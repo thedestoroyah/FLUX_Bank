@@ -1,6 +1,5 @@
 package com.flux.bank.ui.customer.home
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +19,7 @@ import com.flux.bank.data.model.KycStatus
 import com.flux.bank.databinding.FragmentHomeBinding
 import com.flux.bank.ui.common.ComingSoonFragment
 import com.flux.bank.ui.customer.CustomerMainActivity
-import com.flux.bank.ui.customer.EkycActivity
+import com.flux.bank.ui.ekyc.EkycCaptureFragment
 
 /** Trang chủ khách hàng: lời chào, thẻ Titanium, nhắc eKYC, lưới tiện ích 4x3, giao dịch gần đây. */
 class HomeFragment : Fragment() {
@@ -51,8 +50,10 @@ class HomeFragment : Fragment() {
             host().openScreen(ComingSoonFragment.newInstance(R.string.cd_notifications, R.drawable.ic_bell, R.color.cat_blue))
         }
         binding.btnSeeAll.setOnClickListener { host().showTab(CustomerMainActivity.CustomerTab.HISTORY) }
-        // shortcut: còn dùng màn eKYC cũ; Task 13 thay bằng EkycCaptureFragment
-        binding.cardKyc.setOnClickListener { startActivity(Intent(requireContext(), EkycActivity::class.java)) }
+        binding.cardKyc.setOnClickListener {
+            val uid = com.flux.bank.FluxApp.instance.authRepository.currentUid() ?: return@setOnClickListener
+            host().openScreen(EkycCaptureFragment.newInstance(uid, submittedBy = uid))
+        }
 
         viewModel.state.observe(viewLifecycleOwner) { render(it) }
     }
