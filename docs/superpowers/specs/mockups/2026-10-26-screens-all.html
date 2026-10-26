@@ -1,0 +1,358 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>FLUX — Mockup các màn hình đã duyệt</title></head><body style="font-family:Inter,sans-serif;background:#fafafa;padding:24px">
+<style>
+  .phones{display:flex;gap:32px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+  .ph-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer}
+  .ph{width:310px;height:660px;background:#F5F5F7;border-radius:40px;border:8px solid #0A0D12;overflow:hidden;position:relative;font-family:Inter,-apple-system,Roboto,sans-serif;color:#0A0D12;box-shadow:0 10px 30px rgba(0,0,0,.15);font-feature-settings:"tnum"}
+  .ph-wrap.selected .ph{border-color:#0071E3}
+  .sb{height:26px;display:flex;justify-content:space-between;padding:6px 20px 0;font-size:11px;font-weight:600}
+  .pad{padding:4px 16px}
+  .row{display:flex;align-items:center;justify-content:space-between}
+  .cap{font-size:12px;color:#64748B}.body{font-size:13px}.ttl{font-size:15px;font-weight:600}
+  .card-w{background:#fff;border:1px solid #E5E7EB;border-radius:20px}
+  .titan{aspect-ratio:1.586;border-radius:24px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,#FFFFFF 0%,#ECEDF0 40%,#FAFAFB 55%,#E1E3E8 100%);border:1px solid #D1D5DB;box-shadow:0 8px 24px rgba(15,23,42,.10)}
+  .gold{width:34px;height:24px;border-radius:6px;background:linear-gradient(135deg,#F6D28B,#D97706)}
+  .amt{font-size:24px;font-weight:700;letter-spacing:-.8px}
+  .icon{width:20px;height:20px;stroke:#0A0D12;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .icon.s{width:16px;height:16px}
+  .act{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:500;flex:1}
+  .act .b{width:48px;height:48px;border-radius:16px;background:#fff;border:1px solid #E5E7EB;display:flex;align-items:center;justify-content:center}
+  .act .b.dark{background:#0A0D12;border-color:#0A0D12}.act .b.dark .icon{stroke:#fff}
+  .tx{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #F1F3F5}
+  .tx:last-child{border:none}
+  .txi{width:34px;height:34px;border-radius:12px;background:#F5F5F7;display:flex;align-items:center;justify-content:center}
+  .neg{font-weight:600;font-size:13px}.pos{color:#10B981;font-weight:600;font-size:13px}
+  .grp{font-size:11px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;margin-top:6px}
+  .nav{position:absolute;bottom:0;left:0;right:0;height:64px;background:rgba(255,255,255,.96);border-top:1px solid #E5E7EB;display:flex;justify-content:space-around;align-items:center;font-size:10px;color:#94A3B8}
+  .nav div{display:flex;flex-direction:column;align-items:center;gap:3px}
+  .nav .icon{stroke:#94A3B8;width:20px;height:20px}
+  .nav .on{color:#0A0D12;font-weight:600}.nav .on .icon{stroke:#0A0D12}
+  .center{width:52px;height:52px;border-radius:18px;background:#0A0D12;margin-top:-26px;box-shadow:0 6px 16px rgba(10,13,18,.3);display:flex;align-items:center;justify-content:center}
+  .center .icon{stroke:#fff !important}
+  .pill{font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px}
+  .seg{display:flex;gap:6px}
+  .seg span{font-size:11px;font-weight:600;padding:6px 12px;border-radius:999px;background:#fff;border:1px solid #E5E7EB;color:#64748B}
+  .seg .on{background:#0A0D12;color:#fff;border-color:#0A0D12}
+  .fab{position:absolute;right:16px;bottom:78px;height:44px;padding:0 16px;border-radius:22px;background:#0A0D12;color:#fff;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;box-shadow:0 6px 16px rgba(10,13,18,.3)}
+  .fab .icon{stroke:#fff;width:16px;height:16px}
+  .lbl{font-weight:700;font-size:15px}
+  .desc{max-width:320px;font-size:13px;color:var(--text-secondary,#666);text-align:center;line-height:1.45}
+</style>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+    <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/></symbol>
+    <symbol id="i-cup" viewBox="0 0 24 24"><path d="M4 8h12v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM16 10h2a2 2 0 0 1 0 4h-2"/></symbol>
+    <symbol id="i-in" viewBox="0 0 24 24"><path d="M17 7 7 17M16 17H7V8"/></symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v.01M14 21h7v-4"/></symbol>
+  </defs>
+</svg>
+
+<style>
+ .grid12{display:grid;grid-template-columns:repeat(4,1fr);row-gap:10px}
+ .act .b{width:44px;height:44px;border-radius:14px}
+ .scrim{position:absolute;inset:0;background:rgba(10,13,18,.55)}
+ .sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:24px 24px 0 0;padding:10px 18px 22px}
+ .dlg{position:absolute;left:18px;right:18px;top:50%;transform:translateY(-50%);background:#fff;border-radius:24px;padding:20px 18px}
+ .otp{display:flex;gap:6px;justify-content:center;margin:14px 0}
+ .otp span{width:34px;height:42px;border-radius:12px;border:1px solid #E5E7EB;background:#F5F5F7;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700}
+ .otp span.f{border:1.5px solid #0071E3;background:#fff}
+ .btnp{height:48px;border-radius:14px;background:#0A0D12;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px}
+ .sumrow{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;color:#64748B}
+ .sumrow b{color:#0A0D12;font-weight:600}
+ .handle{width:36px;height:5px;border-radius:3px;background:#D1D5DB;margin:0 auto 12px}
+ hr.sec{border:none;border-top:1px solid var(--border,#ddd);margin:40px 0 24px}
+</style>
+<svg width="0" height="0" style="position:absolute"><defs>
+ <symbol id="i-minus" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7 7 7-7"/></symbol>
+ <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></symbol>
+ <symbol id="i-plane" viewBox="0 0 24 24"><path d="M10 14 3 11l1-2 8 1 4-5c1-1 3-1 3 0s-1 2-2 3l-4 4 1 8-2 1-3-7-3 3v2H5l-1-3-3-1v-1h2z"/></symbol>
+ <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/></symbol>
+ <symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 18V6M3 13h18v5M21 13a3 3 0 0 0-3-3h-7v3M7 10.5h.01"/></symbol>
+ <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6zM9 8a3 3 0 0 1 6 0"/></symbol>
+ <symbol id="i-piggy" viewBox="0 0 24 24"><path d="M19 10c1 0 2 1 2 2v2h-2l-1 3h-3v-2h-4v2H8l-1-3c-2-1-3-3-3-5a6 6 0 0 1 6-5h3c2 0 4 1 5 3z"/><circle cx="15" cy="10" r=".5"/></symbol>
+ <symbol id="i-scan" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/></symbol>
+ <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+</defs></svg>
+<style>
+.hdr{display:flex;align-items:center;gap:10px;padding:6px 16px 10px}
+.hdr .t{font-size:17px;font-weight:600}
+.backb{width:36px;height:36px;border-radius:12px;background:#fff;border:1px solid #E5E7EB;display:flex;align-items:center;justify-content:center}
+.fld{margin-top:10px}.fld .l{font-size:12px;color:#64748B;margin-bottom:5px;font-weight:500}
+.fld .i{height:46px;border-radius:14px;border:1px solid #E5E7EB;background:#fff;display:flex;align-items:center;gap:8px;padding:0 12px;font-size:14px}
+.fld .i.focus{border:1.5px solid #10B981}.fld .i.err{border:1.5px solid #EF4444}
+.fld .i.ro{background:#F1F3F5;color:#64748B}
+.fld .e{font-size:12px;color:#EF4444;margin-top:4px}
+.btn2{height:48px;border-radius:14px;background:#fff;border:1px solid #E5E7EB;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:14px}
+.btnd{height:48px;border-radius:14px;background:#fff;border:1.5px solid #FCA5A5;color:#DC2626;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px}
+.lr{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #F1F3F5;font-size:14px}
+.lr:last-child{border:none}.lr .k{flex:1}.lr .v{color:#64748B;font-size:13px}
+.sw{width:42px;height:26px;border-radius:13px;background:#10B981;position:relative}.sw::after{content:"";position:absolute;right:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff}
+.pl{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;display:inline-block}
+.pl.ok{background:#ECFDF5;color:#059669}.pl.wait{background:#FEF3C7;color:#B45309}.pl.no{background:#FEF2F2;color:#DC2626}.pl.gray{background:#F1F3F5;color:#64748B}
+.secl{font-size:12px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;margin:14px 0 6px}
+.av{border-radius:50%;background:#E5E7EB;display:flex;align-items:center;justify-content:center;font-weight:700}
+.chip2{font-size:12px;font-weight:600;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid #E5E7EB;color:#64748B}
+.chip2.on{background:#0A0D12;color:#fff;border-color:#0A0D12}
+.idph{aspect-ratio:1.586;border-radius:14px;background:linear-gradient(135deg,#F8FAFC,#E2E8F0);border:1px solid #CBD5E1;position:relative;overflow:hidden}
+.idph::before{content:"";position:absolute;left:10%;top:22%;width:24%;height:52%;border-radius:8px;background:#CBD5E1}
+.idph::after{content:"";position:absolute;left:42%;top:28%;width:46%;height:6px;border-radius:3px;background:#CBD5E1;box-shadow:0 14px 0 #CBD5E1,0 28px 0 #E2E8F0,0 42px 0 #E2E8F0}
+.facebox{border-radius:14px;background:linear-gradient(180deg,#E2E8F0,#CBD5E1);display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.dash{border:1.5px dashed #CBD5E1;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#64748B;font-size:12px}
+.radio{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #F1F3F5;font-size:14px}
+.radio i{width:20px;height:20px;border-radius:50%;border:2px solid #CBD5E1;display:inline-block}
+.radio.on i{border:6px solid #10B981}
+.onav{position:absolute;bottom:0;left:0;right:0;height:64px;background:rgba(255,255,255,.96);border-top:1px solid #E5E7EB;display:flex;justify-content:space-around;align-items:center;font-size:10px;color:#94A3B8}
+.onav div{display:flex;flex-direction:column;align-items:center;gap:3px}.onav .icon{stroke:#94A3B8}
+.onav .on{color:#059669;font-weight:600}.onav .on .icon{stroke:#059669}
+.grp-title{font-size:20px;font-weight:700;margin:36px 0 4px}
+.scroll{position:absolute;top:26px;bottom:0;left:0;right:0;overflow:hidden}
+</style>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+<symbol id="i-finger" viewBox="0 0 24 24"><path d="M12 11v4a6 6 0 0 1-1.5 4M8 8.5A5 5 0 0 1 17 11v2M6 12a6 6 0 0 1 .8-3M15 14v1a9 9 0 0 1-1 4M9 21a10 10 0 0 0 1-6v-4a2 2 0 0 1 4 0M5 16a9 9 0 0 0 .5-3M18.5 16a12 12 0 0 0 .5-3v-2a7 7 0 0 0-11.5-5.4"/></symbol>
+<symbol id="i-cam" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+<symbol id="i-logout" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11"/></symbol>
+<symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M15 8l2 2"/></symbol>
+<symbol id="i-id" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.5-1.5 1.7-2 3-2s2.5.5 3 2M14 10h4M14 13h3"/></symbol>
+<symbol id="i-face" viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 10v1M15 10v1M9.5 15a3.5 3.5 0 0 0 5 0"/></symbol>
+<symbol id="i-userplus" viewBox="0 0 24 24"><circle cx="10" cy="8" r="4"/><path d="M3 21c0-4 3-6 7-6 1.5 0 2.8.3 4 .8M19 14v6M16 17h6"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5c2.5.5 4 2.5 4 5.5"/></symbol>
+<symbol id="i-percent" viewBox="0 0 24 24"><path d="M19 5 5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/></symbol>
+<symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></symbol>
+</defs></svg>
+<h2>Mockup các màn hình còn lại: duyệt từng nhóm</h2>
+<p class="subtitle">Có 4 nhóm, tất cả theo design system đã chốt. Bạn bấm chọn những màn đã ổn, rồi góp ý trong terminal theo từng nhóm (ví dụ "nhóm 2: đổi …").</p>
+<div class="grp-title" id="auth">Nhóm 1 · Đăng nhập & bảo mật phiên</div><div class="phones">
+<div class="ph-wrap" data-choice="auth-login" onclick="toggleSelect(this)"><div class="lbl">Đăng nhập</div><div class="ph" style="background:linear-gradient(180deg,#E7F8EF 0%,#F5F5F7 42%)"><div class="sb"><span>9:41</span><span>●●● ▮</span></div>
+<div class="pad" style="padding-top:40px;text-align:center">
+  <div style="width:64px;height:64px;margin:0 auto;border-radius:20px;background:linear-gradient(135deg,#fff,#E1E3E8);border:1px solid #D1D5DB;
+   display:flex;align-items:center;justify-content:center;font-weight:800;letter-spacing:2px;font-size:13px;box-shadow:0 8px 20px rgba(16,185,129,.18)">FLUX</div>
+  <div style="font-size:24px;font-weight:700;margin-top:18px;letter-spacing:-.5px">Chào mừng trở lại</div>
+  <div class="cap" style="margin-top:4px">Đăng nhập để tiếp tục với FLUX Bank</div>
+</div>
+<div class="pad" style="margin-top:14px">
+  <div class="fld"><div class="l">Email</div><div class="i "><svg class="icon s" style="stroke:#94A3B8;fill:none"><use href="#i-mail"/></svg><span style="flex:1">minhanh@gmail.com</span></div></div>
+  <div class="fld"><div class="l">Mật khẩu</div><div class="i focus"><svg class="icon s" style="stroke:#94A3B8;fill:none"><use href="#i-lock"/></svg><span style="flex:1">••••••••</span></div></div>
+  <div style="text-align:right;font-size:13px;font-weight:600;color:#059669;margin:10px 0 16px">Quên mật khẩu?</div>
+  <div class="btnp">Đăng nhập</div>
+  <div style="display:flex;align-items:center;gap:10px;margin:16px 0;color:#94A3B8;font-size:12px"><span style="flex:1;height:1px;background:#E5E7EB"></span>hoặc<span style="flex:1;height:1px;background:#E5E7EB"></span></div>
+  <div class="btn2"><svg class="icon" style="stroke:#059669;fill:none"><use href="#i-finger"/></svg>Đăng nhập bằng sinh trắc học</div>
+</div>
+<div style="position:absolute;bottom:22px;left:0;right:0;text-align:center" class="cap"><svg class="icon s" style="stroke:#10B981;fill:rgba(16,185,129,.22)"><use href="#i-shield"/></svg> Phiên đăng nhập được mã hoá</div>
+</div><div class="desc">Nền mint giống trang chủ. Có nút đăng nhập bằng mật khẩu (đen) và nút sinh trắc học phụ (viền).</div></div>
+<div class="ph-wrap" data-choice="auth-unlock" onclick="toggleSelect(this)"><div class="lbl">Mở khoá (khi app tự khoá)</div><div class="ph" style="background:linear-gradient(180deg,#E7F8EF 0%,#F5F5F7 42%)"><div class="sb"><span>9:41</span><span>●●● ▮</span></div>
+<div style="text-align:center;padding-top:80px">
+  <div class="av" style="width:72px;height:72px;margin:0 auto;font-size:22px;background:#fff;border:1px solid #E5E7EB">MA</div>
+  <div class="cap" style="margin-top:14px">Xin chào</div>
+  <div style="font-size:22px;font-weight:700">Minh Anh</div>
+  <div class="cap" style="margin-top:4px">FLUX đã khoá để bảo vệ tài khoản của bạn</div>
+  <div style="width:96px;height:96px;border-radius:32px;margin:56px auto 14px;background:rgba(16,185,129,.10);display:flex;align-items:center;justify-content:center">
+    <svg style="width:48px;height:48px;stroke:#059669;fill:none;stroke-width:1.6;stroke-linecap:round"><use href="#i-finger"/></svg></div>
+  <div class="ttl">Chạm để mở khoá</div>
+</div>
+<div style="position:absolute;bottom:30px;left:0;right:0;text-align:center;font-size:13px;font-weight:600;color:#64748B">Đăng nhập tài khoản khác</div>
+</div><div class="desc">Hiện khi mở lại app, hoặc khi app quay lại sau 60 giây ở nền. Lời nhắc vân tay tự bật lên.</div></div>
+<div class="ph-wrap" data-choice="auth-chpw" onclick="toggleSelect(this)"><div class="lbl">Đổi mật khẩu lần đầu</div><div class="ph" style="background:#F5F5F7"><div class="sb"><span>9:41</span><span>●●● ▮</span></div>
+<div class="hdr"><div class="backb"><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-back"/></svg></div><div class="t" style="flex:1">Tạo mật khẩu mới</div></div>
+<div class="pad">
+  <div class="cap" style="font-size:13px;line-height:1.5">Đây là lần đăng nhập đầu tiên. Hãy thay mật khẩu tạm do nhân viên cấp bằng mật khẩu của riêng bạn.</div>
+  <div class="fld"><div class="l">Mật khẩu mới</div><div class="i focus"><svg class="icon s" style="stroke:#94A3B8;fill:none"><use href="#i-lock"/></svg><span style="flex:1">••••••••••</span></div></div>
+  <div class="fld"><div class="l">Nhập lại mật khẩu</div><div class="i "><svg class="icon s" style="stroke:#94A3B8;fill:none"><use href="#i-lock"/></svg><span style="flex:1">••••••••••</span></div></div>
+  <div class="card-w" style="padding:10px 12px;margin-top:14px">
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:4px 0"><svg class="icon s" style="stroke:#10B981;fill:none"><use href="#i-check"/></svg>Tối thiểu 8 ký tự</div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:4px 0"><svg class="icon s" style="stroke:#10B981;fill:none"><use href="#i-check"/></svg>Có cả chữ và số</div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:4px 0;color:#94A3B8"><svg class="icon s" style="stroke:#CBD5E1;fill:none"><use href="#i-check"/></svg>Hai mật khẩu trùng khớp</div>
+  </div>
+</div>
+<div style="position:absolute;left:16px;right:16px;bottom:24px"><div class="btnp">Lưu mật khẩu</div></div>
+</div><div class="desc">Bắt buộc khi khách đăng nhập bằng mật khẩu tạm. Có checklist quy tắc hiện trực tiếp.</div></div>
+</div>
+<div class="grp-title" id="customer-profile">Nhóm 2 · Tab Cá nhân</div><div class="phones">
+<div class="ph-wrap" data-choice="customer-profile-profile" onclick="toggleSelect(this)"><div class="lbl">Cá nhân</div><div class="ph" style="background:#F5F5F7"><div class="sb"><span>9:41</span><span>●●● ▮</span></div>
+<div class="pad" style="padding-top:10px;display:flex;align-items:center;gap:14px">
+  <div class="av" style="width:60px;height:60px;font-size:19px;background:#fff;border:1px solid #E5E7EB">MA</div>
+  <div style="flex:1"><div style="font-size:18px;font-weight:700">Nguyễn Minh Anh</div><div class="cap">min•••@gmail.com</div>
+  <span class="pl ok" style="margin-top:4px">● Đã xác minh</span></div>
+</div>
+<div class="pad">
+  <div class="secl">Thông tin</div>
+  <div class="card-w" style="padding:0 14px">
+    <div class="lr"><span class="k">Số điện thoại</span><span class="v">0912 345 678</span></div>
+    <div class="lr"><span class="k">CCCD</span><span class="v">•••• •••• 1234</span></div>
+    <div class="lr"><span class="k">Địa chỉ</span><span class="v">Q.7, TP.HCM</span></div>
+    <div class="lr" style="color:#059669;font-weight:600"><svg class="icon s" style="stroke:#059669;fill:none"><use href="#i-pen"/></svg><span class="k">Chỉnh sửa hồ sơ</span><svg class="icon s" style="stroke:#059669;fill:none"><use href="#i-chev"/></svg></div>
+  </div>
+  <div class="secl">Bảo mật</div>
+  <div class="card-w" style="padding:0 14px">
+    <div class="lr"><svg class="icon s" style="stroke:#059669;fill:none"><use href="#i-finger"/></svg><span class="k">Đăng nhập sinh trắc học</span><span class="sw"></span></div>
+    <div class="lr"><svg class="icon s" style="stroke:#0A0D12;fill:none"><use href="#i-face"/></svg><span class="k">Kiểm tra xác thực khuôn mặt</span><svg class="icon s" style="stroke:#94A3B8;fill:none"><use href="#i-chev"/></svg></div>
+    <div class="lr"><svg class="icon s" style="stroke:#0A0D12;fill:none"><use href="#i-id"/></svg><span class="k">Xác minh danh tính</span><span class="pl ok">Đã duyệt</span></div>
+    <div class="lr"><svg class="icon s" style="stroke:#0A0D12;fill:none"><use href="#i-key"/></svg><span class="k">Đổi mật khẩu</span><svg class="icon s" style="stroke:#94A3B8;fill:none"><use href="#i-chev"/></svg></div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:center;gap:6px;color:#DC2626;font-weight:600;font-size:14px;margin-top:14px"><svg class="icon s" style="stroke:#DC2626;fill:none"><use href="#i-logout"/></svg>Đăng xuất</div>
+</div>
+<div class="nav"><div class="" style="color:#94A3B8"><svg class="icon" style="stroke:#94A3B8;fill:none"><use href="#i-home"/></svg>Trang chủ</div><div class="" style="color:#94A3B8"><svg class="icon" style="stroke:#94A3B8;fill:none"><use href="#i-swap"/></svg>Chuyển tiền</div><div><div class="center" style="background:#10B981;box-shadow:0 6px 16px rgba(16,185,129,.35)"><svg class="icon" style="stroke:#fff;fill:none"><use href="#i-scan"/></svg></div></div><div class="" style="color:#94A3B8"><svg class="icon" style="stroke:#94A3B8;fill:none"><use href="#i-list"/></svg>Lịch sử</div><div class="on" style="color:#059669"><svg class="icon" style="stroke:#059669;fill:none"><use href="#i-user"/></svg>Cá nhân</div></div>
+</div><div class="desc">Thông tin chỉ để xem; muốn sửa thì bấm "Chỉnh sửa hồ sơ". Phần Bảo mật gom sinh trắc học, kiểm tra khuôn mặt, eKYC và đổi mật khẩu.</div></div>
+<div class="ph-wrap" data-choice="customer-profile-edit" onclick="toggleSelect(this)"><div class="lbl">Chỉnh sửa hồ sơ</div><div class="ph" style="background:#F5F5F7"><div class="sb"><span>9:41</span><span>●●● ▮</span></div>
+<div class="hdr"><div class="backb"><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-back"/></svg></div><div class="t" style="flex:1">Chỉnh sửa hồ sơ</div></div>
+<div class="pad">
+  <div style="width:76px;height:76px;margin:0 auto;position:relative"><div class="av" style="width:76px;height:76px;font-size:22px;background:#fff;border:1px solid #E5E7EB">MA</div>
+   <div style="position:absolute;right:-2px;bottom:-2px;width:28px;height:28px;border-radius:50%;background:#0A0D12;display:flex;align-items:center;justify-content:center"><svg class="icon s" style="stroke:#fff;fill:none"><use href="#i-cam"/></svg></div></div>
+  <div class="fld"><div class="l">Số điện thoại</div><div class="i focus"><span style="flex:1">0912 345 679</span></div></div>
+  <div class="cap" style="margin-top:4px">Đổi số điện thoại cần xác thực bằng mã OTP</div>
+  <div class="fld"><div class="l">Địa chỉ</div><div class="i "><span style="flex:1">123 Nguyễn Văn Linh, Q.7, TP.HCM</span></div></div>
+  <div class="secl">Chỉ nhân viên được thay đổi</div>
+  <div class="fld"><div class="l">Họ và tên</div><div class="i ro"><svg class="icon s" style="stroke:#94A3B8;fill:none"><use href="#i-lock"/></svg><span style="flex:1">Nguyễn Minh Anh</span></div></div>
+  <div class="fld"><div class="l">CCCD</div><div class="i ro"><svg class="icon s" style="stroke:#94A3B8;fill:none"><use href="#i-lock"/></svg><span style="flex:1">079 203 001 234</span></div></div>
+</div>
+<div style="position:absolute;left:16px;right:16px;bottom:24px"><div class="btnp">Lưu thay đổi</div></div>
+</div><div class="desc">Khách tự sửa được SĐT, địa chỉ và ảnh đại diện. Họ tên và CCCD bị khoá. Đổi SĐT sẽ mở bottom sheet OTP.</div></div>
+<div class="ph-wrap" data-choice="customer-profile-soon" onclick="toggleSelect(this)"><div class="lbl">Sắp ra mắt</div><div class="ph" style="background:#F5F5F7"><div class="sb"><span>9:41</span><span>●●● ▮</span></div>
+<div class="hdr"><div class="backb"><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-back"/></svg></div><div class="t" style="flex:1">Vé máy bay</div></div>
+<div style="text-align:center;padding:110px 32px 0">
+  <div style="display:inline-block;transform:scale(1.6);margin-bottom:24px"><div style="width:44px;height:44px;border-radius:14px;background:rgba(14,165,233,.10);display:flex;align-items:center;justify-content:center"><svg class="icon" style="stroke:#0EA5E9;fill:rgba(14,165,233,.22)"><use href="#i-plane"/></svg></div></div>
+  <div style="font-size:20px;font-weight:700">Sắp ra mắt</div>
+  <div class="cap" style="font-size:13px;line-height:1.5;margin-top:6px">Tính năng Vé máy bay đang được FLUX hoàn thiện. Bạn sẽ sớm dùng được ngay trong ứng dụng.</div>
+  <div class="btn2" style="margin-top:24px">Về trang chủ</div>
+</div>
+</div><div class="desc">Dùng chung cho mọi tiện ích và tab chưa làm. Icon duotone theo màu của tiện ích tương ứng.</div></div>
+</div>
+<div class="grp-title" id="ekyc">Nhóm 3 · eKYC & quét khuôn mặt</div><div class="phones">
+<div class="ph-wrap" data-choice="ekyc-ekyc" onclick="toggleSelect(this)"><div class="lbl">Xác minh danh tính (eKYC)</div><div class="ph" style="background:#F5F5F7"><div class="sb"><span>9:41</span><span>●●● ▮</span></div>
+<div class="hdr"><div class="backb"><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-back"/></svg></div><div class="t" style="flex:1">Xác minh danh tính</div></div>
+<div class="pad">
+  <div style="background:#FEF2F2;border-radius:14px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start"><svg class="icon s" style="stroke:#DC2626;fill:none"><use href="#i-alert"/></svg>
+   <div><div style="font-size:13px;font-weight:600;color:#DC2626">Hồ sơ bị từ chối</div><div class="cap" style="color:#B91C1C">Lý do: Ảnh CCCD bị mờ. Vui lòng chụp lại.</div></div></div>
+  <div class="secl">Bước 1 · CCCD mặt trước</div>
+  <div class="card-w" style="padding:12px"><div class="idph"></div>
+   <div class="btn2" style="margin-top:10px;height:42px"><svg class="icon s" style="stroke:#0A0D12;fill:none"><use href="#i-cam"/></svg>Chụp lại</div></div>
+  <div class="secl">Bước 2 · Ảnh chân dung</div>
+  <div class="card-w" style="padding:12px;display:flex;gap:12px;align-items:center">
+   <div class="dash" style="width:76px;height:76px;border-radius:50%"><svg class="icon" style="stroke:#94A3B8;fill:none"><use href="#i-face"/></svg></div>
+   <div style="flex:1"><div class="cap">Nhìn thẳng, đủ sáng, không đeo kính râm</div>
+   <div class="btn2" style="margin-top:8px;height:40px"><svg class="icon s" style="stroke:#0A0D12;fill:none"><use href="#i-cam"/></svg>Chụp ảnh</div></div></div>
+</div>
+<div style="position:absolute;left:16px;right:16px;bottom:24px"><div class="btnp" style="opacity:.4">Gửi hồ sơ</div></div>
+</div><div class="desc">Gồm 2 bước chụp. Banner đỏ hiện lý do khi hồ sơ bị từ chối. Nút "Gửi hồ sơ" sáng lên khi đã có đủ 2 ảnh.</div></div>
+<div class="ph-wrap" data-choice="ekyc-facescan" onclick="toggleSelect(this)"><div class="lbl">Quét mặt trong bottom sheet</div><div class="ph" style="background:#F5F5F7"><div class="sb"><span>9:41</span><span>●●● ▮</span></div><div class="pad" style="margin-top:40px"><div class="titan"></div></div><div class="nav"><div class="on" style="color:#059669"><svg class="icon" style="stroke:#059669;fill:none"><use href="#i-home"/></svg>Trang chủ</div><div class="" style="color:#94A3B8"><svg class="icon" style="stroke:#94A3B8;fill:none"><use href="#i-swap"/></svg>Chuyển tiền</div><div><div class="center" style="background:#10B981;box-shadow:0 6px 16px rgba(16,185,129,.35)"><svg class="icon" style="stroke:#fff;fill:none"><use href="#i-scan"/></svg></div></div><div class="" style="color:#94A3B8"><svg class="icon" style="stroke:#94A3B8;fill:none"><use href="#i-list"/></svg>Lịch sử</div><div class="" style="color:#94A3B8"><svg class="icon" style="stroke:#94A3B8;fill:none"><use href="#i-user"/></svg>Cá nhân</div></div><div class="scrim"></div>
+<div class="sheet" style="top:120px"><div class="handle"></div>
+ <div class="ttl" style="font-size:17px;text-align:center">Xác thực khuôn mặt</div>
+ <div class="cap" style="text-align:center;margin:4px 0 8px">Giao dịch từ 10.000.000 ₫ cần xác thực khuôn mặt</div><div style="display:flex;gap:6px;justify-content:center;margin:2px 0 12px"><span class="pl ok">✓ OTP</span><span class="pl" style="background:#0A0D12;color:#fff">2 · Khuôn mặt</span></div>
+ <div style="width:190px;height:190px;margin:0 auto;border-radius:50%;padding:5px;background:conic-gradient(#10B981 0 62%,#E5E7EB 62% 100%)">
+  <div class="facebox" style="width:100%;height:100%;border-radius:50%;border:4px solid #fff"><svg viewBox="0 0 100 100" style="width:80%;height:80%"><circle cx="50" cy="38" r="18" fill="#94A3B8"/><path d="M14 100c0-22 16-34 36-34s36 12 36 34z" fill="#94A3B8"/></svg></div></div>
+ <div style="text-align:center;font-size:16px;font-weight:600;margin-top:14px">Hãy chớp mắt</div>
+ <div class="cap" style="text-align:center;margin-top:2px">Giữ khuôn mặt trong khung tròn</div>
+ <div style="text-align:center;font-size:13px;font-weight:600;color:#64748B;margin-top:16px">Huỷ</div>
+</div></div><div class="desc">Bước 2 sau OTP khi giao dịch từ 10 triệu. Vòng xanh chạy tiến độ, yêu cầu chớp mắt để chứng minh người thật.</div></div>
+<div class="ph-wrap" data-choice="ekyc-faceok" onclick="toggleSelect(this)"><div class="lbl">Kết quả khớp</div><div class="ph" style="background:#F5F5F7"><div class="sb"><span>9:41</span><span>●●● ▮</span></div><div class="pad" style="margin-top:40px"><div class="titan"></div></div><div class="nav"><div class="on" style="color:#059669"><svg class="icon" style="stroke:#059669;fill:none"><use href="#i-home"/></svg>Trang chủ</div><div class="" style="color:#94A3B8"><svg class="icon" style="stroke:#94A3B8;fill:none"><use href="#i-swap"/></svg>Chuyển tiền</div><div><div class="center" style="background:#10B981;box-shadow:0 6px 16px rgba(16,185,129,.35)"><svg class="icon" style="stroke:#fff;fill:none"><use href="#i-scan"/></svg></div></div><div class="" style="color:#94A3B8"><svg class="icon" style="stroke:#94A3B8;fill:none"><use href="#i-list"/></svg>Lịch sử</div><div class="" style="color:#94A3B8"><svg class="icon" style="stroke:#94A3B8;fill:none"><use href="#i-user"/></svg>Cá nhân</div></div><div class="scrim"></div>
+<div class="sheet" style="top:120px"><div class="handle"></div>
+ <div class="ttl" style="font-size:17px;text-align:center">Xác thực khuôn mặt</div>
+ <div class="cap" style="text-align:center;margin:4px 0 8px">Giao dịch từ 10.000.000 ₫ cần xác thực khuôn mặt</div><div style="display:flex;gap:6px;justify-content:center;margin:2px 0 12px"><span class="pl ok">✓ OTP</span><span class="pl" style="background:#0A0D12;color:#fff">2 · Khuôn mặt</span></div>
+ <div style="width:190px;height:190px;margin:0 auto;border-radius:50%;padding:5px;background:#10B981">
+  <div class="facebox" style="width:100%;height:100%;border-radius:50%;border:4px solid #fff;position:relative"><svg viewBox="0 0 100 100" style="width:80%;height:80%"><circle cx="50" cy="38" r="18" fill="#94A3B8"/><path d="M14 100c0-22 16-34 36-34s36 12 36 34z" fill="#94A3B8"/></svg>
+  <div style="position:absolute;inset:0;background:rgba(16,185,129,.35);display:flex;align-items:center;justify-content:center">
+  <svg style="width:64px;height:64px;stroke:#fff;fill:none;stroke-width:2.4;stroke-linecap:round"><use href="#i-check"/></svg></div></div></div>
+ <div style="text-align:center;font-size:16px;font-weight:600;margin-top:14px;color:#059669">Khuôn mặt khớp</div>
+ <div class="cap" style="text-align:center;margin-top:2px">Đang hoàn tất giao dịch…</div>
+ <div class="cap" style="text-align:center;margin-top:16px;color:#DC2626">(Nếu không khớp: "Không khớp, thử lại · còn 2 lần")</div>
+</div></div><div class="desc">Khớp: phủ xanh + dấu tích + rung nhẹ. Không khớp: cho thử lại, tối đa 3 lần.</div></div>
+</div>
+<div class="grp-title" id="officer">Nhóm 4 · Giao diện nhân viên</div><div class="phones">
+<div class="ph-wrap" data-choice="officer-ov" onclick="toggleSelect(this)"><div class="lbl">Tổng quan</div><div class="ph" style="background:#F5F5F7"><div class="sb"><span>9:41</span><span>●●● ▮</span></div>
+<div class="pad row" style="margin:6px 0 12px"><div><div class="cap">Xin chào</div><div class="ttl" style="font-size:18px">Trần Thị Lan</div></div>
+ <span class="pl" style="background:#0A0D12;color:#fff">Nhân viên</span></div>
+<div class="pad" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+ <div class="card-w" style="padding:14px"><div style="width:36px;height:36px;border-radius:14px;background:rgba(0,113,227,.10);display:flex;align-items:center;justify-content:center"><svg class="icon" style="stroke:#0071E3;fill:rgba(0,113,227,.22)"><use href="#i-users"/></svg></div><div class="cap" style="margin-top:10px">Khách hàng</div><div style="font-size:24px;font-weight:700">128</div></div>
+ <div class="card-w" style="padding:14px"><div style="width:36px;height:36px;border-radius:14px;background:rgba(217,119,6,.10);display:flex;align-items:center;justify-content:center"><svg class="icon" style="stroke:#D97706;fill:rgba(217,119,6,.22)"><use href="#i-face"/></svg></div><div class="cap" style="margin-top:10px">eKYC chờ duyệt</div><div style="font-size:24px;font-weight:700;color:#B45309">5</div></div>
+ <div class="btnp" style="grid-column:span 2;gap:8px"><svg class="icon s" style="stroke:#fff;fill:none"><use href="#i-userplus"/></svg>Tạo khách hàng</div>
+</div>
+<div class="pad"><div class="secl">Hồ sơ chờ duyệt gần đây</div>
+ <div class="card-w" style="padding:0 14px">
+  <div class="lr"><div class="av" style="width:34px;height:34px;font-size:12px">BN</div><span class="k">Trần Bảo Ngọc<div class="cap">10 phút trước</div></span><svg class="icon s" style="stroke:#94A3B8;fill:none"><use href="#i-chev"/></svg></div>
+  <div class="lr"><div class="av" style="width:34px;height:34px;font-size:12px">QH</div><span class="k">Lê Quang Huy<div class="cap">1 giờ trước · NV chụp hộ</div></span><svg class="icon s" style="stroke:#94A3B8;fill:none"><use href="#i-chev"/></svg></div>
+ </div></div>
+<div class="onav"><div class="on"><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-chart"/></svg>Tổng quan</div><div class=""><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-users"/></svg>Khách hàng</div><div class=""><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-face"/></svg>eKYC</div><div class=""><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-percent"/></svg>Lãi suất</div><div class=""><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-user"/></svg>Cá nhân</div></div></div><div class="desc">Ô Bento thống kê, nút tạo khách hàng, các hồ sơ eKYC chờ duyệt. Thanh tab riêng của officer, không có nút nổi.</div></div>
+<div class="ph-wrap" data-choice="officer-clist" onclick="toggleSelect(this)"><div class="lbl">Khách hàng</div><div class="ph" style="background:#F5F5F7"><div class="sb"><span>9:41</span><span>●●● ▮</span></div>
+<div class="pad" style="margin:6px 0 10px"><div class="ttl" style="font-size:20px">Khách hàng</div></div>
+<div class="pad"><div class="fld" style="margin:0"><div class="i"><svg class="icon s" style="stroke:#94A3B8;fill:none"><use href="#i-search"/></svg><span style="color:#94A3B8">Tìm theo tên, SĐT, email</span></div></div>
+ <div style="display:flex;gap:6px;margin:10px 0"><span class="chip2 on">Tất cả</span><span class="chip2">Chờ eKYC</span><span class="chip2">Đã xác minh</span></div>
+ <div class="card-w" style="padding:0 14px">
+  <div class="lr"><div class="av" style="width:38px;height:38px;font-size:12px">MA</div><span class="k">Nguyễn Minh Anh<div class="cap">0912 345 678</div></span><span class="pl ok">Đã xác minh</span></div>
+  <div class="lr"><div class="av" style="width:38px;height:38px;font-size:12px">BN</div><span class="k">Trần Bảo Ngọc<div class="cap">0987 111 222</div></span><span class="pl wait">Chờ duyệt</span></div>
+  <div class="lr"><div class="av" style="width:38px;height:38px;font-size:12px">QH</div><span class="k">Lê Quang Huy<div class="cap">0903 456 789</div></span><span class="pl wait">Chờ duyệt</span></div>
+  <div class="lr"><div class="av" style="width:38px;height:38px;font-size:12px">TT</div><span class="k">Phạm Thu Trang<div class="cap">0938 000 123</div></span><span class="pl gray">Chưa nộp</span></div>
+  <div class="lr"><div class="av" style="width:38px;height:38px;font-size:12px">DK</div><span class="k">Võ Đăng Khoa<div class="cap">0977 654 321</div></span><span class="pl no">Từ chối</span></div>
+ </div></div>
+<div class="center" style="position:absolute;right:18px;bottom:82px;margin:0;background:#0A0D12"><svg class="icon" style="stroke:#fff;fill:none"><use href="#i-userplus"/></svg></div>
+<div class="onav"><div class=""><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-chart"/></svg>Tổng quan</div><div class="on"><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-users"/></svg>Khách hàng</div><div class=""><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-face"/></svg>eKYC</div><div class=""><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-percent"/></svg>Lãi suất</div><div class=""><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-user"/></svg>Cá nhân</div></div></div><div class="desc">Tìm theo tên, SĐT hoặc email (không phân biệt dấu). Có chip lọc theo trạng thái eKYC và nút nổi để tạo khách.</div></div>
+<div class="ph-wrap" data-choice="officer-create" onclick="toggleSelect(this)"><div class="lbl">Tạo khách hàng</div><div class="ph" style="background:#F5F5F7"><div class="sb"><span>9:41</span><span>●●● ▮</span></div>
+<div class="hdr"><div class="backb"><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-back"/></svg></div><div class="t" style="flex:1">Tạo khách hàng</div></div>
+<div class="pad">
+ <div class="fld"><div class="l">Họ và tên</div><div class="i "><span style="flex:1">Phạm Thu Trang</span></div></div>
+ <div class="fld"><div class="l">Email</div><div class="i "><span style="flex:1">thutrang@gmail.com</span></div></div>
+ <div class="fld"><div class="l">Số điện thoại</div><div class="i err"><span style="flex:1">0912 345 678</span></div><div class="e">Số điện thoại đã được sử dụng</div></div>
+ <div class="fld"><div class="l">Số CCCD</div><div class="i "><span style="flex:1">079 301 004 567</span></div></div>
+ <div class="fld"><div class="l">Địa chỉ</div><div class="i "><span style="flex:1">45 Lê Lợi, Q.1, TP.HCM</span></div></div>
+ <div class="fld"><div class="l" style="display:flex;justify-content:space-between">Mật khẩu tạm<span style="color:#059669;font-weight:600">Tạo ngẫu nhiên</span></div>
+  <div class="i"><svg class="icon s" style="stroke:#94A3B8;fill:none"><use href="#i-key"/></svg><span style="flex:1;font-feature-settings:'tnum'">fx7Kq2mP9a</span></div></div>
+</div>
+<div style="position:absolute;left:16px;right:16px;bottom:24px"><div class="btnp">Tạo khách hàng</div></div>
+</div><div class="desc">Lỗi hiện ngay dưới từng ô nhập. Có nút "Tạo ngẫu nhiên" để sinh mật khẩu tạm, và mật khẩu được hiện lại một lần sau khi tạo.</div></div>
+<div class="ph-wrap" data-choice="officer-detail" onclick="toggleSelect(this)"><div class="lbl">Hồ sơ khách hàng</div><div class="ph" style="background:#F5F5F7"><div class="sb"><span>9:41</span><span>●●● ▮</span></div>
+<div class="hdr"><div class="backb"><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-back"/></svg></div><div class="t" style="flex:1">Hồ sơ khách hàng</div><span class="pl ok">Đã xác minh</span></div>
+<div class="pad">
+ <div class="titan" style="aspect-ratio:auto;padding:12px 14px;flex-direction:row;align-items:center;justify-content:space-between">
+  <div><div class="cap">Checking · •••• 5678</div><div style="font-size:18px;font-weight:700">0 ₫</div></div><div class="gold" style="width:26px;height:18px"></div></div>
+ <div class="fld"><div class="l">Họ và tên</div><div class="i "><span style="flex:1">Nguyễn Minh Anh</span></div></div>
+ <div class="fld"><div class="l">Số điện thoại</div><div class="i "><span style="flex:1">0912 345 678</span></div></div>
+ <div class="fld"><div class="l">Số CCCD</div><div class="i "><span style="flex:1">079 203 001 234</span></div></div>
+ <div class="fld"><div class="l">Email</div><div class="i ro"><svg class="icon s" style="stroke:#94A3B8;fill:none"><use href="#i-lock"/></svg><span style="flex:1">minhanh@gmail.com</span></div></div>
+ <div class="btnp" style="margin-top:14px">Lưu thay đổi</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+  <div class="btn2" style="font-size:12px"><svg class="icon s" style="stroke:#0A0D12;fill:none"><use href="#i-mail"/></svg>Đặt lại mật khẩu</div>
+  <div class="btn2" style="font-size:12px"><svg class="icon s" style="stroke:#0A0D12;fill:none"><use href="#i-cam"/></svg>Chụp eKYC hộ</div></div>
+</div></div><div class="desc">Officer sửa được mọi thông tin trừ email. Có nút gửi email đặt lại mật khẩu và nút chụp eKYC hộ khách.</div></div>
+<div class="ph-wrap" data-choice="officer-review" onclick="toggleSelect(this)"><div class="lbl">Duyệt eKYC</div><div class="ph" style="background:#F5F5F7"><div class="sb"><span>9:41</span><span>●●● ▮</span></div>
+<div class="hdr"><div class="backb"><svg class="icon" style="stroke:#0A0D12;fill:none"><use href="#i-back"/></svg></div><div class="t" style="flex:1">Duyệt eKYC</div><span class="pl wait">5 hồ sơ</span></div>
+<div class="pad">
+ <div class="card-w" style="padding:14px">
+  <div class="row"><div><div class="ttl">Lê Quang Huy</div><div class="cap">Nộp lúc 14:20 · 26/10</div></div><span class="pl gray">NV chụp hộ</span></div>
+  <div class="secl">CCCD mặt trước</div><div class="idph"></div>
+  <div class="secl">Ảnh chân dung</div>
+  <div style="display:flex;gap:10px"><div class="facebox" style="width:96px;height:120px"><svg viewBox="0 0 100 100" style="width:80%;height:80%"><circle cx="50" cy="38" r="18" fill="#94A3B8"/><path d="M14 100c0-22 16-34 36-34s36 12 36 34z" fill="#94A3B8"/></svg></div>
+   <div class="cap" style="flex:1;line-height:1.6">Họ tên: Lê Quang Huy<br>CCCD: 079 203 009 876<br>SĐT: 0903 456 789<br><span style="color:#0071E3;font-weight:600">Chạm ảnh để phóng to</span></div></div>
+ </div>
+</div>
+<div style="position:absolute;left:16px;right:16px;bottom:24px;display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="btnd">Từ chối</div><div class="btnp">Duyệt</div></div>
+</div><div class="desc">Ảnh CCCD và chân dung xếp cạnh thông tin khách. Nút Từ chối (viền đỏ) và nút Duyệt (đen).</div></div>
+<div class="ph-wrap" data-choice="officer-reject" onclick="toggleSelect(this)"><div class="lbl">Chọn lý do từ chối</div><div class="ph" style="background:#F5F5F7"><div class="sb"><span>9:41</span><span>●●● ▮</span></div><div class="pad" style="margin-top:30px"><div class="idph"></div></div><div class="scrim"></div>
+<div class="sheet"><div class="handle"></div>
+ <div class="ttl" style="font-size:17px">Lý do từ chối</div><div class="cap" style="margin:2px 0 6px">Khách hàng sẽ thấy lý do này</div>
+ <div class="radio"><i></i>Ảnh CCCD bị mờ</div>
+ <div class="radio"><i></i>Ảnh chân dung không rõ mặt</div>
+ <div class="radio"><i></i>Thông tin không khớp với CCCD</div>
+ <div class="radio on" style="border:none"><i></i>Khác…</div>
+ <div class="fld"><div class="l"></div><div class="i focus"><span style="flex:1">Ảnh CCCD bị loá sáng góc phải</span></div></div>
+ <div class="btnd" style="margin-top:14px;background:#DC2626;color:#fff;border-color:#DC2626">Xác nhận từ chối</div>
+</div></div><div class="desc">Bottom sheet chọn lý do có sẵn hoặc chọn "Khác…" để tự nhập. Bắt buộc phải có lý do.</div></div>
+</div>
+</body></html>
