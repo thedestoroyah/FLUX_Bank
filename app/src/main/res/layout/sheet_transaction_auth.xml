@@ -124,9 +124,10 @@
             app:layout_constraintTop_toBottomOf="@id/keypad" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Bước khuôn mặt (Task 12) -->
-    <FrameLayout
-        android:id="@+id/faceContainer"
+    <!-- Bước khuôn mặt (giao dịch giá trị cao) -->
+    <include
+        android:id="@+id/face"
+        layout="@layout/view_face_step"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
