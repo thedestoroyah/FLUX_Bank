@@ -229,4 +229,27 @@
     <string name="err_national_id_invalid">CCCD phải gồm đúng 12 chữ số.</string>
     <string name="err_national_id_taken">CCCD đã được dùng cho khách khác.</string>
     <string name="err_email_taken">Email đã được dùng cho tài khoản khác.</string>
+
+    <!-- Duyệt eKYC -->
+    <string name="review_title">Duyệt eKYC</string>
+    <string name="review_count">%1$d hồ sơ</string>
+    <string name="review_empty">Không có hồ sơ nào đang chờ duyệt</string>
+    <string name="review_submitted_at">Nộp lúc %1$s</string>
+    <string name="review_id_photo">CCCD mặt trước</string>
+    <string name="review_selfie">Ảnh chân dung</string>
+    <string name="review_info">Họ tên: %1$s\nCCCD: %2$s\nSĐT: %3$s</string>
+    <string name="review_zoom_hint">Chạm ảnh để phóng to</string>
+    <string name="review_approve">Duyệt</string>
+    <string name="review_reject">Từ chối</string>
+    <string name="review_approved">Đã duyệt hồ sơ</string>
+    <string name="review_rejected">Đã từ chối hồ sơ</string>
+    <string name="reject_title">Lý do từ chối</string>
+    <string name="reject_caption">Khách hàng sẽ thấy lý do này</string>
+    <string name="reject_blurry_id">Ảnh CCCD bị mờ</string>
+    <string name="reject_unclear_face">Ảnh chân dung không rõ mặt</string>
+    <string name="reject_mismatch">Thông tin không khớp với CCCD</string>
+    <string name="reject_other">Khác…</string>
+    <string name="reject_other_hint">Nhập lý do</string>
+    <string name="reject_confirm">Xác nhận từ chối</string>
+    <string name="reject_reason_required">Vui lòng chọn hoặc nhập lý do từ chối.</string>
 </resources>
