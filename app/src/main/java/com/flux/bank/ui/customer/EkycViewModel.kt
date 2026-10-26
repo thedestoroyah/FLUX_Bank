@@ -5,7 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flux.bank.data.repository.AuthRepository
+import com.flux.bank.FluxApp
+import com.flux.bank.data.model.KycRecord
+import com.flux.bank.data.repository.KycRepository
 import com.flux.bank.utils.ImageUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,7 +21,7 @@ sealed class EkycUiState {
 }
 
 class EkycViewModel(
-    private val authRepository: AuthRepository = AuthRepository()
+    private val kycRepository: KycRepository = FluxApp.instance.kycRepository
 ) : ViewModel() {
 
     private val _uiState = MutableLiveData<EkycUiState>(EkycUiState.Idle)
@@ -51,7 +53,7 @@ class EkycViewModel(
                 Pair(idBase64, fBase64)
             }
 
-            val result = authRepository.submitEkyc(uid, idCardBase64, faceBase64)
+            val result = kycRepository.submit(KycRecord(uid = uid, idCardBase64 = idCardBase64, faceImageBase64 = faceBase64, submittedBy = uid))
             result.onSuccess {
                 _uiState.value = EkycUiState.Success("eKYC documents submitted successfully! Awaiting bank officer verification.")
             }.onFailure { err ->

@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flux.bank.data.model.User
 import com.flux.bank.data.model.UserRole
+import com.flux.bank.FluxApp
 import com.flux.bank.data.repository.AuthRepository
+import com.flux.bank.data.repository.UserRepository
 import kotlinx.coroutines.launch
 
 sealed class AuthUiState {
@@ -19,7 +21,8 @@ sealed class AuthUiState {
 }
 
 class AuthViewModel(
-    private val authRepository: AuthRepository = AuthRepository()
+    private val authRepository: AuthRepository = FluxApp.instance.authRepository,
+    private val userRepository: UserRepository = FluxApp.instance.userRepository
 ) : ViewModel() {
 
     private val _uiState = MutableLiveData<AuthUiState>(AuthUiState.Idle)
@@ -41,8 +44,8 @@ class AuthViewModel(
 
         viewModelScope.launch {
             val loginResult = authRepository.login(trimmedEmail, pass)
-            loginResult.onSuccess { firebaseUser ->
-                val profileResult = authRepository.getUserProfile(firebaseUser.uid)
+            loginResult.onSuccess { uid ->
+                val profileResult = userRepository.getUser(uid)
                 profileResult.onSuccess { userProfile ->
                     when (userProfile.role) {
                         UserRole.CUSTOMER -> {
@@ -68,7 +71,7 @@ class AuthViewModel(
     fun loginWithUid(uid: String) {
         _uiState.value = AuthUiState.Loading
         viewModelScope.launch {
-            val profileResult = authRepository.getUserProfile(uid)
+            val profileResult = userRepository.getUser(uid)
             profileResult.onSuccess { userProfile ->
                 when (userProfile.role) {
                     UserRole.CUSTOMER -> {

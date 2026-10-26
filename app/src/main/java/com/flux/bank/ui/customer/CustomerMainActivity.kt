@@ -3,7 +3,7 @@ package com.flux.bank.ui.customer
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.flux.bank.data.repository.AuthRepository
+import com.flux.bank.FluxApp
 import com.flux.bank.databinding.ActivityCustomerMainBinding
 import com.flux.bank.ui.auth.LoginActivity
 
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 class CustomerMainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCustomerMainBinding
-    private val authRepository = AuthRepository()
+    private val authRepository = FluxApp.instance.authRepository
     private var currentUid: String = ""
 
     companion object {
@@ -30,15 +30,12 @@ class CustomerMainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val userName = intent.getStringExtra(EXTRA_USER_NAME) ?: "Customer"
-        currentUid = intent.getStringExtra(EXTRA_USER_UID) ?: authRepository.getCurrentUser()?.uid.orEmpty()
+        currentUid = intent.getStringExtra(EXTRA_USER_UID) ?: authRepository.currentUid().orEmpty()
 
         binding.tvCustomerGreeting.text = "Welcome, $userName"
         binding.tvUserUid.text = "UID: $currentUid"
 
-        val currentUser = authRepository.getCurrentUser()
-        if (currentUser?.email != null) {
-            binding.tvCustomerEmail.text = currentUser.email
-        }
+        authRepository.currentEmail()?.let { binding.tvCustomerEmail.text = it }
 
         setupListeners()
     }
@@ -75,7 +72,7 @@ class CustomerMainActivity : AppCompatActivity() {
 
     private fun refreshKycStatus(uid: String) {
         lifecycleScope.launch {
-            val result = authRepository.getUserProfile(uid)
+            val result = FluxApp.instance.userRepository.getUser(uid)
             result.onSuccess { user ->
                 when (user.kycStatus) {
                     KycStatus.NOT_SUBMITTED -> {

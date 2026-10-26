@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.flux.bank.data.model.KycStatus
-import com.flux.bank.data.repository.AuthRepository
+import com.flux.bank.FluxApp
 import com.flux.bank.databinding.ActivityEkycBinding
 import com.flux.bank.utils.ImageUtils
 import com.google.android.material.snackbar.Snackbar
@@ -21,7 +21,7 @@ class EkycActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEkycBinding
     private val viewModel: EkycViewModel by viewModels()
-    private val authRepository = AuthRepository()
+    private val authRepository = FluxApp.instance.authRepository
 
     private var idCardBitmap: Bitmap? = null
     private var faceBitmap: Bitmap? = null
@@ -84,7 +84,7 @@ class EkycActivity : AppCompatActivity() {
         }
 
         binding.btnSubmitEkyc.setOnClickListener {
-            val uid = authRepository.getCurrentUser()?.uid.orEmpty()
+            val uid = authRepository.currentUid().orEmpty()
             viewModel.submitEkyc(uid, idCardBitmap, faceBitmap)
         }
     }
@@ -123,11 +123,11 @@ class EkycActivity : AppCompatActivity() {
     }
 
     private fun loadCurrentKycStatus() {
-        val uid = authRepository.getCurrentUser()?.uid
+        val uid = authRepository.currentUid()
         if (uid != null) {
             // Load existing KYC status and photos if any
             lifecycleScopeLaunch {
-                val profileResult = authRepository.getUserProfile(uid)
+                val profileResult = FluxApp.instance.userRepository.getUser(uid)
                 profileResult.onSuccess { user ->
                     when (user.kycStatus) {
                         KycStatus.VERIFIED -> {
@@ -151,13 +151,14 @@ class EkycActivity : AppCompatActivity() {
                     }
 
                     // Display previous images if available
-                    user.idCardBase64?.let { base64 ->
+                    val record = FluxApp.instance.kycRepository.get(uid).getOrNull()
+                    record?.idCardBase64?.let { base64 ->
                         ImageUtils.base64ToBitmap(base64)?.let { bmp ->
                             idCardBitmap = bmp
                             binding.ivIdPreview.setImageBitmap(bmp)
                         }
                     }
-                    user.faceImageBase64?.let { base64 ->
+                    record?.faceImageBase64?.let { base64 ->
                         ImageUtils.base64ToBitmap(base64)?.let { bmp ->
                             faceBitmap = bmp
                             binding.ivFacePreview.setImageBitmap(bmp)
