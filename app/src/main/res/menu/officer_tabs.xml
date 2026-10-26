@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/otabOverview" android:icon="@drawable/ic_chart_bar" android:title="@string/otab_overview" />
+    <item android:id="@+id/otabCustomers" android:icon="@drawable/ic_users" android:title="@string/otab_customers" />
+    <item android:id="@+id/otabEkyc" android:icon="@drawable/ic_user_focus" android:title="@string/otab_ekyc" />
+    <item android:id="@+id/otabRates" android:icon="@drawable/ic_percent" android:title="@string/otab_rates" />
+    <item android:id="@+id/otabProfile" android:icon="@drawable/ic_user" android:title="@string/otab_profile" />
+</menu>
