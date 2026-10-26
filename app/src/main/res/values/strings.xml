@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">FLUX Bank</string>
+
+    <!-- OTP / SMS giả lập -->
+    <string name="otp_channel_name">Mã xác thực OTP</string>
+    <string name="otp_sms_sender">FLUX Bank</string>
+    <string name="otp_sms_body">FLUX: Mã OTP của bạn là %1$s. Không chia sẻ mã này cho bất kỳ ai.</string>
+    <string name="otp_sms_tap_to_fill">Chạm để tự điền mã</string>
 </resources>
