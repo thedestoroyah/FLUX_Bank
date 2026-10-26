@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Bento tile: nền trắng, viền mảnh, không bóng -->
+    <style name="Widget.Flux.Card" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardBackgroundColor">@color/flux_surface</item>
+        <item name="strokeColor">@color/flux_border_hairline</item>
+        <item name="strokeWidth">@dimen/stroke_hairline</item>
+        <item name="cardCornerRadius">@dimen/radius_tile</item>
+        <item name="cardElevation">0dp</item>
+    </style>
+
+    <style name="Widget.Flux.Button.Primary" parent="Widget.Material3.Button">
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="backgroundTint">@color/selector_button_primary</item>
+        <item name="android:textColor">@color/flux_text_on_dark</item>
+        <item name="android:textAppearance">@style/TextAppearance.Flux.TitleM</item>
+        <item name="android:textColorHint">@color/flux_text_on_dark</item>
+        <item name="cornerRadius">@dimen/radius_button</item>
+        <item name="iconTint">@color/flux_text_on_dark</item>
+        <item name="iconGravity">textStart</item>
+        <item name="rippleColor">@color/flux_primary_light</item>
+    </style>
+
+    <style name="Widget.Flux.Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textColor">@color/flux_text_primary</item>
+        <item name="android:textAppearance">@style/TextAppearance.Flux.TitleM</item>
+        <item name="strokeColor">@color/flux_border_hairline</item>
+        <item name="strokeWidth">@dimen/stroke_hairline</item>
+        <item name="backgroundTint">@color/flux_surface</item>
+        <item name="cornerRadius">@dimen/radius_button</item>
+        <item name="iconTint">@color/flux_text_primary</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
+    <style name="Widget.Flux.Button.Destructive" parent="Widget.Flux.Button.Secondary">
+        <item name="android:textColor">@color/flux_error_dark</item>
+        <item name="strokeColor">@color/flux_error</item>
+    </style>
+
+    <style name="Widget.Flux.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minHeight">@dimen/touch_min</item>
+        <item name="android:textColor">@color/flux_emerald_dark</item>
+        <item name="android:textAppearance">@style/TextAppearance.Flux.Label</item>
+    </style>
+
+    <style name="Widget.Flux.TextField" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/radius_button</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_button</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_button</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_button</item>
+        <item name="boxStrokeColor">@color/selector_field_stroke</item>
+        <item name="boxStrokeWidth">@dimen/stroke_hairline</item>
+        <item name="boxStrokeWidthFocused">1.5dp</item>
+        <item name="boxBackgroundColor">@color/flux_surface</item>
+        <item name="hintTextColor">@color/flux_emerald_dark</item>
+        <item name="startIconTint">@color/flux_text_tertiary</item>
+        <item name="endIconTint">@color/flux_text_tertiary</item>
+        <item name="errorTextColor">@color/flux_error_dark</item>
+        <item name="boxStrokeErrorColor">@color/flux_error</item>
+    </style>
+
+    <!-- Ô icon tiện ích: nền nhạt cùng tông (đặt bằng backgroundTint), icon duotone -->
+    <style name="Widget.Flux.IconTile" parent="">
+        <item name="android:layout_width">@dimen/icon_tile</item>
+        <item name="android:layout_height">@dimen/icon_tile</item>
+        <item name="android:background">@drawable/bg_icon_tile</item>
+        <item name="android:scaleType">center</item>
+    </style>
+
+    <style name="Widget.Flux.StatusPill" parent="">
+        <item name="android:background">@drawable/bg_pill_capsule</item>
+        <item name="android:paddingStart">@dimen/space_8</item>
+        <item name="android:paddingEnd">@dimen/space_8</item>
+        <item name="android:paddingTop">@dimen/space_4</item>
+        <item name="android:paddingBottom">@dimen/space_4</item>
+        <item name="android:textAppearance">@style/TextAppearance.Flux.Caption</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ShapeAppearance.Flux.BottomSheet" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">@dimen/radius_card</item>
+        <item name="cornerSizeTopRight">@dimen/radius_card</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+    <style name="Widget.Flux.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">@color/flux_surface</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Flux.BottomSheet</item>
+    </style>
+
+    <style name="ThemeOverlay.Flux.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.Flux.BottomSheet</item>
+        <item name="android:backgroundDimAmount">0.55</item>
+        <item name="android:windowSoftInputMode">adjustNothing</item>
+    </style>
+</resources>

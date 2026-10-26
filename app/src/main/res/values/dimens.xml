@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Thang khoảng cách: chỉ dùng các giá trị này trong layout -->
+    <dimen name="space_4">4dp</dimen>
+    <dimen name="space_8">8dp</dimen>
+    <dimen name="space_12">12dp</dimen>
+    <dimen name="space_16">16dp</dimen>
+    <dimen name="space_24">24dp</dimen>
+    <dimen name="space_32">32dp</dimen>
+
+    <dimen name="radius_tile">20dp</dimen>
+    <dimen name="radius_card">24dp</dimen>
+    <dimen name="radius_chip">14dp</dimen>
+    <dimen name="radius_button">14dp</dimen>
+    <dimen name="stroke_hairline">1dp</dimen>
+    <dimen name="touch_min">48dp</dimen>
+    <dimen name="icon_tile">48dp</dimen>
+    <dimen name="icon_size">24dp</dimen>
+    <dimen name="button_height">52dp</dimen>
+</resources>

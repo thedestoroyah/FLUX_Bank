@@ -60,16 +60,21 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
 
-    // --- Xử lý tải ảnh (khi cần load ảnh Base64 hoặc URL) ---
-    implementation("com.github.bumptech.glide:glide:4.16.0")
+    // --- UI: Fragment, danh sách, thẻ vuốt ngang ---
+    implementation("androidx.fragment:fragment-ktx:1.8.5")
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
+    implementation("androidx.lifecycle:lifecycle-process:2.8.6")
 
-    // --- Google Maps & GPS (cho mục tìm đường chi nhánh ngân hàng) ---
-    implementation("com.google.android.gms:play-services-maps:19.0.0")
-    implementation("com.google.android.gms:play-services-location:21.3.0")
+    // --- Nhận diện & đối chiếu khuôn mặt on-device ---
+    implementation("com.google.mlkit:face-detection:16.1.7")
+    implementation("com.google.ai.edge.litert:litert:1.4.2")
+    implementation("androidx.camera:camera-core:1.6.2")
+    implementation("androidx.camera:camera-camera2:1.6.2")
+    implementation("androidx.camera:camera-lifecycle:1.6.2")
+    implementation("androidx.camera:camera-view:1.6.2")
 
-    // --- Mạng & API (Gọi AI Chatbot và cổng thanh toán) ---
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    // --- Test ---
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
 }

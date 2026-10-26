@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Thang chữ FLUX: 6 cấp, tối thiểu 12sp -->
+    <style name="TextAppearance.Flux.Display" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:textColor">@color/flux_text_primary</item>
+    </style>
+    <style name="TextAppearance.Flux.TitleL" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/inter_semibold</item>
+        <item name="fontFamily">@font/inter_semibold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/flux_text_primary</item>
+    </style>
+    <style name="TextAppearance.Flux.TitleM" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">@font/inter_semibold</item>
+        <item name="fontFamily">@font/inter_semibold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/flux_text_primary</item>
+    </style>
+    <style name="TextAppearance.Flux.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/inter_regular</item>
+        <item name="fontFamily">@font/inter_regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/flux_text_primary</item>
+    </style>
+    <style name="TextAppearance.Flux.Label" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/inter_medium</item>
+        <item name="fontFamily">@font/inter_medium</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/flux_text_primary</item>
+    </style>
+    <style name="TextAppearance.Flux.Caption" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">@font/inter_regular</item>
+        <item name="fontFamily">@font/inter_regular</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/flux_text_secondary</item>
+    </style>
+    <!-- Số tiền: chữ số có độ rộng đều để thẳng cột -->
+    <style name="TextAppearance.Flux.Amount" parent="TextAppearance.Flux.Display">
+        <item name="android:fontFeatureSettings">tnum</item>
+    </style>
+    <style name="TextAppearance.Flux.AmountSmall" parent="TextAppearance.Flux.TitleM">
+        <item name="android:fontFeatureSettings">tnum</item>
+    </style>
+</resources>

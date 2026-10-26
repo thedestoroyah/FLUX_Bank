@@ -39,4 +39,26 @@
     <color name="flux_success">#10B981</color>
     <color name="flux_success_bg">#ECFDF5</color>
     <color name="flux_warning">#F59E0B</color>
+
+    <!-- Nền mint phía sau thẻ trang chủ & emerald đậm cho trạng thái chọn -->
+    <color name="flux_mint">#E7F8EF</color>
+    <color name="flux_emerald_dark">#059669</color>
+    <color name="flux_scrim">#8C0A0D12</color>
+    <color name="flux_error_dark">#DC2626</color>
+    <color name="flux_warning_bg">#FEF3C7</color>
+    <color name="flux_warning_dark">#B45309</color>
+
+    <!-- Màu theo nhóm tiện ích (icon duotone) -->
+    <color name="cat_emerald">#10B981</color>
+    <color name="cat_gold">#D97706</color>
+    <color name="cat_blue">#0071E3</color>
+    <color name="cat_sky">#0EA5E9</color>
+    <color name="cat_rose">#E11D48</color>
+    <color name="cat_violet">#7C3AED</color>
+    <color name="cat_emerald_bg">#1A10B981</color>
+    <color name="cat_gold_bg">#1AD97706</color>
+    <color name="cat_blue_bg">#1A0071E3</color>
+    <color name="cat_sky_bg">#1A0EA5E9</color>
+    <color name="cat_rose_bg">#1AE11D48</color>
+    <color name="cat_violet_bg">#1A7C3AED</color>
 </resources>
