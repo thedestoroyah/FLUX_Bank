@@ -6,7 +6,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.flux.bank.data.model.User
-import com.flux.bank.data.repository.AuthRepository
+import com.flux.bank.FluxApp
+import com.flux.bank.data.model.KycRecord
 import com.flux.bank.databinding.ActivityOfficerEkycReviewBinding
 import com.flux.bank.utils.ImageUtils
 import kotlinx.coroutines.launch
@@ -14,8 +15,8 @@ import kotlinx.coroutines.launch
 class OfficerEkycReviewActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityOfficerEkycReviewBinding
-    private val authRepository = AuthRepository()
-    private val pendingUsers = mutableListOf<User>()
+    private val kycRepository = FluxApp.instance.kycRepository
+    private val pendingUsers = mutableListOf<Pair<User, KycRecord>>()
     private var currentIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +45,7 @@ class OfficerEkycReviewActivity : AppCompatActivity() {
     private fun loadPendingQueue() {
         setLoading(true)
         lifecycleScope.launch {
-            val result = authRepository.getPendingEkycUsers()
+            val result = kycRepository.pendingQueue()
             setLoading(false)
             result.onSuccess { users ->
                 pendingUsers.clear()
@@ -69,13 +70,13 @@ class OfficerEkycReviewActivity : AppCompatActivity() {
         binding.tvEmptyState.visibility = View.GONE
         binding.cardReviewItem.visibility = View.VISIBLE
 
-        val user = pendingUsers[currentIndex]
+        val (user, record) = pendingUsers[currentIndex]
         binding.tvCustomerName.text = user.fullName.ifEmpty { "Anonymous Customer" }
         binding.tvCustomerEmail.text = user.email.ifEmpty { "No email provided" }
         binding.tvCustomerUid.text = "UID: ${user.uid}"
 
         // Decode ID Card photo
-        val idBitmap = ImageUtils.base64ToBitmap(user.idCardBase64)
+        val idBitmap = ImageUtils.base64ToBitmap(record.idCardBase64)
         if (idBitmap != null) {
             binding.ivReviewIdCard.setImageBitmap(idBitmap)
         } else {
@@ -83,7 +84,7 @@ class OfficerEkycReviewActivity : AppCompatActivity() {
         }
 
         // Decode Face Selfie photo
-        val faceBitmap = ImageUtils.base64ToBitmap(user.faceImageBase64)
+        val faceBitmap = ImageUtils.base64ToBitmap(record.faceImageBase64)
         if (faceBitmap != null) {
             binding.ivReviewFace.setImageBitmap(faceBitmap)
         } else {
@@ -99,11 +100,11 @@ class OfficerEkycReviewActivity : AppCompatActivity() {
 
     private fun submitDecision(isApproved: Boolean) {
         if (pendingUsers.isEmpty() || currentIndex >= pendingUsers.size) return
-        val currentApplicant = pendingUsers[currentIndex]
+        val currentApplicant = pendingUsers[currentIndex].first
 
         setLoading(true)
         lifecycleScope.launch {
-            val result = authRepository.reviewEkyc(currentApplicant.uid, isApproved)
+            val result = kycRepository.review(currentApplicant.uid, isApproved, null, FluxApp.instance.authRepository.currentUid().orEmpty())
             setLoading(false)
             result.onSuccess {
                 val actionName = if (isApproved) "Approved" else "Declined"

@@ -3,14 +3,14 @@ package com.flux.bank.ui.officer
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.flux.bank.data.repository.AuthRepository
+import com.flux.bank.FluxApp
 import com.flux.bank.databinding.ActivityOfficerMainBinding
 import com.flux.bank.ui.auth.LoginActivity
 
 class OfficerMainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityOfficerMainBinding
-    private val authRepository = AuthRepository()
+    private val authRepository = FluxApp.instance.authRepository
 
     companion object {
         const val EXTRA_USER_UID = "extra_user_uid"
@@ -28,10 +28,7 @@ class OfficerMainActivity : AppCompatActivity() {
         binding.tvOfficerGreeting.text = "Welcome, $userName"
         binding.tvOfficerUid.text = "UID: $userUid"
 
-        val currentUser = authRepository.getCurrentUser()
-        if (currentUser?.email != null) {
-            binding.tvOfficerEmail.text = currentUser.email
-        }
+        authRepository.currentEmail()?.let { binding.tvOfficerEmail.text = it }
 
         binding.cardTaskEkyc.setOnClickListener {
             val intent = Intent(this, OfficerEkycReviewActivity::class.java)
