@@ -1,0 +1,74 @@
+rules_version = '2';
+
+// Security Rules của FLUX Bank (gói Spark, không có server).
+// Deploy: Firebase Console → Firestore Database → Rules → dán nội dung file này → Publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function isOfficer() {
+      return signedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'BANK_OFFICER';
+    }
+
+    function changedKeys() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    // Khách chỉ tự sửa: SĐT, địa chỉ, ảnh, cờ sinh trắc học, tắt cờ đổi mật khẩu,
+    // và chuyển eKYC sang PENDING khi nộp hồ sơ (từ NOT_SUBMITTED hoặc REJECTED).
+    function ownerUpdateAllowed() {
+      let keys = changedKeys();
+      let data = request.resource.data;
+      return keys.hasOnly(['phoneNumber', 'address', 'avatarBase64', 'biometricEnabled',
+                           'mustChangePassword', 'kycStatus', 'kycRejectReason'])
+        && (!keys.hasAny(['mustChangePassword']) || data.mustChangePassword == false)
+        && (!keys.hasAny(['kycStatus', 'kycRejectReason'])
+            || (data.kycStatus == 'PENDING'
+                && data.kycRejectReason == null
+                && resource.data.kycStatus in ['NOT_SUBMITTED', 'REJECTED']));
+    }
+
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isOfficer();
+      allow create, delete: if isOfficer();
+      allow update: if isOfficer() || (isOwner(uid) && ownerUpdateAllowed());
+    }
+
+    // Chỉ mục SĐT -> uid: bảo đảm SĐT duy nhất (create thất bại nếu đã có) và để tra người nhận.
+    // Chỉ cho đọc từng mục (get), không cho liệt kê.
+    match /phoneIndex/{phone} {
+      allow get: if signedIn();
+      allow list: if false;
+      allow create: if isOfficer()
+        || (signedIn()
+            && request.resource.data.uid == request.auth.uid
+            && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.phoneNumber == phone);
+      allow delete: if isOfficer() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow update: if false;
+    }
+
+    match /kyc/{uid} {
+      allow read: if isOwner(uid) || isOfficer();
+      allow create, update: if isOfficer()
+        || (isOwner(uid)
+            && request.resource.data.submittedBy == request.auth.uid
+            && request.resource.data.reviewedBy == null);
+      allow delete: if false;
+    }
+
+    // Số dư chỉ thay đổi qua Feature 4 (transaction); hiện tại không ai được sửa/xoá.
+    match /accounts/{accountId} {
+      allow read: if isOfficer() || (signedIn() && resource.data.ownerUid == request.auth.uid);
+      allow create: if isOfficer();
+      allow update, delete: if false;
+    }
+  }
+}

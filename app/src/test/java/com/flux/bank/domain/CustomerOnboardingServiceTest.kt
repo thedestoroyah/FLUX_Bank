@@ -107,4 +107,12 @@ class CustomerOnboardingServiceTest {
         assertEquals(OnboardingError.InvalidNationalId, errorOf(service.create(input(nationalId = "123"))))
         assertTrue(auth.created.isEmpty())
     }
+
+    @Test
+    fun customerPhoneChangeChecksOnlyPhoneIndex() = runTest {
+        assertNull(service.validatePhoneChange("c1", "0912 345 678"))
+        assertEquals(OnboardingError.PhoneTaken, service.validatePhoneChange("c2", "0912345678"))
+        assertEquals(OnboardingError.InvalidPhone, service.validatePhoneChange("c2", "12345"))
+        assertEquals(0, users.nationalIdQueries)
+    }
 }
