@@ -50,12 +50,6 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Bank Officer eKYC Review Queue -->
-        <activity
-            android:name=".ui.officer.OfficerEkycReviewActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

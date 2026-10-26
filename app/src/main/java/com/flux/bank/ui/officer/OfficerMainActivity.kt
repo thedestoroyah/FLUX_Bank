@@ -12,6 +12,7 @@ import com.flux.bank.ui.common.ComingSoonFragment
 import com.flux.bank.ui.common.ScreenHost
 import com.flux.bank.ui.customer.profile.ProfileFragment
 import com.flux.bank.ui.officer.customers.CustomerListFragment
+import com.flux.bank.ui.officer.ekyc.EkycReviewFragment
 import com.flux.bank.ui.officer.overview.OfficerOverviewFragment
 
 /** Khung app nhân viên: Tổng quan · Khách hàng · eKYC · Lãi suất · Cá nhân. */
@@ -65,8 +66,7 @@ class OfficerMainActivity : AppCompatActivity(), ScreenHost {
     private fun fragmentFor(tab: OfficerTab): Fragment = when (tab) {
         OfficerTab.OVERVIEW -> OfficerOverviewFragment()
         OfficerTab.CUSTOMERS -> CustomerListFragment()
-        // shortcut: tab eKYC hoàn thiện ở Task 16
-        OfficerTab.EKYC -> ComingSoonFragment.newInstance(R.string.otab_ekyc, R.drawable.ic_user_focus, R.color.cat_gold, showBack = false)
+        OfficerTab.EKYC -> EkycReviewFragment()
         OfficerTab.RATES -> ComingSoonFragment.newInstance(R.string.otab_rates, R.drawable.ic_percent, R.color.cat_emerald, showBack = false)
         OfficerTab.PROFILE -> ProfileFragment.newInstance(officer = true)
     }

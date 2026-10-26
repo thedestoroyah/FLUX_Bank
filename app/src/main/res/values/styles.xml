@@ -160,4 +160,9 @@
         <item name="checkedIconVisible">false</item>
         <item name="android:textAppearance">@style/TextAppearance.Flux.Label</item>
     </style>
+
+    <style name="ShapeAppearance.Flux.Rounded14" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/radius_chip</item>
+    </style>
 </resources>
