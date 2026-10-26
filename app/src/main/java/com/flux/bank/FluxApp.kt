@@ -14,6 +14,7 @@ import com.flux.bank.data.repository.FirestoreKycRepository
 import com.flux.bank.data.repository.FirestoreUserRepository
 import com.flux.bank.data.repository.KycRepository
 import com.flux.bank.data.repository.UserRepository
+import com.flux.bank.domain.CustomerOnboardingService
 import com.flux.bank.utils.SessionManager
 
 /**
@@ -28,6 +29,9 @@ class FluxApp : Application() {
     val kycRepository: KycRepository by lazy { FirestoreKycRepository() }
     val accountRepository: AccountRepository by lazy { FirestoreAccountRepository() }
     val sessionManager: SessionManager by lazy { SessionManager(this) }
+    val onboardingService: CustomerOnboardingService by lazy {
+        CustomerOnboardingService(authRepository, userRepository, accountRepository) { authRepository.currentUid().orEmpty() }
+    }
     val lockPolicy = LockPolicy()
     val appLockObserver: AppLockObserver by lazy { AppLockObserver(this, lockPolicy, authRepository, sessionManager) }
 

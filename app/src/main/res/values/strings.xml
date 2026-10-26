@@ -153,4 +153,36 @@
     <string name="ekyc_camera_denied">Cần quyền camera để chụp ảnh eKYC.</string>
     <string name="cd_id_preview">Ảnh CCCD đã chụp</string>
     <string name="cd_selfie_preview">Ảnh chân dung đã chụp</string>
+
+    <!-- Hồ sơ / tab Cá nhân -->
+    <string name="err_phone_taken">Số điện thoại đã được sử dụng.</string>
+    <string name="err_phone_invalid">Số điện thoại không hợp lệ (10 số, bắt đầu bằng 0).</string>
+    <string name="profile_info">Thông tin</string>
+    <string name="profile_security">Bảo mật</string>
+    <string name="profile_phone">Số điện thoại</string>
+    <string name="profile_national_id">CCCD</string>
+    <string name="profile_address">Địa chỉ</string>
+    <string name="profile_email">Email</string>
+    <string name="profile_full_name">Họ và tên</string>
+    <string name="profile_edit">Chỉnh sửa hồ sơ</string>
+    <string name="profile_biometric">Đăng nhập sinh trắc học</string>
+    <string name="profile_biometric_unavailable">Máy chưa đăng ký vân tay hoặc khuôn mặt</string>
+    <string name="profile_face_check">Kiểm tra xác thực khuôn mặt</string>
+    <string name="profile_face_ok">Xác thực khuôn mặt thành công</string>
+    <string name="profile_ekyc">Xác minh danh tính</string>
+    <string name="profile_change_password">Đổi mật khẩu</string>
+    <string name="profile_logout">Đăng xuất</string>
+    <string name="kyc_pill_verified">Đã xác minh</string>
+    <string name="kyc_pill_pending">Chờ duyệt</string>
+    <string name="kyc_pill_rejected">Từ chối</string>
+    <string name="kyc_pill_none">Chưa nộp</string>
+    <string name="edit_title">Chỉnh sửa hồ sơ</string>
+    <string name="edit_phone_otp_note">Đổi số điện thoại cần xác thực bằng mã OTP</string>
+    <string name="edit_locked_section">Chỉ nhân viên được thay đổi</string>
+    <string name="edit_locked_caption">Liên hệ nhân viên ngân hàng để thay đổi các thông tin này</string>
+    <string name="edit_save">Lưu thay đổi</string>
+    <string name="edit_saved">Đã lưu hồ sơ</string>
+    <string name="edit_phone_sheet_title">Xác nhận đổi số điện thoại</string>
+    <string name="edit_phone_sheet_row">Số điện thoại mới</string>
+    <string name="cd_change_avatar">Đổi ảnh đại diện</string>
 </resources>

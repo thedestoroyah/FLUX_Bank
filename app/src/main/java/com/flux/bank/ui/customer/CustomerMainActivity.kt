@@ -8,13 +8,15 @@ import androidx.fragment.app.commit
 import com.flux.bank.R
 import com.flux.bank.databinding.ActivityCustomerMainBinding
 import com.flux.bank.ui.common.ComingSoonFragment
+import com.flux.bank.ui.common.ScreenHost
 import com.flux.bank.ui.customer.home.HomeFragment
+import com.flux.bank.ui.customer.profile.ProfileFragment
 
 /**
  * Khung app khách hàng: 5 tab (Trang chủ · Chuyển tiền · [Quét QR] · Lịch sử · Cá nhân).
  * Màn phụ mở bằng [openScreen] (có back stack, ẩn thanh tab).
  */
-class CustomerMainActivity : AppCompatActivity() {
+class CustomerMainActivity : AppCompatActivity(), ScreenHost {
 
     enum class CustomerTab(val menuId: Int) {
         HOME(R.id.tabHome), TRANSFER(R.id.tabTransfer), HISTORY(R.id.tabHistory), PROFILE(R.id.tabProfile)
@@ -36,7 +38,20 @@ class CustomerMainActivity : AppCompatActivity() {
             openScreen(ComingSoonFragment.newInstance(R.string.tab_qr, R.drawable.ic_scan, R.color.cat_emerald))
         }
         supportFragmentManager.addOnBackStackChangedListener { syncChrome() }
-        if (savedInstanceState == null) showTab(CustomerTab.HOME)
+        if (savedInstanceState == null) {
+            showTab(CustomerTab.HOME)
+            requestNotificationPermission()
+        }
+    }
+
+    private val notificationPermission =
+        registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.RequestPermission()) { }
+
+    /** Android 13+: xin quyền thông báo để nhận SMS giả lập chứa OTP (từ chối thì dùng banner trong app). */
+    private fun requestNotificationPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            notificationPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 
     fun showTab(tab: CustomerTab) {
@@ -44,7 +59,7 @@ class CustomerMainActivity : AppCompatActivity() {
     }
 
     /** Mở một màn phụ phủ lên tab hiện tại; nút back sẽ quay lại. */
-    fun openScreen(fragment: Fragment) {
+    override fun openScreen(fragment: Fragment) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out)
@@ -65,8 +80,7 @@ class CustomerMainActivity : AppCompatActivity() {
         CustomerTab.HOME -> HomeFragment()
         CustomerTab.TRANSFER -> ComingSoonFragment.newInstance(R.string.tab_transfer, R.drawable.ic_arrows_swap, R.color.cat_blue, showBack = false)
         CustomerTab.HISTORY -> ComingSoonFragment.newInstance(R.string.tab_history, R.drawable.ic_history, R.color.cat_blue, showBack = false)
-        // shortcut: tab Cá nhân hoàn thiện ở Task 14
-        CustomerTab.PROFILE -> ComingSoonFragment.newInstance(R.string.tab_profile, R.drawable.ic_user, R.color.cat_violet, showBack = false)
+        CustomerTab.PROFILE -> ProfileFragment.newInstance()
     }
 
     /** Ẩn thanh tab và nút QR khi đang ở màn phụ. */

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/flux_bg"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/space_16">
+
+        <!-- Đầu hồ sơ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/space_8">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/bg_avatar"
+                android:importantForAccessibility="no"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Flux.Circle" />
+
+            <TextView
+                android:id="@+id/tvInitials"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/bg_avatar"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.Flux.TitleL" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_16"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Flux.TitleL"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tvEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Flux.Caption" />
+
+                <TextView
+                    android:id="@+id/tvKycPill"
+                    style="@style/Widget.Flux.StatusPill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_4" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            style="@style/Widget.Flux.SectionLabel"
+            android:text="@string/profile_info" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Flux.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <include android:id="@+id/rowPhone" layout="@layout/view_profile_row" />
+                <include android:id="@+id/rowNationalId" layout="@layout/view_profile_row" />
+                <include android:id="@+id/rowAddress" layout="@layout/view_profile_row" />
+                <include android:id="@+id/rowEdit" layout="@layout/view_profile_row" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            style="@style/Widget.Flux.SectionLabel"
+            android:text="@string/profile_security" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Flux.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <include android:id="@+id/rowBiometric" layout="@layout/view_profile_row" />
+                <include android:id="@+id/rowFaceCheck" layout="@layout/view_profile_row" />
+                <include android:id="@+id/rowEkyc" layout="@layout/view_profile_row" />
+                <include android:id="@+id/rowPassword" layout="@layout/view_profile_row" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogout"
+            style="@style/Widget.Flux.Button.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_16"
+            android:text="@string/profile_logout"
+            android:textColor="@color/flux_error_dark"
+            app:icon="@drawable/ic_sign_out"
+            app:iconGravity="textStart"
+            app:iconTint="@color/flux_error_dark" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
