@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/space_8">
+
+    <TextView
+        android:id="@+id/tvFaceCaption"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/face_caption"
+        android:textAppearance="@style/TextAppearance.Flux.Caption"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/steps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_8"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvFaceCaption">
+
+        <TextView
+            style="@style/Widget.Flux.StatusPill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/flux_emerald_light"
+            android:text="@string/auth_step_otp"
+            android:textColor="@color/flux_emerald_dark"
+            app:drawableStartCompat="@drawable/ic_check"
+            app:drawableTint="@color/flux_emerald_dark" />
+
+        <TextView
+            style="@style/Widget.Flux.StatusPill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_8"
+            android:backgroundTint="@color/flux_primary"
+            android:text="@string/auth_step_face"
+            android:textColor="@color/flux_text_on_dark" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/frameCamera"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="@dimen/space_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/steps">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/preview"
+            android:layout_width="184dp"
+            android:layout_height="184dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_oval"
+            android:contentDescription="@string/cd_face_preview"
+            app:scaleType="fillCenter" />
+
+        <View
+            android:id="@+id/matchOverlay"
+            android:layout_width="184dp"
+            android:layout_height="184dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_match_overlay"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/ivMatched"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_check"
+            android:visibility="gone"
+            app:tint="@color/flux_text_on_dark" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/ring"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:max="100"
+            app:indicatorColor="@color/flux_emerald"
+            app:indicatorSize="200dp"
+            app:trackColor="@color/flux_border_hairline"
+            app:trackThickness="5dp" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvInstruction"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.Flux.TitleM"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frameCamera" />
+
+    <TextView
+        android:id="@+id/tvFaceMessage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_4"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.Flux.Caption"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvInstruction" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnFaceCancel"
+        style="@style/Widget.Flux.Button.Secondary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:text="@string/action_cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvFaceMessage" />
+</androidx.constraintlayout.widget.ConstraintLayout>

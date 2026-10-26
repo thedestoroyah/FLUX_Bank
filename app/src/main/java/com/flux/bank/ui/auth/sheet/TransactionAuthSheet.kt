@@ -1,6 +1,12 @@
 package com.flux.bank.ui.auth.sheet
 
+import android.Manifest
 import android.content.DialogInterface
+import android.content.pm.PackageManager
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.camera.view.PreviewView
+import androidx.core.content.ContextCompat
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -81,16 +87,86 @@ class TransactionAuthSheet : BottomSheetDialogFragment() {
 
     private fun render(state: AuthSheetState) {
         binding.groupOtp.isVisible = state is AuthSheetState.EnteringOtp
-        binding.faceContainer.isVisible = state is AuthSheetState.FaceStep
+        binding.face.root.isVisible = state is AuthSheetState.FaceStep
         when (state) {
             is AuthSheetState.EnteringOtp -> renderOtp(state)
+            is AuthSheetState.FaceStep -> renderFace(state)
             AuthSheetState.Verified -> finishWith(true)
-            AuthSheetState.Locked -> {
-                android.widget.Toast.makeText(requireContext(), R.string.otp_locked, android.widget.Toast.LENGTH_LONG).show()
-                finishWith(false)
-            }
-            AuthSheetState.FaceStep -> Unit // Task 12: bước khuôn mặt
+            AuthSheetState.Locked -> failWith(R.string.otp_locked)
+            is AuthSheetState.Failed -> failWith(state.messageRes)
         }
+    }
+
+    private fun failWith(messageRes: Int) {
+        Toast.makeText(requireContext(), messageRes, Toast.LENGTH_LONG).show()
+        finishWith(false)
+    }
+
+    private fun renderFace(state: AuthSheetState.FaceStep) {
+        val face = binding.face
+        binding.tvTitle.setText(R.string.face_title)
+        binding.summaryRows.isVisible = false
+        face.btnFaceCancel.setOnClickListener { finishWith(false) }
+        face.tvFaceMessage.setTextColor(requireContext().getColor(if (state.messageRes != null) R.color.flux_error_dark else R.color.flux_text_secondary))
+        face.tvFaceMessage.text = state.messageRes?.let(::getString) ?: getString(R.string.face_hold)
+        face.matchOverlay.isVisible = state.phase == FacePhase.MATCHED
+        face.ivMatched.isVisible = state.phase == FacePhase.MATCHED
+        face.ring.isIndeterminate = state.phase == FacePhase.CHECKING || state.phase == FacePhase.MATCHING
+        when (state.phase) {
+            FacePhase.CHECKING -> face.tvInstruction.text = ""
+            FacePhase.BLOCKED -> {
+                face.tvInstruction.text = ""
+                stopCamera()
+            }
+            FacePhase.BLINK -> {
+                face.tvInstruction.setText(R.string.face_blink)
+                face.ring.setProgressCompat(PROGRESS_BLINK, true)
+                if (state.attemptsLeft < MAX_FACE_ATTEMPTS) {
+                    face.tvFaceMessage.text = getString(R.string.face_mismatch) + " " +
+                        getString(R.string.face_attempts_left, state.attemptsLeft)
+                }
+                ensureCamera()?.retry()
+            }
+            FacePhase.MATCHING -> face.tvInstruction.setText(R.string.face_matching)
+            FacePhase.MATCHED -> {
+                face.tvInstruction.setText(R.string.face_matched)
+                face.tvFaceMessage.setText(R.string.face_matched_caption)
+                face.ring.setProgressCompat(100, true)
+                stopCamera()
+                face.root.postDelayed({ viewModel.onMatchShown() }, MATCH_SHOW_MS)
+            }
+        }
+    }
+
+    private var camera: FaceStepController? = null
+
+    private val cameraPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) ensureCamera() else failWith(R.string.face_camera_denied)
+    }
+
+    /** Khởi động camera một lần; xin quyền nếu chưa có. */
+    private fun ensureCamera(): FaceStepController? {
+        camera?.let { return it }
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            cameraPermission.launch(Manifest.permission.CAMERA)
+            return null
+        }
+        // TextureView (COMPATIBLE) mới cắt được theo khung tròn
+        binding.face.preview.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+        binding.face.preview.clipToOutline = true
+        return FaceStepController(
+            requireContext(), viewLifecycleOwner, binding.face.preview,
+            onBlink = viewModel::onBlink,
+            onEmbedding = viewModel::onFaceEmbedding
+        ).also {
+            camera = it
+            it.start()
+        }
+    }
+
+    private fun stopCamera() {
+        camera?.stop()
+        camera = null
     }
 
     private fun renderOtp(state: AuthSheetState.EnteringOtp) {
@@ -134,6 +210,7 @@ class TransactionAuthSheet : BottomSheetDialogFragment() {
     }
 
     override fun onDestroyView() {
+        stopCamera()
         super.onDestroyView()
         _binding = null
     }
@@ -148,6 +225,8 @@ class TransactionAuthSheet : BottomSheetDialogFragment() {
         private const val ARG_REQUEST_KEY = "request_key"
         private const val NO_AMOUNT = Long.MIN_VALUE
         private const val TICK_MS = 1_000L
+        private const val PROGRESS_BLINK = 40
+        private const val MATCH_SHOW_MS = 900L
 
         /** Mở sheet; lắng nghe kết quả bằng `fm.setFragmentResultListener(requestKey, ...)`. */
         fun show(fm: FragmentManager, summary: AuthSummary, requestKey: String) {

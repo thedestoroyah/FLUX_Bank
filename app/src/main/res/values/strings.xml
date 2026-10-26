@@ -117,4 +117,20 @@
     <string name="cd_backspace">Xoá</string>
     <string name="auth_step_otp">OTP</string>
     <string name="auth_step_face">Khuôn mặt</string>
+
+    <!-- Bước khuôn mặt -->
+    <string name="face_title">Xác thực khuôn mặt</string>
+    <string name="face_caption">Giao dịch từ 10.000.000 ₫ cần xác thực khuôn mặt</string>
+    <string name="face_blink">Hãy chớp mắt</string>
+    <string name="face_hold">Giữ khuôn mặt trong khung tròn</string>
+    <string name="face_matching">Đang đối chiếu khuôn mặt…</string>
+    <string name="face_matched">Khuôn mặt khớp</string>
+    <string name="face_matched_caption">Đang hoàn tất…</string>
+    <string name="face_mismatch">Khuôn mặt không khớp, hãy thử lại.</string>
+    <string name="face_attempts_left">Còn %1$d lần thử</string>
+    <string name="face_failed">Không xác thực được khuôn mặt. Giao dịch bị huỷ.</string>
+    <string name="face_not_verified">Bạn cần hoàn tất eKYC trước khi thực hiện giao dịch giá trị cao.</string>
+    <string name="face_no_embedding">Hồ sơ eKYC chưa có dữ liệu khuôn mặt. Hãy nộp lại eKYC.</string>
+    <string name="face_camera_denied">Cần quyền camera để xác thực khuôn mặt.</string>
+    <string name="cd_face_preview">Khung hình camera trước</string>
 </resources>

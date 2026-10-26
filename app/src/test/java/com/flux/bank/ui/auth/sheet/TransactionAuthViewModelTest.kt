@@ -3,6 +3,7 @@ package com.flux.bank.ui.auth.sheet
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.flux.bank.R
 import com.flux.bank.core.security.OtpManager
+import com.flux.bank.domain.FacePrecheck
 import com.flux.bank.testutil.MainDispatcherRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -17,7 +18,8 @@ class TransactionAuthViewModelTest {
 
     private var now = 0L
     private val delivered = mutableListOf<String>()
-    private val vm = TransactionAuthViewModel(OtpManager { now }, deliver = { delivered += it })
+    private var reference: FaceReference = FaceReference(FacePrecheck.OK, floatArrayOf(1f, 0f))
+    private val vm = TransactionAuthViewModel(OtpManager { now }, deliver = { delivered += it }, loadFaceReference = { reference })
 
     private fun type(code: String) = code.forEach { vm.onDigit(it) }
     private fun wrong(code: String) = if (code == "000000") "111111" else "000000"
@@ -48,7 +50,65 @@ class TransactionAuthViewModelTest {
     fun thresholdAmountGoesToFaceStep() {
         vm.start(amount = 10_000_000)
         type(delivered[0]); vm.confirm()
-        assertEquals(AuthSheetState.FaceStep, vm.state.value)
+        assertTrue(vm.state.value is AuthSheetState.FaceStep)
+    }
+
+    private fun toFaceStep() {
+        vm.start(amount = 10_000_000)
+        type(delivered[0]); vm.confirm()
+    }
+
+    @Test
+    fun faceStepWaitsForBlinkWhenPrecheckOk() {
+        toFaceStep()
+        assertEquals(FacePhase.BLINK, (vm.state.value as AuthSheetState.FaceStep).phase)
+    }
+
+    @Test
+    fun faceStepBlockedWhenNotVerified() {
+        reference = FaceReference(FacePrecheck.NOT_VERIFIED, null)
+        toFaceStep()
+        val s = vm.state.value as AuthSheetState.FaceStep
+        assertEquals(FacePhase.BLOCKED, s.phase)
+        assertEquals(R.string.face_not_verified, s.messageRes)
+    }
+
+    @Test
+    fun faceStepBlockedWithoutEmbedding() {
+        reference = FaceReference(FacePrecheck.NO_EMBEDDING, null)
+        toFaceStep()
+        assertEquals(R.string.face_no_embedding, (vm.state.value as AuthSheetState.FaceStep).messageRes)
+    }
+
+    @Test
+    fun matchingFaceVerifies() {
+        toFaceStep()
+        vm.onBlink()
+        vm.onFaceEmbedding(floatArrayOf(1f, 0f))
+        assertEquals(FacePhase.MATCHED, (vm.state.value as AuthSheetState.FaceStep).phase)
+        vm.onMatchShown()
+        assertEquals(AuthSheetState.Verified, vm.state.value)
+    }
+
+    @Test
+    fun embeddingBeforeBlinkIsIgnored() {
+        toFaceStep()
+        vm.onFaceEmbedding(floatArrayOf(1f, 0f))
+        assertEquals(FacePhase.BLINK, (vm.state.value as AuthSheetState.FaceStep).phase)
+    }
+
+    @Test
+    fun mismatchAllowsRetryThenFailsAfterThree() {
+        toFaceStep()
+        repeat(2) {
+            vm.onBlink(); vm.onFaceEmbedding(floatArrayOf(0f, 1f))
+            val s = vm.state.value as AuthSheetState.FaceStep
+            assertEquals(FacePhase.BLINK, s.phase)
+            assertEquals(R.string.face_mismatch, s.messageRes)
+        }
+        assertEquals(1, (vm.state.value as AuthSheetState.FaceStep).attemptsLeft)
+        vm.onBlink(); vm.onFaceEmbedding(floatArrayOf(0f, 1f))
+        assertEquals(AuthSheetState.Failed(R.string.face_failed), vm.state.value)
     }
 
     @Test
