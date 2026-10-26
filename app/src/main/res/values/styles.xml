@@ -112,4 +112,21 @@
         <item name="android:textAppearance">@style/TextAppearance.Flux.Body</item>
         <item name="drawableStartCompat">@drawable/ic_check</item>
     </style>
+
+    <!-- Thanh tab: nền trắng, luôn hiện nhãn, không có pill chỉ báo của Material 3 -->
+    <style name="Widget.Flux.BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@color/flux_surface</item>
+        <item name="backgroundTint">@color/flux_surface</item>
+        <item name="itemIconTint">@color/selector_tab_item</item>
+        <item name="itemTextColor">@color/selector_tab_item</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="itemActiveIndicatorStyle">@null</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.Flux.TabLabel</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.Flux.TabLabel</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="TextAppearance.Flux.TabLabel" parent="TextAppearance.Flux.Caption">
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

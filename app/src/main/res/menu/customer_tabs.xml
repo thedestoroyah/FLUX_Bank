@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/tabHome" android:icon="@drawable/ic_house" android:title="@string/tab_home" />
+    <item android:id="@+id/tabTransfer" android:icon="@drawable/ic_arrows_swap" android:title="@string/tab_transfer" />
+    <!-- Chỗ trống cho nút Quét QR nổi ở giữa -->
+    <item android:id="@+id/tabQrSpace" android:enabled="false" android:title="" />
+    <item android:id="@+id/tabHistory" android:icon="@drawable/ic_history" android:title="@string/tab_history" />
+    <item android:id="@+id/tabProfile" android:icon="@drawable/ic_user" android:title="@string/tab_profile" />
+</menu>

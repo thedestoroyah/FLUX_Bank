@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Thẻ Titanium: ánh kim nhẹ theo đường chéo. Một shape duy nhất để bóng đổ bo đúng góc. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient android:angle="315" android:startColor="#FFFFFFFF" android:centerColor="#FFF0F1F3" android:endColor="#FFE1E3E8" />
+    <stroke android:width="@dimen/stroke_hairline" android:color="@color/flux_titanium_border" />
+    <corners android:radius="@dimen/radius_card" />
+</shape>
