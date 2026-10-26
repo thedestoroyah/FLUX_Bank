@@ -24,10 +24,16 @@ class FaceStepController(
     private val owner: LifecycleOwner,
     private val previewView: PreviewView,
     private val onBlink: () -> Unit,
-    private val onEmbedding: (FloatArray) -> Unit
+    private val onEmbedding: (FloatArray) -> Unit,
+    private val onError: () -> Unit
 ) {
 
     private val executor = Executors.newSingleThreadExecutor()
+
+    // Callback ML Kit có thể tới sau stop(); bỏ qua thay vì ném RejectedExecutionException
+    private val safeExecutor = java.util.concurrent.Executor { task ->
+        if (!executor.isShutdown) runCatching { executor.execute(task) }
+    }
     private val detector = FaceDetectorHelper()
     private val embedder by lazy { FaceEmbedder(context) }
     private val blink = BlinkDetector()
@@ -35,29 +41,36 @@ class FaceStepController(
     private var provider: ProcessCameraProvider? = null
 
     @Volatile private var wantEmbedding = false
+    @Volatile private var stopped = false
 
     fun start() {
         val future = ProcessCameraProvider.getInstance(context)
         future.addListener({
-            val cameraProvider = future.get().also { provider = it }
-            val preview = Preview.Builder().build().also { it.surfaceProvider = previewView.surfaceProvider }
-            val analysis = ImageAnalysis.Builder()
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .build()
-            analysis.setAnalyzer(executor, detector.analyzer { face, bitmap ->
-                if (face == null) return@analyzer
-                if (wantEmbedding) {
-                    wantEmbedding = false
-                    val embedding = embedder.embed(cropFace(bitmap, face.boundingBox))
-                    main.execute { onEmbedding(embedding) }
-                } else if (blink.onFrame(face.leftEyeOpenProbability, face.rightEyeOpenProbability)) {
-                    wantEmbedding = true
-                    main.execute(onBlink)
-                }
-            })
-            cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(owner, CameraSelector.DEFAULT_FRONT_CAMERA, preview, analysis)
+            if (stopped) return@addListener
+            runCatching { bind(future.get()) }.onFailure { onError() }
         }, main)
+    }
+
+    private fun bind(cameraProvider: ProcessCameraProvider) {
+        provider = cameraProvider
+        val preview = Preview.Builder().build().also { it.surfaceProvider = previewView.surfaceProvider }
+        val analysis = ImageAnalysis.Builder()
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+        // Callback ML Kit chạy trên executor riêng (một luồng) nên embed() và close() không chạy chồng nhau
+        analysis.setAnalyzer(executor, detector.analyzer(safeExecutor) { face, bitmap ->
+            if (face == null || stopped) return@analyzer
+            if (wantEmbedding) {
+                wantEmbedding = false
+                val embedding = embedder.embed(cropFace(bitmap, face.boundingBox))
+                main.execute { onEmbedding(embedding) }
+            } else if (blink.onFrame(face.leftEyeOpenProbability, face.rightEyeOpenProbability)) {
+                wantEmbedding = true
+                main.execute(onBlink)
+            }
+        })
+        cameraProvider.unbindAll()
+        cameraProvider.bindToLifecycle(owner, CameraSelector.DEFAULT_FRONT_CAMERA, preview, analysis)
     }
 
     /** Sau một lần không khớp: bắt đầu lại từ bước chớp mắt. */
@@ -67,6 +80,7 @@ class FaceStepController(
     }
 
     fun stop() {
+        stopped = true
         provider?.unbindAll()
         executor.execute {
             detector.close()

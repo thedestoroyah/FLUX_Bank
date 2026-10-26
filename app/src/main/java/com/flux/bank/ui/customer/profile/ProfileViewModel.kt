@@ -16,13 +16,15 @@ data class ProfileState(val user: User? = null, val biometricEnabled: Boolean = 
  * Tab Cá nhân: hiển thị hồ sơ (che bớt email/CCCD) và bật/tắt đăng nhập sinh trắc học.
  *
  * @param setLocalBiometric lưu cờ sinh trắc học cục bộ (SessionManager) — cần cho quyết định khoá app lúc mở.
+ * @param isLocalBiometric đọc cờ cục bộ; Firestore chỉ để thống kê, không quyết định khoá.
  */
 class ProfileViewModel(
     private val auth: AuthRepository = FluxApp.instance.authRepository,
     private val users: UserRepository = FluxApp.instance.userRepository,
     private val setLocalBiometric: (String, Boolean) -> Unit = { uid, on ->
         FluxApp.instance.sessionManager.setBiometricEnabled(uid, on)
-    }
+    },
+    private val isLocalBiometric: (String) -> Boolean = { FluxApp.instance.sessionManager.isBiometricEnabled(it) }
 ) : ViewModel() {
 
     private val _state = MutableLiveData(ProfileState())
@@ -32,7 +34,8 @@ class ProfileViewModel(
         val uid = auth.currentUid() ?: return
         viewModelScope.launch {
             users.getUser(uid).onSuccess { user ->
-                _state.value = ProfileState(user, user.biometricEnabled)
+                // Khoá app dựa vào cờ cục bộ (gắn với thiết bị), nên công tắc phải hiển thị đúng cờ đó
+                _state.value = ProfileState(user, isLocalBiometric(uid))
             }
         }
     }

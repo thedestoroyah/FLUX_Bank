@@ -11,6 +11,7 @@ import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import kotlinx.coroutines.tasks.await
 import java.io.Closeable
+import java.util.concurrent.Executor
 
 /** Bọc ML Kit Face Detection (model đóng gói sẵn, chạy offline) cho ảnh tĩnh và luồng CameraX. */
 class FaceDetectorHelper : Closeable {
@@ -27,10 +28,11 @@ class FaceDetectorHelper : Closeable {
 
     /**
      * Analyzer cho CameraX: mỗi khung hình gọi [onFrame] với khuôn mặt duy nhất (null nếu 0 hoặc >1 mặt)
-     * và bitmap đã xoay đúng chiều để cắt mặt khi cần.
+     * và bitmap đã xoay đúng chiều. [onFrame] chạy trên [callbackExecutor] (không phải main thread)
+     * để việc tính embedding nặng không làm giật giao diện.
      */
     @OptIn(ExperimentalGetImage::class)
-    fun analyzer(onFrame: (Face?, Bitmap) -> Unit): ImageAnalysis.Analyzer = ImageAnalysis.Analyzer { proxy: ImageProxy ->
+    fun analyzer(callbackExecutor: Executor, onFrame: (Face?, Bitmap) -> Unit): ImageAnalysis.Analyzer = ImageAnalysis.Analyzer { proxy: ImageProxy ->
         val media = proxy.image
         if (media == null) {
             proxy.close()
@@ -39,8 +41,8 @@ class FaceDetectorHelper : Closeable {
         val rotation = proxy.imageInfo.rotationDegrees
         val bitmap = proxy.toBitmap().rotate(rotation)
         detector.process(InputImage.fromMediaImage(media, rotation))
-            .addOnSuccessListener { faces -> onFrame(faces.singleOrNull(), bitmap) }
-            .addOnCompleteListener { proxy.close() }
+            .addOnSuccessListener(callbackExecutor) { faces -> onFrame(faces.singleOrNull(), bitmap) }
+            .addOnCompleteListener(callbackExecutor) { proxy.close() }
     }
 
     override fun close() = detector.close()

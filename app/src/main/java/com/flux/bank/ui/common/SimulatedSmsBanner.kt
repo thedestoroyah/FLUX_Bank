@@ -1,6 +1,6 @@
 package com.flux.bank.ui.common
 
-import android.app.Activity
+import android.view.Window
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -14,9 +14,13 @@ object SimulatedSmsBanner {
 
     private const val SHOW_MS = 8_000L
 
-    fun show(activity: Activity, text: String, onTap: () -> Unit) {
-        val root = activity.window.decorView as ViewGroup
-        val binding = ViewSmsBannerBinding.inflate(LayoutInflater.from(activity), root, false)
+    /**
+     * Hiện banner trên cửa sổ [window]. Khi đang mở bottom sheet phải truyền cửa sổ của dialog,
+     * nếu không banner nằm dưới lớp nền tối và chạm vào sẽ đóng sheet.
+     */
+    fun show(window: Window, text: String, onTap: () -> Unit) {
+        val root = window.decorView as ViewGroup
+        val binding = ViewSmsBannerBinding.inflate(LayoutInflater.from(root.context), root, false)
         binding.tvSmsBody.text = text
         val topInset = ViewCompat.getRootWindowInsets(root)
             ?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0

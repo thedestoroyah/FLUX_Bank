@@ -22,6 +22,8 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        // Màn đăng nhập tự quyết định khoá lúc mở app, AppLockObserver không cần khoá thêm
+        app.appLockObserver.markColdStartHandled()
 
         if (savedInstanceState == null && routeExistingSession()) return
 
