@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Apple Bento & Ultra-Minimalism Palette (White Canvas Dominant) -->
+    <color name="flux_bg">#F5F5F7</color>
+    <color name="flux_surface">#FFFFFF</color>
+    <color name="flux_bento_subcard">#F9FAFB</color>
+    <color name="flux_border_hairline">#E5E7EB</color>
+    <color name="flux_border_subtle">#F1F3F5</color>
+
+    <!-- Obsidian & High-Contrast Typography -->
+    <color name="flux_primary">#0A0D12</color>
+    <color name="flux_primary_dark">#000000</color>
+    <color name="flux_primary_light">#1E293B</color>
+    <color name="flux_text_primary">#0F172A</color>
+    <color name="flux_text_secondary">#64748B</color>
+    <color name="flux_text_tertiary">#94A3B8</color>
+    <color name="flux_text_on_dark">#FFFFFF</color>
+
+    <!-- Apple Interactive Accents -->
+    <color name="flux_accent_blue">#0071E3</color>
+    <color name="flux_accent_blue_light">#EFF6FF</color>
+    <color name="flux_emerald">#10B981</color>
+    <color name="flux_emerald_light">#ECFDF5</color>
+    <color name="flux_gold_chip">#D97706</color>
+    <color name="flux_gold_light">#FEF3C7</color>
+
+    <!-- Titanium Pearl Card Palette -->
+    <color name="flux_titanium_start">#FFFFFF</color>
+    <color name="flux_titanium_mid">#F8F9FA</color>
+    <color name="flux_titanium_end">#EFF1F5</color>
+    <color name="flux_titanium_border">#D1D5DB</color>
+
+    <!-- Status & Semantic -->
+    <color name="flux_error">#EF4444</color>
+    <color name="flux_error_bg">#FEF2F2</color>
+    <color name="flux_success">#10B981</color>
+    <color name="flux_success_bg">#ECFDF5</color>
+    <color name="flux_warning">#F59E0B</color>
+</resources>

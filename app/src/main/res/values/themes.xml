@@ -1,0 +1,15 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme: Apple Bento Clean Style -->
+    <style name="Base.Theme.FLUXBank" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/flux_primary</item>
+        <item name="colorPrimaryVariant">@color/flux_primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/flux_accent_blue</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:statusBarColor">@color/flux_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowBackground">@color/flux_bg</item>
+    </style>
+
+    <style name="Theme.FLUXBank" parent="Base.Theme.FLUXBank" />
+</resources>

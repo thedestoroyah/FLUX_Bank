@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/flux_bg"
+    tools:context=".ui.customer.CustomerMainActivity">
+
+    <!-- Top Minimal Header Bar (Apple Minimalist - No Dark Banner) -->
+    <TextView
+        android:id="@+id/tvGreetingSub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="32dp"
+        android:text="Welcome back,"
+        android:textColor="@color/flux_text_secondary"
+        android:textSize="13sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvCustomerGreeting"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="2dp"
+        android:text="Customer"
+        android:textColor="@color/flux_text_primary"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:letterSpacing="-0.02"
+        app:layout_constraintTop_toBottomOf="@id/tvGreetingSub"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tvRoleBadge" />
+
+    <!-- Role Status Capsule -->
+    <TextView
+        android:id="@+id/tvRoleBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_pill_capsule"
+        android:gravity="center"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:text="Customer Hub"
+        android:textColor="@color/flux_accent_blue"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="@id/tvCustomerGreeting"
+        app:layout_constraintBottom_toBottomOf="@id/tvCustomerGreeting"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvCustomerEmail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="2dp"
+        android:text="customer@fluxbank.com"
+        android:textColor="@color/flux_text_tertiary"
+        android:textSize="12sp"
+        app:layout_constraintTop_toBottomOf="@id/tvCustomerGreeting"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Apple Titanium White Card Mockup (100% ConstraintLayout) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardDebit"
+        android:layout_width="0dp"
+        android:layout_height="186dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="3dp"
+        app:cardBackgroundColor="@color/flux_surface"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/flux_titanium_border"
+        app:layout_constraintTop_toBottomOf="@id/tvCustomerEmail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_titanium_card"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/tvCardBankName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FLUX"
+                android:textColor="@color/flux_text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tvCardType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Titanium Debit"
+                android:textColor="@color/flux_text_secondary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <ImageView
+                android:id="@+id/ivCardChip"
+                android:layout_width="36dp"
+                android:layout_height="28dp"
+                android:layout_marginTop="12dp"
+                android:src="@drawable/ic_card_chip_minimal"
+                android:contentDescription="Titanium Card Chip"
+                app:layout_constraintTop_toBottomOf="@id/tvCardBankName"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tvCardNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="••••   ••••   ••••   8868"
+                android:textColor="@color/flux_text_primary"
+                android:textSize="15sp"
+                android:letterSpacing="0.1"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/ivCardChip"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tvBalanceLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TOTAL CHECKING BALANCE"
+                android:textColor="@color/flux_text_tertiary"
+                android:textSize="10sp"
+                android:letterSpacing="0.05"
+                app:layout_constraintBottom_toTopOf="@id/tvBalanceValue"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tvBalanceValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$25,480.00"
+                android:textColor="@color/flux_text_primary"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:letterSpacing="-0.02"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tvCardExpiry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EXP 08/29"
+                android:textColor="@color/flux_text_secondary"
+                android:textSize="11sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- eKYC Verification Status & Prompt Bento Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardEkycBanner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="14dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="1dp"
+        app:cardBackgroundColor="@color/flux_surface"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/flux_border_hairline"
+        app:layout_constraintTop_toBottomOf="@id/cardDebit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/ivEkycStatusIcon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_security_shield"
+                app:tint="@color/flux_accent_blue"
+                android:contentDescription="eKYC Shield"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tvEkycTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="8dp"
+                android:text="Identity Verification (eKYC)"
+                android:textColor="@color/flux_text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivEkycStatusIcon"
+                app:layout_constraintEnd_toStartOf="@id/btnStartEkyc" />
+
+            <TextView
+                android:id="@+id/tvEkycSubtitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="2dp"
+                android:text="Status: Not Verified • Tap to apply"
+                android:textColor="@color/flux_text_secondary"
+                android:textSize="11sp"
+                app:layout_constraintTop_toBottomOf="@id/tvEkycTitle"
+                app:layout_constraintStart_toEndOf="@id/ivEkycStatusIcon"
+                app:layout_constraintEnd_toStartOf="@id/btnStartEkyc" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnStartEkyc"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Verify →"
+                android:textColor="@color/flux_accent_blue"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Bento Quick Action Tiles (ConstraintLayout Horizontal Grid) -->
+    <TextView
+        android:id="@+id/tvQuickActionsLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="16dp"
+        android:text="Shortcuts"
+        android:textColor="@color/flux_text_primary"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/cardEkycBanner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Bento Tile 1: Transfer -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btnQuickTransfer"
+        android:layout_width="0dp"
+        android:layout_height="76dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="1dp"
+        app:cardBackgroundColor="@color/flux_surface"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/flux_border_hairline"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintTop_toBottomOf="@id/tvQuickActionsLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnQuickHistory">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/ivTransferIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_transfer"
+                app:tint="@color/flux_accent_blue"
+                android:contentDescription="Transfer"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/tvTransferLabel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/tvTransferLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Transfer"
+                android:textColor="@color/flux_text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/ivTransferIcon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Bento Tile 2: History -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btnQuickHistory"
+        android:layout_width="0dp"
+        android:layout_height="76dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="1dp"
+        app:cardBackgroundColor="@color/flux_surface"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/flux_border_hairline"
+        app:layout_constraintTop_toBottomOf="@id/tvQuickActionsLabel"
+        app:layout_constraintStart_toEndOf="@id/btnQuickTransfer"
+        app:layout_constraintEnd_toStartOf="@id/btnQuickBills">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/ivHistoryIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_history"
+                app:tint="@color/flux_primary"
+                android:contentDescription="History"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/tvHistoryLabel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/tvHistoryLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Activity"
+                android:textColor="@color/flux_text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/ivHistoryIcon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Bento Tile 3: Utilities / Bills -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btnQuickBills"
+        android:layout_width="0dp"
+        android:layout_height="76dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="20dp"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="1dp"
+        app:cardBackgroundColor="@color/flux_surface"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/flux_border_hairline"
+        app:layout_constraintTop_toBottomOf="@id/tvQuickActionsLabel"
+        app:layout_constraintStart_toEndOf="@id/btnQuickHistory"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/ivBillsIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_bill"
+                app:tint="@color/flux_emerald"
+                android:contentDescription="Bills"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/tvBillsLabel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/tvBillsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Pay Bills"
+                android:textColor="@color/flux_text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/ivBillsIcon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Session Details Bento Card (Pure White with Hairline Border) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardCustomerInfo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="1dp"
+        app:cardBackgroundColor="@color/flux_surface"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/flux_border_hairline"
+        app:layout_constraintTop_toBottomOf="@id/btnQuickTransfer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="18dp">
+
+            <TextView
+                android:id="@+id/tvSessionTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Verified Customer Session"
+                android:textColor="@color/flux_text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/tvUserUid"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="UID: -"
+                android:textColor="@color/flux_text_secondary"
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@id/tvSessionTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <View
+                android:id="@+id/dividerLine"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:background="@color/flux_border_subtle"
+                app:layout_constraintTop_toBottomOf="@id/tvUserUid"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/tvPermissionsTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Active Banking Services"
+                android:textColor="@color/flux_text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/dividerLine"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/tvPermissionsDesc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="• Checking, Saving &amp; Mortgage balance management\n• 2FA OTP-verified instant transfers (VNPay / Stripe)\n• Biometric eKYC face scan &amp; ID card security\n• Nearest bank office shortest-path navigation &amp; AI Assistant"
+                android:textColor="@color/flux_text_secondary"
+                android:textSize="12sp"
+                android:lineSpacingExtra="3dp"
+                app:layout_constraintTop_toBottomOf="@id/tvPermissionsTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Sign Out Button (Sleek Outlined Style) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLogout"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="24dp"
+        android:text="Sign Out"
+        android:textColor="@color/flux_error"
+        app:strokeColor="@color/flux_error"
+        app:cornerRadius="14dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

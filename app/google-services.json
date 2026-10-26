@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "204561432031",
+    "project_id": "banking-app-final-b5407",
+    "storage_bucket": "banking-app-final-b5407.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:204561432031:android:5259af73fe48d5a30cd86a",
+        "android_client_info": {
+          "package_name": "com.flux.bank"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxMtJiFZhicuLLRBylrULNnO38bA3MdFc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

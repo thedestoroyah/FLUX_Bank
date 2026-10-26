@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+  <!-- Minimalist Geometric Monogram for FLUX -->
+  <path
+      android:fillColor="#0A0D12"
+      android:pathData="M8,8h32v6H14v8h22v6H14v12H8V8z"/>
+  <path
+      android:fillColor="#0071E3"
+      android:pathData="M34,34m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"/>
+</vector>
