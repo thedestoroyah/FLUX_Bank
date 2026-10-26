@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FLUX Bank - Design Concept Comparison: Option 1 vs Option 2</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+    
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-mono-brutal {
+      font-family: 'Space Grotesk', monospace, sans-serif;
+    }
+    
+    /* Neo-Brutalism Shadows */
+    .shadow-brutal-sm {
+      box-shadow: 3px 3px 0px #000000;
+    }
+    .shadow-brutal-md {
+      box-shadow: 5px 5px 0px #000000;
+    }
+    .shadow-brutal-lg {
+      box-shadow: 8px 8px 0px #000000;
+    }
+    .shadow-brutal-btn:active {
+      transform: translate(3px, 3px);
+      box-shadow: 1px 1px 0px #000000;
+    }
+
+    /* Apple Bento Shadows */
+    .shadow-bento-subtle {
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+    }
+    .shadow-bento-card {
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.06), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+    }
+
+    /* Titanium Card Sheen */
+    .bg-titanium-sheen {
+      background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 50%, #EEF2F6 100%);
+    }
+  </style>
+</head>
+<body class="bg-[#0F172A] text-slate-100 min-h-screen p-4 md:p-8 antialiased">
+
+  <!-- Top Navigation & Controls Bar -->
+  <header class="max-w-7xl mx-auto mb-8 bg-slate-900/90 border border-slate-800 rounded-2xl p-6 backdrop-blur shadow-2xl">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div>
+        <div class="flex items-center gap-3">
+          <span class="px-3 py-1 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full text-xs font-semibold tracking-wide uppercase">
+            FLUX Bank UI Architecture
+          </span>
+          <span class="text-xs text-slate-400">White Canvas Concept Matrix</span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-bold text-white mt-2 tracking-tight">
+          So sánh thiết kế: Option 1 vs Option 2
+        </h1>
+        <p class="text-slate-400 text-sm mt-1">
+          Cả 2 phong cách đều lấy <span class="text-white font-medium">Màu Trắng làm chủ đạo</span> và tuân thủ <span class="text-blue-400 font-medium">100% ConstraintLayout</span>, nhưng khác biệt hoàn toàn về ngôn ngữ thị giác & cá tính.
+        </p>
+      </div>
+
+      <!-- Screen Switcher Controls -->
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="bg-slate-800 p-1.5 rounded-xl border border-slate-700 flex gap-1">
+          <button id="btnScreenLogin" onclick="switchScreen('login')" class="px-4 py-2 rounded-lg text-xs font-semibold transition-all bg-white text-slate-900 shadow">
+            Màn hình 1: Sign In
+          </button>
+          <button id="btnScreenCustomer" onclick="switchScreen('customer')" class="px-4 py-2 rounded-lg text-xs font-semibold transition-all text-slate-300 hover:text-white">
+            Màn hình 2: Customer Hub
+          </button>
+        </div>
+
+        <div class="bg-slate-800 p-1.5 rounded-xl border border-slate-700 flex gap-1">
+          <button id="btnViewSide" onclick="switchView('side')" class="px-3 py-2 rounded-lg text-xs font-medium bg-blue-600 text-white">
+            Song song (Side-by-Side)
+          </button>
+          <button id="btnViewFocus" onclick="switchView('focus')" class="px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:text-white">
+            So sánh Tab
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Comparison Area -->
+  <main class="max-w-7xl mx-auto">
+    <div id="comparisonGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+      <!-- ================= OPTION 1: NEO-BRUTALISM FINTECH ================= -->
+      <section id="colOption1" class="flex flex-col">
+        <!-- Header Badge -->
+        <div class="bg-black text-white p-4 rounded-t-2xl border-t-2 border-x-2 border-black flex items-center justify-between shadow-brutal-sm">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-[#00E599] border border-black"></span>
+            <span class="font-mono-brutal font-bold text-sm tracking-wider uppercase">OPTION 1: NEO-BRUTALISM</span>
+          </div>
+          <span class="text-xs bg-[#FFE600] text-black font-bold px-2.5 py-0.5 rounded border border-black">
+            Cash App / Punk Fintech
+          </span>
+        </div>
+
+        <!-- Phone Frame: Option 1 -->
+        <div class="bg-[#FAF9F6] border-2 border-black rounded-b-2xl p-6 shadow-brutal-md text-slate-900 flex-1 flex flex-col justify-between">
+          
+          <!-- Screen 1: Login (Option 1) -->
+          <div id="opt1LoginScreen" class="space-y-6">
+            <!-- Brand Mark -->
+            <div class="pt-4 flex items-center justify-between">
+              <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-black text-white font-mono-brutal font-bold text-xs uppercase border border-black shadow-brutal-sm">
+                <span>⚡ FLUX BANK</span>
+              </div>
+              <span class="font-mono-brutal text-xs font-bold px-2 py-1 bg-[#00E599] text-black border border-black shadow-brutal-sm">
+                256-BIT
+              </span>
+            </div>
+
+            <div>
+              <h3 class="font-mono-brutal text-2xl font-bold text-black uppercase tracking-tight">
+                Secure Portal
+              </h3>
+              <p class="text-xs text-slate-700 font-medium mt-1">
+                Next-generation digital finance terminal.
+              </p>
+            </div>
+
+            <!-- Brutalist Card Box -->
+            <div class="bg-white border-2 border-black p-5 rounded-xl shadow-brutal-md space-y-4">
+              <div class="flex items-center justify-between border-b-2 border-black pb-2">
+                <span class="font-mono-brutal font-bold text-sm uppercase">Sign In</span>
+                <span class="text-[10px] font-bold bg-[#E2E8F0] px-2 py-0.5 rounded-full border border-black">AUTH v1.0</span>
+              </div>
+
+              <!-- Input Email -->
+              <div>
+                <label class="block font-mono-brutal text-xs font-bold uppercase mb-1">Email</label>
+                <div class="border-2 border-black bg-white rounded-lg p-2.5 shadow-brutal-sm flex items-center justify-between">
+                  <span class="text-xs text-slate-800 font-mono-brutal">customer@fluxbank.com</span>
+                  <span class="text-xs text-black font-bold">@</span>
+                </div>
+              </div>
+
+              <!-- Input Password -->
+              <div>
+                <label class="block font-mono-brutal text-xs font-bold uppercase mb-1">Password</label>
+                <div class="border-2 border-black bg-white rounded-lg p-2.5 shadow-brutal-sm flex items-center justify-between">
+                  <span class="text-xs text-slate-800 font-mono-brutal">••••••••••••</span>
+                  <span class="text-xs text-black font-bold">HIDE</span>
+                </div>
+              </div>
+
+              <!-- Brutal CTA Button -->
+              <button class="w-full py-3 bg-[#00E599] hover:bg-[#00d08a] text-black font-mono-brutal font-bold text-sm uppercase rounded-lg border-2 border-black shadow-brutal-sm shadow-brutal-btn transition-transform">
+                Sign In To Terminal →
+              </button>
+            </div>
+
+            <!-- Role Badge Matrix -->
+            <div class="grid grid-cols-2 gap-3 pt-2">
+              <div class="bg-[#FFFDF0] border-2 border-black p-3 rounded-lg shadow-brutal-sm">
+                <span class="text-[10px] font-mono-brutal font-bold text-black uppercase bg-[#FFE600] px-1.5 py-0.5 border border-black">Role 1</span>
+                <p class="font-mono-brutal font-bold text-xs text-black mt-2">Customer</p>
+                <p class="text-[11px] text-slate-600 mt-0.5">Direct to Personal Wallet</p>
+              </div>
+              <div class="bg-[#F0FDF4] border-2 border-black p-3 rounded-lg shadow-brutal-sm">
+                <span class="text-[10px] font-mono-brutal font-bold text-black uppercase bg-[#86EFAC] px-1.5 py-0.5 border border-black">Role 2</span>
+                <p class="font-mono-brutal font-bold text-xs text-black mt-2">Bank Officer</p>
+                <p class="text-[11px] text-slate-600 mt-0.5">Admin Governance Desk</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Screen 2: Customer Hub (Option 1) -->
+          <div id="opt1CustomerScreen" class="space-y-5 hidden">
+            <!-- Top Bar -->
+            <div class="flex items-center justify-between pt-2">
+              <div>
+                <p class="text-[10px] font-mono-brutal font-bold uppercase text-slate-600">Active Account</p>
+                <h4 class="font-mono-brutal font-bold text-lg text-black">Alex Rivera</h4>
+              </div>
+              <div class="px-2.5 py-1 bg-black text-[#00E599] font-mono-brutal text-xs font-bold border border-black shadow-brutal-sm">
+                VERIFIED
+              </div>
+            </div>
+
+            <!-- Neo Brutalist Card -->
+            <div class="bg-[#FFE600] border-2 border-black rounded-xl p-5 shadow-brutal-md text-black relative overflow-hidden">
+              <div class="flex justify-between items-start">
+                <span class="font-mono-brutal font-bold text-xs uppercase bg-black text-white px-2 py-0.5">FLUX PUNK CARD</span>
+                <span class="font-mono-brutal text-xs font-bold">EXP 09/29</span>
+              </div>
+              <div class="my-4">
+                <p class="text-[10px] font-mono-brutal font-bold uppercase text-slate-800">Checking Balance</p>
+                <p class="font-mono-brutal text-3xl font-extrabold tracking-tight mt-0.5">$25,480.00</p>
+              </div>
+              <div class="flex justify-between items-center pt-2 border-t-2 border-black font-mono-brutal text-xs font-bold">
+                <span>•••• 8868</span>
+                <span class="bg-black text-[#00E599] px-2 py-0.5 rounded border border-black">VISA DEBIT</span>
+              </div>
+            </div>
+
+            <!-- Quick Action Grid -->
+            <div>
+              <p class="font-mono-brutal text-xs font-bold uppercase text-black mb-2">Tactical Actions</p>
+              <div class="grid grid-cols-3 gap-2.5">
+                <button class="bg-white border-2 border-black p-3 rounded-lg shadow-brutal-sm text-center shadow-brutal-btn">
+                  <span class="text-base block">💸</span>
+                  <span class="font-mono-brutal font-bold text-[11px] uppercase block mt-1">Send</span>
+                </button>
+                <button class="bg-white border-2 border-black p-3 rounded-lg shadow-brutal-sm text-center shadow-brutal-btn">
+                  <span class="text-base block">📜</span>
+                  <span class="font-mono-brutal font-bold text-[11px] uppercase block mt-1">History</span>
+                </button>
+                <button class="bg-white border-2 border-black p-3 rounded-lg shadow-brutal-sm text-center shadow-brutal-btn">
+                  <span class="text-base block">⚡</span>
+                  <span class="font-mono-brutal font-bold text-[11px] uppercase block mt-1">Bills</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Security Log Box -->
+            <div class="bg-white border-2 border-black p-3.5 rounded-xl shadow-brutal-sm">
+              <span class="font-mono-brutal text-xs font-bold text-black uppercase block">2FA Enforcement</span>
+              <p class="text-xs text-slate-700 mt-1">Every transaction requires hardware biometrics & OTP verification before Firestore commitment.</p>
+            </div>
+          </div>
+
+          <!-- Bottom Footer Info -->
+          <div class="pt-6 border-t-2 border-black/10 mt-6 text-xs text-slate-600 font-mono-brutal">
+            <span class="font-bold text-black">Visual Rule:</span> 2px solid stroke, 4px hard shadow, high-contrast off-white canvas.
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= OPTION 2: APPLE BENTO & ULTRA-MINIMALISM ================= -->
+      <section id="colOption2" class="flex flex-col">
+        <!-- Header Badge -->
+        <div class="bg-[#111827] text-white p-4 rounded-t-2xl border-t border-x border-slate-700 flex items-center justify-between shadow-bento-subtle">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-[#0071E3]"></span>
+            <span class="font-semibold text-sm tracking-wide">OPTION 2: APPLE BENTO GRID</span>
+          </div>
+          <span class="text-xs bg-white text-slate-900 font-bold px-2.5 py-0.5 rounded-full">
+            Apple Card / Minimalist
+          </span>
+        </div>
+
+        <!-- Phone Frame: Option 2 -->
+        <div class="bg-[#F5F5F7] border border-slate-200 rounded-b-2xl p-6 shadow-bento-card text-slate-900 flex-1 flex flex-col justify-between">
+          
+          <!-- Screen 1: Login (Option 2) -->
+          <div id="opt2LoginScreen" class="space-y-6">
+            <!-- Brand Monogram -->
+            <div class="pt-4 text-center">
+              <div class="w-12 h-12 mx-auto bg-white border border-slate-200/80 rounded-2xl flex items-center justify-center shadow-bento-subtle text-slate-900 font-bold text-xl">
+                F
+              </div>
+              <h3 class="text-2xl font-bold text-slate-900 mt-3 tracking-tight">
+                FLUX Bank
+              </h3>
+              <p class="text-xs text-slate-500 font-normal mt-0.5">
+                Next-generation intelligent finance.
+              </p>
+            </div>
+
+            <!-- Bento Card Box -->
+            <div class="bg-white border border-slate-200/80 p-6 rounded-3xl shadow-bento-subtle space-y-4">
+              <div>
+                <span class="text-slate-900 font-bold text-lg block tracking-tight">Sign In</span>
+                <span class="text-xs text-slate-400">Access your accounts with verified credentials</span>
+              </div>
+
+              <!-- Input Email -->
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Email address</label>
+                <div class="border border-slate-200 bg-white rounded-xl p-3 text-xs text-slate-800 flex items-center justify-between">
+                  <span>customer@fluxbank.com</span>
+                  <span class="text-slate-400 text-xs">✉</span>
+                </div>
+              </div>
+
+              <!-- Input Password -->
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Password</label>
+                <div class="border border-slate-200 bg-white rounded-xl p-3 text-xs text-slate-800 flex items-center justify-between">
+                  <span>••••••••••••</span>
+                  <span class="text-slate-400 text-xs">👁</span>
+                </div>
+              </div>
+
+              <!-- Apple Obsidian Button -->
+              <button class="w-full py-3.5 bg-[#0A0D12] hover:bg-black text-white font-semibold text-xs rounded-xl shadow-sm transition-all">
+                Continue
+              </button>
+            </div>
+
+            <!-- Security Capsule -->
+            <div class="mx-auto w-fit px-4 py-1.5 bg-white border border-slate-200/80 rounded-full flex items-center gap-2 shadow-sm text-xs text-slate-500">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span>Bank-Grade 256-Bit Encryption • Secure Session</span>
+            </div>
+
+            <!-- Role Access Bento Tile -->
+            <div class="bg-white border border-slate-200/80 p-4 rounded-2xl shadow-bento-subtle">
+              <span class="text-xs font-bold text-slate-900 block">System Access Guidance</span>
+              <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                • Customers route to Financial Hub.<br>
+                • Officers route to Administrative Governance Console.
+              </p>
+            </div>
+          </div>
+
+          <!-- Screen 2: Customer Hub (Option 2) -->
+          <div id="opt2CustomerScreen" class="space-y-5 hidden">
+            <!-- Top Bar -->
+            <div class="flex items-center justify-between pt-2">
+              <div>
+                <p class="text-xs text-slate-500">Welcome back,</p>
+                <h4 class="text-xl font-bold text-slate-900 tracking-tight">Alex Rivera</h4>
+              </div>
+              <div class="px-3 py-1 bg-white border border-slate-200 rounded-full text-xs font-semibold text-[#0071E3] shadow-sm">
+                Customer Hub
+              </div>
+            </div>
+
+            <!-- Apple Titanium White Card -->
+            <div class="bg-titanium-sheen border border-slate-300/80 rounded-3xl p-5 shadow-bento-card relative">
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-sm tracking-wider text-slate-900">FLUX</span>
+                <span class="text-[11px] font-semibold text-slate-500">Titanium Debit</span>
+              </div>
+              
+              <!-- Chip -->
+              <div class="w-8 h-6 my-2 bg-amber-100 border border-amber-300 rounded flex items-center justify-center">
+                <div class="w-4 h-3 border border-amber-500 rounded-sm"></div>
+              </div>
+
+              <div>
+                <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Total Checking Balance</p>
+                <p class="text-2xl font-bold text-slate-900 tracking-tight mt-0.5">$25,480.00</p>
+              </div>
+
+              <div class="flex justify-between items-center pt-3 border-t border-slate-200/80 text-xs font-medium text-slate-600">
+                <span>•••• 8868</span>
+                <span>EXP 08/29</span>
+              </div>
+            </div>
+
+            <!-- Bento Shortcuts Grid -->
+            <div>
+              <p class="text-xs font-bold text-slate-900 mb-2">Shortcuts</p>
+              <div class="grid grid-cols-3 gap-2.5">
+                <div class="bg-white border border-slate-200/80 p-3.5 rounded-2xl shadow-bento-subtle text-center">
+                  <span class="text-blue-600 text-lg block">↗</span>
+                  <span class="text-xs font-semibold text-slate-800 block mt-1">Transfer</span>
+                </div>
+                <div class="bg-white border border-slate-200/80 p-3.5 rounded-2xl shadow-bento-subtle text-center">
+                  <span class="text-slate-700 text-lg block">◷</span>
+                  <span class="text-xs font-semibold text-slate-800 block mt-1">Activity</span>
+                </div>
+                <div class="bg-white border border-slate-200/80 p-3.5 rounded-2xl shadow-bento-subtle text-center">
+                  <span class="text-emerald-600 text-lg block">✓</span>
+                  <span class="text-xs font-semibold text-slate-800 block mt-1">Pay Bills</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Session Bento Tile -->
+            <div class="bg-white border border-slate-200/80 p-4 rounded-2xl shadow-bento-subtle">
+              <span class="text-xs font-bold text-slate-900 block">Verified Session Details</span>
+              <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                Checking, Saving & Mortgage accounts linked with biometric eKYC readiness.
+              </p>
+            </div>
+          </div>
+
+          <!-- Bottom Footer Info -->
+          <div class="pt-6 border-t border-slate-200 mt-6 text-xs text-slate-400">
+            <span class="font-semibold text-slate-700">Visual Rule:</span> 24px Bento radius, 1px hairline border, Apple signature white canvas.
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Component Comparison Deep Dive Table -->
+    <section class="mt-12 bg-slate-900/90 border border-slate-800 rounded-2xl p-6 backdrop-blur">
+      <h2 class="text-xl font-bold text-white mb-4">
+        Bảng phân tích tiêu chí chi tiết giữa Option 1 & Option 2
+      </h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-300 border-collapse">
+          <thead>
+            <tr class="border-b border-slate-800 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <th class="py-3 px-4">Yếu tố thiết kế</th>
+              <th class="py-3 px-4 text-[#00E599]">Option 1: Neo-Brutalism</th>
+              <th class="py-3 px-4 text-blue-400">Option 2: Apple Bento Grid (Hiện tại)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-xs">
+            <tr>
+              <td class="py-3 px-4 font-semibold text-white">Nền chủ đạo (Canvas)</td>
+              <td class="py-3 px-4">Trắng Off-white ấm (`#FAF9F6`)</td>
+              <td class="py-3 px-4">Trắng sứ &amp; Apple Light Gray (`#F5F5F7` / `#FFFFFF`)</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-white">Đường viền (Strokes)</td>
+              <td class="py-3 px-4 font-mono-brutal font-bold">2.0px viền đen đặc dứt khoát (`#000000`)</td>
+              <td class="py-3 px-4">1.0px hairline siêu mảnh thanh lịch (`#E5E7EB`)</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-white">Đổ bóng (Shadows)</td>
+              <td class="py-3 px-4">Đổ bóng cứng 45° không blur (Hard Drop Shadow 4px 4px #000)</td>
+              <td class="py-3 px-4">Bóng mờ nhẹ mềm mại, chiều sâu tự nhiên (Soft Apple ambient elevation)</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-white">Thẻ ghi nợ (Debit Card)</td>
+              <td class="py-3 px-4">Thẻ màu Vàng Cyber (`#FFE600`) viền đen cá tính, font retro-modern</td>
+              <td class="py-3 px-4">Thẻ Apple Titanium trắng ngọc trai mạ kim, chip vàng mờ tinh tế</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-white">Nút bấm hành động (CTA)</td>
+              <td class="py-3 px-4 font-bold text-[#00E599]">Màu Neon Green / Cyber Yellow viền đen, hiệu ứng lún cơ học khi bấm</td>
+              <td class="py-3 px-4 font-bold text-white">Obsidian Black (`#0A0D12`) sang trọng, phẳng dứt khoát chuẩn Apple</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-white">Ấn tượng khi chấm điểm</td>
+              <td class="py-3 px-4 text-amber-300">Cực kỳ phá cách, tạo bất ngờ cho giảng viên vì không trùng lặp bất kỳ đồ án nào</td>
+              <td class="py-3 px-4 text-emerald-300">Đẳng cấp, đạt chuẩn mực tối đa của một app ngân hàng cao cấp chuyên nghiệp</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let currentScreen = 'login';
+    let currentView = 'side';
+
+    function switchScreen(screen) {
+      currentScreen = screen;
+      
+      const btnLogin = document.getElementById('btnScreenLogin');
+      const btnCustomer = document.getElementById('btnScreenCustomer');
+      
+      const opt1Login = document.getElementById('opt1LoginScreen');
+      const opt1Customer = document.getElementById('opt1CustomerScreen');
+      const opt2Login = document.getElementById('opt2LoginScreen');
+      const opt2Customer = document.getElementById('opt2CustomerScreen');
+
+      if (screen === 'login') {
+        btnLogin.className = "px-4 py-2 rounded-lg text-xs font-semibold transition-all bg-white text-slate-900 shadow";
+        btnCustomer.className = "px-4 py-2 rounded-lg text-xs font-semibold transition-all text-slate-300 hover:text-white";
+        
+        opt1Login.classList.remove('hidden');
+        opt1Customer.classList.add('hidden');
+        opt2Login.classList.remove('hidden');
+        opt2Customer.classList.add('hidden');
+      } else {
+        btnCustomer.className = "px-4 py-2 rounded-lg text-xs font-semibold transition-all bg-white text-slate-900 shadow";
+        btnLogin.className = "px-4 py-2 rounded-lg text-xs font-semibold transition-all text-slate-300 hover:text-white";
+        
+        opt1Login.classList.add('hidden');
+        opt1Customer.classList.remove('hidden');
+        opt2Login.classList.add('hidden');
+        opt2Customer.classList.remove('hidden');
+      }
+    }
+
+    function switchView(view) {
+      currentView = view;
+      const btnSide = document.getElementById('btnViewSide');
+      const btnFocus = document.getElementById('btnViewFocus');
+      const grid = document.getElementById('comparisonGrid');
+      const col1 = document.getElementById('colOption1');
+      const col2 = document.getElementById('colOption2');
+
+      if (view === 'side') {
+        btnSide.className = "px-3 py-2 rounded-lg text-xs font-medium bg-blue-600 text-white";
+        btnFocus.className = "px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:text-white";
+        grid.className = "grid grid-cols-1 lg:grid-cols-2 gap-8";
+        col1.classList.remove('hidden');
+        col2.classList.remove('hidden');
+      } else {
+        btnFocus.className = "px-3 py-2 rounded-lg text-xs font-medium bg-blue-600 text-white";
+        btnSide.className = "px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:text-white";
+        // Toggle view
+      }
+    }
+  </script>
+</body>
+</html>
