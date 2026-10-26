@@ -133,4 +133,24 @@
     <string name="face_no_embedding">Hồ sơ eKYC chưa có dữ liệu khuôn mặt. Hãy nộp lại eKYC.</string>
     <string name="face_camera_denied">Cần quyền camera để xác thực khuôn mặt.</string>
     <string name="cd_face_preview">Khung hình camera trước</string>
+
+    <!-- eKYC -->
+    <string name="ekyc_title">Xác minh danh tính</string>
+    <string name="ekyc_step_id">Bước 1 · CCCD mặt trước</string>
+    <string name="ekyc_step_selfie">Bước 2 · Ảnh chân dung</string>
+    <string name="ekyc_selfie_tips">Nhìn thẳng, đủ sáng, không đeo kính râm</string>
+    <string name="ekyc_capture">Chụp ảnh</string>
+    <string name="ekyc_recapture">Chụp lại</string>
+    <string name="ekyc_submit">Gửi hồ sơ</string>
+    <string name="ekyc_need_id">Hãy chụp ảnh CCCD mặt trước.</string>
+    <string name="ekyc_need_selfie">Hãy chụp ảnh chân dung.</string>
+    <string name="ekyc_need_one_face">Ảnh chân dung cần có đúng 1 khuôn mặt. Hãy chụp lại.</string>
+    <string name="ekyc_submitted">Đã gửi hồ sơ. Nhân viên sẽ duyệt trong thời gian sớm nhất.</string>
+    <string name="ekyc_rejected_title">Hồ sơ bị từ chối</string>
+    <string name="ekyc_rejected_reason">Lý do: %1$s</string>
+    <string name="ekyc_pending_banner">Hồ sơ đang chờ nhân viên duyệt.</string>
+    <string name="ekyc_verified_banner">Danh tính đã được xác minh.</string>
+    <string name="ekyc_camera_denied">Cần quyền camera để chụp ảnh eKYC.</string>
+    <string name="cd_id_preview">Ảnh CCCD đã chụp</string>
+    <string name="cd_selfie_preview">Ảnh chân dung đã chụp</string>
 </resources>

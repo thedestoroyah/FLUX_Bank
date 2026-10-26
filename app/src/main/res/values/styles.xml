@@ -129,4 +129,22 @@
     <style name="TextAppearance.Flux.TabLabel" parent="TextAppearance.Flux.Caption">
         <item name="android:textSize">12sp</item>
     </style>
+
+    <!-- Nhãn nhóm viết hoa nhỏ phía trên mỗi khối -->
+    <style name="Widget.Flux.SectionLabel" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/space_16</item>
+        <item name="android:layout_marginBottom">@dimen/space_8</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:textAppearance">@style/TextAppearance.Flux.Caption</item>
+        <item name="android:textColor">@color/flux_text_tertiary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ShapeAppearance.Flux.Circle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>
