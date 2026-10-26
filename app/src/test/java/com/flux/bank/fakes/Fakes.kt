@@ -1,0 +1,97 @@
+package com.flux.bank.fakes
+
+import com.flux.bank.data.model.AccountType
+import com.flux.bank.data.model.BankAccount
+import com.flux.bank.data.model.KycRecord
+import com.flux.bank.data.model.KycStatus
+import com.flux.bank.data.model.User
+import com.flux.bank.data.model.UserRole
+import com.flux.bank.data.repository.AccountRepository
+import com.flux.bank.data.repository.AuthRepository
+import com.flux.bank.data.repository.KycRepository
+import com.flux.bank.data.repository.UserRepository
+
+/** Repository giả trong bộ nhớ, dùng chung cho unit test. */
+class FakeAuthRepository : AuthRepository {
+    var uid: String? = null
+    var email: String? = null
+    var loginResult: Result<String> = Result.success("u1")
+    val created = mutableListOf<String>()
+    var deleted = false
+    var released = false
+    var failCreate = false
+    var changedPassword: String? = null
+    var resetEmail: String? = null
+    private var counter = 0
+
+    override suspend fun login(email: String, password: String) = loginResult.onSuccess { uid = it; this.email = email }
+    override fun currentUid() = uid
+    override fun currentEmail() = email
+    override fun logout() { uid = null }
+    override suspend fun changePassword(newPassword: String): Result<Unit> { changedPassword = newPassword; return Result.success(Unit) }
+    override suspend fun sendPasswordReset(email: String): Result<Unit> { resetEmail = email; return Result.success(Unit) }
+    override suspend fun createAuthUser(email: String, tempPassword: String): Result<String> {
+        if (failCreate) return Result.failure(IllegalStateException("email exists"))
+        val id = "new${++counter}"
+        created += id
+        return Result.success(id)
+    }
+    override suspend fun deleteCreatedAuthUser(): Result<Unit> { deleted = true; return Result.success(Unit) }
+    override fun releaseCreatedAuthUser() { released = true }
+}
+
+class FakeUserRepository(initial: List<User> = emptyList()) : UserRepository {
+    val users = initial.associateBy { it.uid }.toMutableMap()
+    var failNextCreate = false
+    var failUpdate = false
+    val updates = mutableListOf<Pair<String, Map<String, Any?>>>()
+
+    override suspend fun getUser(uid: String) = users[uid]?.let { Result.success(it) } ?: Result.failure(NoSuchElementException(uid))
+    override suspend fun createProfile(user: User): Result<Unit> {
+        if (failNextCreate) { failNextCreate = false; return Result.failure(IllegalStateException("write failed")) }
+        users[user.uid] = user
+        return Result.success(Unit)
+    }
+    override suspend fun updateFields(uid: String, fields: Map<String, Any?>): Result<Unit> {
+        if (failUpdate) return Result.failure(IllegalStateException("update failed"))
+        updates += uid to fields
+        return Result.success(Unit)
+    }
+    override suspend fun deleteProfile(uid: String): Result<Unit> { users.remove(uid); return Result.success(Unit) }
+    override suspend fun listCustomers() = Result.success(users.values.filter { it.role == UserRole.CUSTOMER })
+    override suspend fun findByPhone(phone: String) = Result.success(users.values.firstOrNull { it.phoneNumber == phone })
+    override suspend fun findByNationalId(nationalId: String) = Result.success(users.values.firstOrNull { it.nationalId == nationalId })
+    override suspend fun countCustomers() = Result.success(users.values.count { it.role == UserRole.CUSTOMER })
+}
+
+class FakeAccountRepository : AccountRepository {
+    val accounts = mutableListOf<BankAccount>()
+    var failNextCreate = false
+
+    override suspend fun createChecking(ownerUid: String): Result<BankAccount> {
+        if (failNextCreate) { failNextCreate = false; return Result.failure(IllegalStateException("account failed")) }
+        val a = BankAccount(accountId = "a${accounts.size}", ownerUid = ownerUid, type = AccountType.CHECKING, accountNumber = "886800000${accounts.size}")
+        accounts += a
+        return Result.success(a)
+    }
+    override suspend fun listByOwner(ownerUid: String) = Result.success(accounts.filter { it.ownerUid == ownerUid })
+}
+
+class FakeKycRepository : KycRepository {
+    val records = mutableMapOf<String, KycRecord>()
+    val submitted = mutableListOf<KycRecord>()
+    val reviews = mutableListOf<List<Any?>>()
+    var queue = mutableListOf<Pair<User, KycRecord>>()
+
+    override suspend fun submit(record: KycRecord): Result<Unit> { submitted += record; records[record.uid] = record; return Result.success(Unit) }
+    override suspend fun get(uid: String) = Result.success(records[uid])
+    override suspend fun pendingQueue() = Result.success(queue.toList())
+    override suspend fun review(uid: String, approve: Boolean, reason: String?, officerUid: String): Result<Unit> {
+        reviews += listOf(uid, approve, reason, officerUid)
+        queue.removeAll { it.first.uid == uid }
+        return Result.success(Unit)
+    }
+}
+
+fun customer(uid: String, phone: String = "09000000${uid.takeLast(2).padStart(2, '0')}", nationalId: String = "0792030012${uid.takeLast(2).padStart(2, '0')}", kyc: String = KycStatus.NOT_SUBMITTED, name: String = "Khách $uid") =
+    User(uid = uid, email = "$uid@mail.com", fullName = name, phoneNumber = phone, nationalId = nationalId, kycStatus = kyc)
