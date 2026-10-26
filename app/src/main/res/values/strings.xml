@@ -104,4 +104,17 @@
     <string name="coming_soon_title">Sắp ra mắt</string>
     <string name="coming_soon_body">Tính năng %1$s đang được FLUX hoàn thiện. Bạn sẽ sớm dùng được ngay trong ứng dụng.</string>
     <string name="coming_soon_home">Về trang chủ</string>
+
+    <!-- Bottom sheet xác thực giao dịch -->
+    <string name="auth_sheet_title">Xác nhận giao dịch</string>
+    <string name="auth_sheet_otp_hint">Nhập mã OTP vừa được gửi qua tin nhắn</string>
+    <string name="auth_sheet_resend_in">Gửi lại mã sau %1$s</string>
+    <string name="auth_sheet_resend">Gửi lại mã</string>
+    <string name="auth_sheet_confirm">Xác nhận</string>
+    <string name="otp_wrong">Mã OTP không đúng. Còn %1$d lần thử.</string>
+    <string name="otp_expired">Mã OTP đã hết hạn. Hãy bấm Gửi lại mã.</string>
+    <string name="otp_locked">Bạn đã nhập sai quá 5 lần. Giao dịch bị huỷ.</string>
+    <string name="cd_backspace">Xoá</string>
+    <string name="auth_step_otp">OTP</string>
+    <string name="auth_step_face">Khuôn mặt</string>
 </resources>
