@@ -6,4 +6,54 @@
     <string name="otp_sms_sender">FLUX Bank</string>
     <string name="otp_sms_body">FLUX: Mã OTP của bạn là %1$s. Không chia sẻ mã này cho bất kỳ ai.</string>
     <string name="otp_sms_tap_to_fill">Chạm để tự điền mã</string>
+
+    <!-- Chung -->
+    <string name="cd_back">Quay lại</string>
+    <string name="action_ok">Đồng ý</string>
+    <string name="action_cancel">Huỷ</string>
+    <string name="action_retry">Thử lại</string>
+    <string name="err_generic">Đã có lỗi xảy ra. Vui lòng thử lại.</string>
+    <string name="err_network">Không thể kết nối. Kiểm tra mạng và thử lại.</string>
+
+    <!-- Đăng nhập -->
+    <string name="login_logo">FLUX</string>
+    <string name="login_title">Chào mừng trở lại</string>
+    <string name="login_subtitle">Đăng nhập để tiếp tục với FLUX Bank</string>
+    <string name="field_email">Email</string>
+    <string name="field_password">Mật khẩu</string>
+    <string name="login_forgot">Quên mật khẩu?</string>
+    <string name="login_submit">Đăng nhập</string>
+    <string name="login_or">hoặc</string>
+    <string name="login_biometric">Đăng nhập bằng sinh trắc học</string>
+    <string name="login_secure_note">Phiên đăng nhập được mã hoá</string>
+    <string name="err_email_required">Vui lòng nhập email.</string>
+    <string name="err_email_invalid">Email không hợp lệ.</string>
+    <string name="err_password_required">Vui lòng nhập mật khẩu.</string>
+    <string name="err_login_failed">Email hoặc mật khẩu không đúng.</string>
+    <string name="err_profile_missing">Không tìm thấy hồ sơ tài khoản. Liên hệ nhân viên ngân hàng.</string>
+    <string name="msg_reset_email_sent">Đã gửi email đặt lại mật khẩu. Hãy kiểm tra hộp thư.</string>
+
+    <!-- Mở khoá -->
+    <string name="unlock_hello">Xin chào</string>
+    <string name="unlock_caption">FLUX đã khoá để bảo vệ tài khoản của bạn</string>
+    <string name="unlock_tap">Chạm để mở khoá</string>
+    <string name="unlock_other_account">Đăng nhập tài khoản khác</string>
+    <string name="biometric_title">Mở khoá FLUX</string>
+    <string name="biometric_subtitle">Xác thực bằng vân tay hoặc khuôn mặt</string>
+    <string name="biometric_negative">Huỷ</string>
+
+    <!-- Đổi mật khẩu -->
+    <string name="chpw_title">Tạo mật khẩu mới</string>
+    <string name="chpw_caption_forced">Đây là lần đăng nhập đầu tiên. Hãy thay mật khẩu tạm do nhân viên cấp bằng mật khẩu của riêng bạn.</string>
+    <string name="chpw_caption_voluntary">Mật khẩu mới phải khác mật khẩu đang dùng.</string>
+    <string name="field_new_password">Mật khẩu mới</string>
+    <string name="field_confirm_password">Nhập lại mật khẩu</string>
+    <string name="chpw_rule_length">Tối thiểu 8 ký tự</string>
+    <string name="chpw_rule_mix">Có cả chữ và số</string>
+    <string name="chpw_rule_match">Hai mật khẩu trùng khớp</string>
+    <string name="chpw_submit">Lưu mật khẩu</string>
+    <string name="chpw_done">Đã đổi mật khẩu</string>
+    <string name="err_password_weak">Mật khẩu cần tối thiểu 8 ký tự, có cả chữ và số.</string>
+    <string name="err_password_mismatch">Hai mật khẩu không trùng khớp.</string>
+    <string name="err_recent_login">Vui lòng đăng nhập lại rồi đổi mật khẩu.</string>
 </resources>

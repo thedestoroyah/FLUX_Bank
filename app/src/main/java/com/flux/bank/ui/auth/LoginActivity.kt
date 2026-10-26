@@ -3,137 +3,95 @@ package com.flux.bank.ui.auth
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
+import android.view.inputmethod.EditorInfo
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.flux.bank.data.model.UserRole
+import com.flux.bank.FluxApp
 import com.flux.bank.databinding.ActivityLoginBinding
-import com.flux.bank.ui.customer.CustomerMainActivity
-import com.flux.bank.ui.officer.OfficerMainActivity
 import com.flux.bank.utils.BiometricHelper
-import com.flux.bank.utils.SessionManager
 import com.google.android.material.snackbar.Snackbar
 
+/** Màn đăng nhập; cũng là điểm vào app: nếu đã có phiên thì khoá (sinh trắc học) hoặc vào thẳng. */
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private val viewModel: AuthViewModel by viewModels()
-    private lateinit var sessionManager: SessionManager
+    private val app get() = FluxApp.instance
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        sessionManager = SessionManager(this)
+        if (savedInstanceState == null && routeExistingSession()) return
 
-        // Pre-fill last known email if available
-        sessionManager.getSavedEmail()?.let { savedEmail ->
-            if (savedEmail.isNotEmpty()) {
-                binding.etEmail.setText(savedEmail)
-            }
+        app.sessionManager.lastEmail()?.let { binding.etEmail.setText(it) }
+        binding.btnLogin.setOnClickListener { submit() }
+        binding.etPassword.setOnEditorActionListener { _, actionId, _ ->
+            (actionId == EditorInfo.IME_ACTION_DONE).also { if (it) submit() }
         }
-
-        // Adjust biometric button visibility based on hardware support
-        if (!BiometricHelper.canAuthenticate(this)) {
-            binding.btnBiometricLogin.visibility = View.GONE
-        }
-
-        setupListeners()
-        observeViewModel()
+        binding.btnForgot.setOnClickListener { viewModel.forgotPassword(binding.etEmail.text.toString()) }
+        observe()
     }
 
-    private fun setupListeners() {
-        binding.btnLogin.setOnClickListener {
-            val email = binding.etEmail.text?.toString().orEmpty()
-            val password = binding.etPassword.text?.toString().orEmpty()
-            viewModel.login(email, password)
+    /** Có phiên Firebase: khoá nếu cần, không thì đọc hồ sơ và điều hướng. Trả về true nếu đã chuyển màn. */
+    private fun routeExistingSession(): Boolean {
+        val uid = app.authRepository.currentUid() ?: return false
+        val mustLock = app.lockPolicy.onColdStart(
+            hasSession = true,
+            biometricEnabled = app.sessionManager.isBiometricEnabled(uid),
+            biometricAvailable = BiometricHelper.canAuthenticate(this)
+        )
+        if (mustLock) {
+            startActivity(UnlockActivity.intent(this, UnlockActivity.Mode.COLD_START))
+            finish()
+            return true
         }
-
-        binding.btnBiometricLogin.setOnClickListener {
-            val savedUid = sessionManager.getSavedUid()
-            if (savedUid.isNullOrEmpty()) {
-                Snackbar.make(
-                    binding.root,
-                    "Please sign in with password first to enable Biometric Quick Sign-In.",
-                    Snackbar.LENGTH_LONG
-                ).show()
-            } else {
-                BiometricHelper.showBiometricPrompt(
-                    activity = this,
-                    title = "FLUX Biometric Authentication",
-                    subtitle = "Verify with Fingerprint or Face ID",
-                    onSuccess = {
-                        viewModel.loginWithUid(savedUid)
-                    },
-                    onError = { errorMessage ->
-                        Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
-                    }
-                )
-            }
-        }
+        observe()
+        viewModel.loadSession(uid)
+        return false
     }
 
-    private fun observeViewModel() {
+    private fun submit() = viewModel.login(binding.etEmail.text.toString(), binding.etPassword.text.toString())
+
+    private fun observe() {
+        if (viewModel.uiState.hasObservers()) return
         viewModel.uiState.observe(this) { state ->
+            setLoading(state is AuthUiState.Loading)
             when (state) {
-                is AuthUiState.Idle -> {
-                    setLoading(false)
-                }
-                is AuthUiState.Loading -> {
-                    setLoading(true)
-                }
-                is AuthUiState.Success -> {
-                    setLoading(false)
-                }
-                is AuthUiState.Error -> {
-                    setLoading(false)
-                    Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG)
-                        .setAction("Dismiss") { }
-                        .show()
-                }
-                is AuthUiState.NavigateToCustomer -> {
-                    setLoading(false)
-                    sessionManager.saveUserSession(
-                        uid = state.user.uid,
-                        email = state.user.email,
-                        role = state.user.role.name,
-                        fullName = state.user.fullName
-                    )
-                    Toast.makeText(this, "Logged in as Customer", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, CustomerMainActivity::class.java).apply {
-                        putExtra(CustomerMainActivity.EXTRA_USER_UID, state.user.uid)
-                        putExtra(CustomerMainActivity.EXTRA_USER_NAME, state.user.fullName.ifEmpty { "Customer" })
-                    }
-                    startActivity(intent)
+                is AuthUiState.Error -> snack(getString(state.messageRes))
+                is AuthUiState.Info -> snack(getString(state.messageRes))
+                is AuthUiState.NavigateToChangePassword -> {
+                    rememberEmail()
+                    startActivity(ChangePasswordActivity.intent(this, forced = true))
                     finish()
                 }
-                is AuthUiState.NavigateToOfficer -> {
-                    setLoading(false)
-                    sessionManager.saveUserSession(
-                        uid = state.user.uid,
-                        email = state.user.email,
-                        role = state.user.role.name,
-                        fullName = state.user.fullName
-                    )
-                    Toast.makeText(this, "Logged in as Bank Officer", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, OfficerMainActivity::class.java).apply {
-                        putExtra(OfficerMainActivity.EXTRA_USER_UID, state.user.uid)
-                        putExtra(OfficerMainActivity.EXTRA_USER_NAME, state.user.fullName.ifEmpty { "Bank Officer" })
-                    }
-                    startActivity(intent)
-                    finish()
-                }
+                is AuthUiState.NavigateToCustomer -> { rememberEmail(); RoleRouter.start(this, state.user) }
+                is AuthUiState.NavigateToOfficer -> { rememberEmail(); RoleRouter.start(this, state.user) }
+                else -> Unit
             }
         }
     }
 
-    private fun setLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-        binding.btnLogin.isEnabled = !isLoading
-        binding.btnBiometricLogin.isEnabled = !isLoading
-        binding.etEmail.isEnabled = !isLoading
-        binding.etPassword.isEnabled = !isLoading
+    private fun rememberEmail() {
+        app.authRepository.currentEmail()?.let { app.sessionManager.saveLastEmail(it) }
+    }
+
+    private fun snack(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
+        viewModel.resetState()
+    }
+
+    private fun setLoading(loading: Boolean) {
+        binding.progress.visibility = if (loading) View.VISIBLE else View.GONE
+        binding.btnLogin.text = if (loading) "" else getString(com.flux.bank.R.string.login_submit)
+        binding.btnLogin.isEnabled = !loading
+        binding.etEmail.isEnabled = !loading
+        binding.etPassword.isEnabled = !loading
+    }
+
+    companion object {
+        fun intent(activity: android.content.Context) =
+            Intent(activity, LoginActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
     }
 }
-
