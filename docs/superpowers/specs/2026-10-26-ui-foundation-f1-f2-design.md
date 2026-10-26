@@ -83,6 +83,10 @@ Thanh tab **[Claude]**: **Tổng quan · Khách hàng · eKYC · Lãi suất · 
 - Nội dung: tiêu đề "Xác nhận giao dịch", tóm tắt giao dịch (người nhận, ngân hàng/số TK, số tiền), 6 ô OTP, đồng hồ "Gửi lại mã sau mm:ss", nút "Xác nhận" (đen).
 - **Bàn phím số riêng vẽ bên trong sheet**, không gọi bàn phím hệ thống, để sheet không bị đẩy lên và bàn phím bên thứ ba không đọc được OTP. **[Claude, chủ dự án đã đồng ý]**
 
+### 4.5 Mockup đã duyệt (2026-10-26) **[Chủ dự án]**
+- Trang chủ + bottom sheet OTP: [mockups/2026-10-26-home-and-otp-sheet.html](mockups/2026-10-26-home-and-otp-sheet.html)
+- Các màn còn lại, 4 nhóm (Đăng nhập & phiên · Tab Cá nhân · eKYC & khuôn mặt · Nhân viên): [mockups/2026-10-26-screens-all.html](mockups/2026-10-26-screens-all.html)
+
 ## 5. Chức năng — những gì chủ dự án đã chốt
 
 ### 5.1 Feature 1 — Hồ sơ người dùng
