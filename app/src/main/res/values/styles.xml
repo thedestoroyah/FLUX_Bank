@@ -100,4 +100,16 @@
         <item name="android:backgroundDimAmount">0.55</item>
         <item name="android:windowSoftInputMode">adjustNothing</item>
     </style>
+
+    <!-- Dòng quy tắc trong checklist (icon tick đổi màu theo trạng thái) -->
+    <style name="Widget.Flux.RuleRow" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">@dimen/space_4</item>
+        <item name="android:paddingBottom">@dimen/space_4</item>
+        <item name="android:drawablePadding">@dimen/space_8</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textAppearance">@style/TextAppearance.Flux.Body</item>
+        <item name="drawableStartCompat">@drawable/ic_check</item>
+    </style>
 </resources>

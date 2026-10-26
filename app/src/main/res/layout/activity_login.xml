@@ -7,292 +7,178 @@
     android:background="@color/flux_bg"
     tools:context=".ui.auth.LoginActivity">
 
-    <!-- Top Minimal Brand Section (Pure Apple Style - No dark banner) -->
-    <ImageView
-        android:id="@+id/ivBankLogo"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="56dp"
-        android:src="@drawable/ic_flux_minimal_logo"
-        android:contentDescription="FLUX Bank Monogram"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/tvBankTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="FLUX Bank"
-        android:textColor="@color/flux_text_primary"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:letterSpacing="-0.02"
-        app:layout_constraintTop_toBottomOf="@id/ivBankLogo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/tvBankSubtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="Next-generation intelligent finance."
-        android:textColor="@color/flux_text_secondary"
-        android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@id/tvBankTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Apple Bento Sign-In Card (Pure White with Hairline Border) -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardLogin"
+    <View
+        android:id="@+id/bgMint"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="28dp"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="2dp"
-        app:cardBackgroundColor="@color/flux_surface"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/flux_border_hairline"
-        app:layout_constraintTop_toBottomOf="@id/tvBankSubtitle"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_home_mint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.45"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="24dp">
+            android:paddingStart="@dimen/space_24"
+            android:paddingEnd="@dimen/space_24"
+            android:paddingBottom="@dimen/space_24">
 
             <TextView
-                android:id="@+id/tvFormTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Sign In"
+                android:id="@+id/tvLogo"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginTop="56dp"
+                android:background="@drawable/bg_logo_tile"
+                android:elevation="4dp"
+                android:fontFamily="@font/inter_bold"
+                android:gravity="center"
+                android:letterSpacing="0.15"
+                android:text="@string/login_logo"
                 android:textColor="@color/flux_text_primary"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:letterSpacing="-0.01"
-                app:layout_constraintTop_toTopOf="parent"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tvFormSubtitle"
-                android:layout_width="0dp"
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Access your personal or officer accounts"
-                android:textColor="@color/flux_text_secondary"
-                android:textSize="13sp"
-                app:layout_constraintTop_toBottomOf="@id/tvFormTitle"
+                android:layout_marginTop="@dimen/space_24"
+                android:text="@string/login_title"
+                android:textAppearance="@style/TextAppearance.Flux.Display"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/tvLogo" />
 
-            <!-- Email Input with 14dp rounded box -->
+            <TextView
+                android:id="@+id/tvSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_4"
+                android:text="@string/login_subtitle"
+                android:textAppearance="@style/TextAppearance.Flux.Caption"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilEmail"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:hint="Email address"
-                app:boxCornerRadiusTopStart="14dp"
-                app:boxCornerRadiusTopEnd="14dp"
-                app:boxCornerRadiusBottomStart="14dp"
-                app:boxCornerRadiusBottomEnd="14dp"
-                app:boxStrokeColor="@color/flux_primary"
-                app:startIconDrawable="@drawable/ic_email"
-                app:startIconTint="@color/flux_text_secondary"
-                app:layout_constraintTop_toBottomOf="@id/tvFormSubtitle"
+                android:layout_marginTop="@dimen/space_32"
+                android:hint="@string/field_email"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
+                app:startIconDrawable="@drawable/ic_envelope">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="52dp"
-                    android:inputType="textEmailAddress"
                     android:imeOptions="actionNext"
-                    android:maxLines="1"
-                    android:textColor="@color/flux_text_primary"
-                    android:textSize="14sp" />
+                    android:inputType="textEmailAddress"
+                    android:textAppearance="@style/TextAppearance.Flux.Body" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Password Input with 14dp rounded box -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilPassword"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:hint="Password"
-                app:boxCornerRadiusTopStart="14dp"
-                app:boxCornerRadiusTopEnd="14dp"
-                app:boxCornerRadiusBottomStart="14dp"
-                app:boxCornerRadiusBottomEnd="14dp"
-                app:boxStrokeColor="@color/flux_primary"
+                android:layout_marginTop="@dimen/space_12"
+                android:hint="@string/field_password"
                 app:endIconMode="password_toggle"
-                app:startIconDrawable="@drawable/ic_lock"
-                app:startIconTint="@color/flux_text_secondary"
-                app:layout_constraintTop_toBottomOf="@id/tilEmail"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintTop_toBottomOf="@id/tilEmail"
+                app:startIconDrawable="@drawable/ic_lock">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="52dp"
-                    android:inputType="textPassword"
                     android:imeOptions="actionDone"
-                    android:maxLines="1"
-                    android:textColor="@color/flux_text_primary"
-                    android:textSize="14sp" />
+                    android:inputType="textPassword"
+                    android:textAppearance="@style/TextAppearance.Flux.Body" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Loading Indicator -->
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginTop="16dp"
-                android:indeterminateTint="@color/flux_primary"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/tilPassword"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+            <Button
+                android:id="@+id/btnForgot"
+                style="@style/Widget.Flux.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login_forgot"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tilPassword" />
 
-            <!-- Apple-Style Obsidian Black Button (54dp height >= 48dp WCAG touch target) -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogin"
+                style="@style/Widget.Flux.Button.Primary"
                 android:layout_width="0dp"
-                android:layout_height="54dp"
-                android:layout_marginTop="18dp"
-                android:text="Continue"
-                android:textColor="@color/white"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:backgroundTint="@color/flux_primary"
-                app:cornerRadius="14dp"
-                app:layout_constraintTop_toBottomOf="@id/progressBar"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_8"
+                android:text="@string/login_submit"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/btnForgot" />
 
-            <!-- Biometric Quick Sign-In Button (Apple Minimalist Outlined Style) -->
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:indicatorColor="@color/flux_text_on_dark"
+                app:indicatorSize="22dp"
+                app:layout_constraintBottom_toBottomOf="@id/btnLogin"
+                app:layout_constraintEnd_toEndOf="@id/btnLogin"
+                app:layout_constraintStart_toStartOf="@id/btnLogin"
+                app:layout_constraintTop_toTopOf="@id/btnLogin" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnBiometricLogin"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.Flux.Button.Secondary"
                 android:layout_width="0dp"
-                android:layout_height="52dp"
-                android:layout_marginTop="12dp"
-                android:text="Sign in with Biometrics"
-                android:textColor="@color/flux_text_primary"
-                android:textSize="14sp"
-                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:text="@string/login_biometric"
+                android:visibility="gone"
                 app:icon="@drawable/ic_fingerprint"
-                app:iconGravity="textStart"
-                app:iconPadding="8dp"
-                app:iconTint="@color/flux_text_primary"
-                app:strokeColor="@color/flux_border_hairline"
-                app:strokeWidth="1dp"
-                app:cornerRadius="14dp"
-                app:layout_constraintTop_toBottomOf="@id/btnLogin"
+                app:iconTint="@color/flux_emerald_dark"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- Floating Minimal Security Capsule -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/securityBadgeLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="34dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/bg_pill_capsule"
-        android:paddingStart="14dp"
-        android:paddingEnd="14dp"
-        app:layout_constraintTop_toBottomOf="@id/cardLogin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <ImageView
-            android:id="@+id/ivSecurityShield"
-            android:layout_width="14dp"
-            android:layout_height="14dp"
-            android:src="@drawable/ic_security_shield"
-            android:contentDescription="@null"
-            app:tint="@color/flux_emerald"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/tvSecurityText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:text="Bank-Grade 256-Bit Encryption • Secure Session"
-            android:textColor="@color/flux_text_secondary"
-            android:textSize="11sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/ivSecurityShield" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- Role-Based Guidance Bento Card -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardInfo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="12dp"
-        app:cardCornerRadius="18dp"
-        app:cardElevation="0dp"
-        app:cardBackgroundColor="@color/flux_surface"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/flux_border_hairline"
-        app:layout_constraintTop_toBottomOf="@id/securityBadgeLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+                app:layout_constraintTop_toBottomOf="@id/btnLogin" />
 
             <TextView
-                android:id="@+id/tvInfoTitle"
-                android:layout_width="0dp"
+                android:id="@+id/tvSecureNote"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="System Access Guidance"
-                android:textColor="@color/flux_text_primary"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="@dimen/space_32"
+                android:drawablePadding="@dimen/space_4"
+                android:gravity="center_vertical"
+                android:text="@string/login_secure_note"
+                android:textAppearance="@style/TextAppearance.Flux.Caption"
+                app:drawableStartCompat="@drawable/ic_shield_check"
+                app:drawableTint="@color/flux_emerald"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <TextView
-                android:id="@+id/tvInfoContent"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="• Customer logins navigate to Customer Financial Hub.\n• Officer logins navigate to Banking Administrative Console."
-                android:textColor="@color/flux_text_secondary"
-                android:textSize="12sp"
-                android:lineSpacingExtra="2dp"
-                app:layout_constraintTop_toBottomOf="@id/tvInfoTitle"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
+                app:layout_constraintTop_toBottomOf="@id/btnBiometricLogin"
+                app:layout_constraintVertical_bias="1" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,12 +1,15 @@
 package com.flux.bank.ui.auth
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flux.bank.FluxApp
+import com.flux.bank.R
+import com.flux.bank.core.validation.Validators
 import com.flux.bank.data.model.User
 import com.flux.bank.data.model.UserRole
-import com.flux.bank.FluxApp
 import com.flux.bank.data.repository.AuthRepository
 import com.flux.bank.data.repository.UserRepository
 import kotlinx.coroutines.launch
@@ -14,12 +17,14 @@ import kotlinx.coroutines.launch
 sealed class AuthUiState {
     object Idle : AuthUiState()
     object Loading : AuthUiState()
-    data class Success(val user: User) : AuthUiState()
-    data class Error(val message: String) : AuthUiState()
+    data class Error(@StringRes val messageRes: Int) : AuthUiState()
+    data class Info(@StringRes val messageRes: Int) : AuthUiState()
+    data class NavigateToChangePassword(val user: User) : AuthUiState()
     data class NavigateToCustomer(val user: User) : AuthUiState()
     data class NavigateToOfficer(val user: User) : AuthUiState()
 }
 
+/** Đăng nhập bằng mật khẩu, khôi phục phiên có sẵn, quên mật khẩu; quyết định màn hình tiếp theo theo hồ sơ. */
 class AuthViewModel(
     private val authRepository: AuthRepository = FluxApp.instance.authRepository,
     private val userRepository: UserRepository = FluxApp.instance.userRepository
@@ -28,69 +33,55 @@ class AuthViewModel(
     private val _uiState = MutableLiveData<AuthUiState>(AuthUiState.Idle)
     val uiState: LiveData<AuthUiState> = _uiState
 
-    fun login(email: String, pass: String) {
-        val trimmedEmail = email.trim()
-        if (trimmedEmail.isEmpty()) {
-            _uiState.value = AuthUiState.Error("Please enter your email.")
-            return
+    fun login(email: String, password: String) {
+        val trimmed = email.trim()
+        when {
+            trimmed.isEmpty() -> return fail(R.string.err_email_required)
+            password.isEmpty() -> return fail(R.string.err_password_required)
         }
-
-        if (pass.isEmpty()) {
-            _uiState.value = AuthUiState.Error("Please enter your password.")
-            return
-        }
-
         _uiState.value = AuthUiState.Loading
-
         viewModelScope.launch {
-            val loginResult = authRepository.login(trimmedEmail, pass)
-            loginResult.onSuccess { uid ->
-                val profileResult = userRepository.getUser(uid)
-                profileResult.onSuccess { userProfile ->
-                    when (userProfile.role) {
-                        UserRole.CUSTOMER -> {
-                            _uiState.value = AuthUiState.NavigateToCustomer(userProfile)
-                        }
-                        UserRole.BANK_OFFICER -> {
-                            _uiState.value = AuthUiState.NavigateToOfficer(userProfile)
-                        }
-                    }
-                }.onFailure { profileError ->
-                    _uiState.value = AuthUiState.Error(
-                        profileError.localizedMessage ?: "Failed to retrieve user profile."
-                    )
-                }
-            }.onFailure { loginError ->
-                _uiState.value = AuthUiState.Error(
-                    loginError.localizedMessage ?: "Invalid email or password."
-                )
-            }
+            authRepository.login(trimmed, password)
+                .onSuccess { uid -> loadAndRoute(uid) }
+                .onFailure { fail(R.string.err_login_failed) }
         }
     }
 
-    fun loginWithUid(uid: String) {
+    /** Đã có phiên Firebase (mở app hoặc vừa mở khoá): đọc hồ sơ rồi điều hướng. */
+    fun loadSession(uid: String) {
         _uiState.value = AuthUiState.Loading
+        viewModelScope.launch { loadAndRoute(uid) }
+    }
+
+    fun forgotPassword(email: String) {
+        if (!Validators.isValidEmail(email)) return fail(R.string.err_email_invalid)
         viewModelScope.launch {
-            val profileResult = userRepository.getUser(uid)
-            profileResult.onSuccess { userProfile ->
-                when (userProfile.role) {
-                    UserRole.CUSTOMER -> {
-                        _uiState.value = AuthUiState.NavigateToCustomer(userProfile)
-                    }
-                    UserRole.BANK_OFFICER -> {
-                        _uiState.value = AuthUiState.NavigateToOfficer(userProfile)
-                    }
-                }
-            }.onFailure { profileError ->
-                _uiState.value = AuthUiState.Error(
-                    profileError.localizedMessage ?: "Failed to authenticate biometric user."
-                )
-            }
+            authRepository.sendPasswordReset(email.trim())
+                .onSuccess { _uiState.value = AuthUiState.Info(R.string.msg_reset_email_sent) }
+                .onFailure { fail(R.string.err_generic) }
         }
     }
 
     fun resetState() {
         _uiState.value = AuthUiState.Idle
     }
-}
 
+    private suspend fun loadAndRoute(uid: String) {
+        userRepository.getUser(uid)
+            .onSuccess { user -> _uiState.value = routeFor(user) }
+            .onFailure {
+                authRepository.logout()
+                fail(R.string.err_profile_missing)
+            }
+    }
+
+    private fun routeFor(user: User): AuthUiState = when {
+        user.mustChangePassword -> AuthUiState.NavigateToChangePassword(user)
+        user.role == UserRole.BANK_OFFICER -> AuthUiState.NavigateToOfficer(user)
+        else -> AuthUiState.NavigateToCustomer(user)
+    }
+
+    private fun fail(@StringRes res: Int) {
+        _uiState.value = AuthUiState.Error(res)
+    }
+}

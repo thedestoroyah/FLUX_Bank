@@ -57,11 +57,7 @@ class CustomerMainActivity : AppCompatActivity() {
         }
 
         binding.btnLogout.setOnClickListener {
-            authRepository.logout()
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
+            com.flux.bank.ui.auth.RoleRouter.signOut(this)
         }
     }
 
