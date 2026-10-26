@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/flux_bg"
+    android:clipChildren="false">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:paddingBottom="@dimen/space_32">
+
+        <View
+            android:id="@+id/bgMint"
+            android:layout_width="0dp"
+            android:layout_height="380dp"
+            android:background="@drawable/bg_home_mint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Lời chào -->
+        <TextView
+            android:id="@+id/tvAvatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="@dimen/space_16"
+            android:layout_marginTop="@dimen/space_12"
+            android:background="@drawable/bg_avatar"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Flux.Label"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvGreeting"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_12"
+            android:textAppearance="@style/TextAppearance.Flux.Caption"
+            app:layout_constraintBottom_toTopOf="@id/tvName"
+            app:layout_constraintEnd_toStartOf="@id/btnBell"
+            app:layout_constraintStart_toEndOf="@id/tvAvatar"
+            app:layout_constraintTop_toTopOf="@id/tvAvatar"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Flux.TitleM"
+            app:layout_constraintBottom_toBottomOf="@id/tvAvatar"
+            app:layout_constraintEnd_toEndOf="@id/tvGreeting"
+            app:layout_constraintStart_toStartOf="@id/tvGreeting"
+            app:layout_constraintTop_toBottomOf="@id/tvGreeting" />
+
+        <ImageButton
+            android:id="@+id/btnBell"
+            android:layout_width="@dimen/touch_min"
+            android:layout_height="@dimen/touch_min"
+            android:layout_marginEnd="@dimen/space_8"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cd_notifications"
+            android:src="@drawable/ic_bell"
+            app:layout_constraintBottom_toBottomOf="@id/tvAvatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvAvatar"
+            app:tint="@color/flux_text_primary" />
+
+        <!-- Thẻ Titanium (vuốt ngang giữa các tài khoản) -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/pagerCards"
+            android:layout_width="0dp"
+            android:layout_height="240dp"
+            android:layout_marginTop="@dimen/space_16"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingStart="@dimen/space_16"
+            android:paddingEnd="@dimen/space_16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvAvatar" />
+
+        <View
+            android:id="@+id/skeletonCard"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/space_16"
+            android:layout_marginEnd="@dimen/space_16"
+            android:background="@drawable/bg_skeleton"
+            app:layout_constraintBottom_toBottomOf="@id/pagerCards"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/pagerCards" />
+
+        <LinearLayout
+            android:id="@+id/dots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_12"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pagerCards" />
+
+        <!-- Nhắc eKYC: chỉ hiện khi chưa được duyệt -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardKyc"
+            style="@style/Widget.Flux.Card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_16"
+            android:layout_marginTop="@dimen/space_12"
+            android:layout_marginEnd="@dimen/space_16"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dots">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/space_12">
+
+                <ImageView
+                    android:id="@+id/ivKyc"
+                    style="@style/Widget.Flux.IconTile"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:backgroundTint="@color/cat_gold_bg"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_id_card"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/cat_gold" />
+
+                <TextView
+                    android:id="@+id/tvKycTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_12"
+                    android:text="@string/home_kyc_title"
+                    android:textAppearance="@style/TextAppearance.Flux.Label"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/ivKycChevron"
+                    app:layout_constraintStart_toEndOf="@id/ivKyc"
+                    app:layout_constraintTop_toTopOf="@id/ivKyc" />
+
+                <TextView
+                    android:id="@+id/tvKycBody"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_12"
+                    android:textAppearance="@style/TextAppearance.Flux.Caption"
+                    app:layout_constraintEnd_toStartOf="@id/ivKycChevron"
+                    app:layout_constraintStart_toEndOf="@id/ivKyc"
+                    app:layout_constraintTop_toBottomOf="@id/tvKycTitle" />
+
+                <ImageView
+                    android:id="@+id/ivKycChevron"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_caret_right"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/flux_text_tertiary" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Lưới tiện ích 4x3 -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvUtilities"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_8"
+            android:layout_marginTop="@dimen/space_16"
+            android:layout_marginEnd="@dimen/space_8"
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardKyc" />
+
+        <!-- Giao dịch gần đây -->
+        <TextView
+            android:id="@+id/tvRecent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_16"
+            android:layout_marginTop="@dimen/space_24"
+            android:text="@string/home_recent"
+            android:textAppearance="@style/TextAppearance.Flux.TitleM"
+            app:layout_constraintEnd_toStartOf="@id/btnSeeAll"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rvUtilities" />
+
+        <Button
+            android:id="@+id/btnSeeAll"
+            style="@style/Widget.Flux.Button.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/space_8"
+            android:text="@string/home_see_all"
+            app:layout_constraintBaseline_toBaselineOf="@id/tvRecent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardEmpty"
+            style="@style/Widget.Flux.Card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_16"
+            android:layout_marginTop="@dimen/space_8"
+            android:layout_marginEnd="@dimen/space_16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvRecent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="@dimen/space_24">
+
+                <ImageView
+                    style="@style/Widget.Flux.IconTile"
+                    android:backgroundTint="@color/flux_border_subtle"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_history"
+                    app:tint="@color/flux_text_tertiary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_12"
+                    android:text="@string/home_no_transactions"
+                    android:textAppearance="@style/TextAppearance.Flux.Label" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_4"
+                    android:text="@string/home_no_transactions_hint"
+                    android:textAppearance="@style/TextAppearance.Flux.Caption" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

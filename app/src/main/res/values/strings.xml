@@ -56,4 +56,52 @@
     <string name="err_password_weak">Mật khẩu cần tối thiểu 8 ký tự, có cả chữ và số.</string>
     <string name="err_password_mismatch">Hai mật khẩu không trùng khớp.</string>
     <string name="err_recent_login">Vui lòng đăng nhập lại rồi đổi mật khẩu.</string>
+
+    <!-- Tab khách hàng -->
+    <string name="tab_home">Trang chủ</string>
+    <string name="tab_transfer">Chuyển tiền</string>
+    <string name="tab_qr">Quét QR</string>
+    <string name="tab_history">Lịch sử</string>
+    <string name="tab_profile">Cá nhân</string>
+
+    <!-- Trang chủ -->
+    <string name="greeting_morning">Chào buổi sáng</string>
+    <string name="greeting_afternoon">Chào buổi chiều</string>
+    <string name="greeting_evening">Chào buổi tối</string>
+    <string name="cd_notifications">Thông báo</string>
+    <string name="card_brand">FLUX</string>
+    <string name="card_available_balance">Số dư khả dụng</string>
+    <string name="cd_toggle_balance">Ẩn hoặc hiện số dư</string>
+    <string name="card_currency">VND</string>
+    <string name="account_checking">Checking</string>
+    <string name="account_saving">Saving</string>
+    <string name="account_mortgage">Mortgage</string>
+    <string name="home_recent">Giao dịch gần đây</string>
+    <string name="home_see_all">Xem tất cả</string>
+    <string name="home_no_transactions">Chưa có giao dịch</string>
+    <string name="home_no_transactions_hint">Giao dịch của bạn sẽ hiện ở đây</string>
+    <string name="home_no_account">Chưa có tài khoản. Liên hệ nhân viên ngân hàng.</string>
+    <string name="home_kyc_title">Xác minh danh tính</string>
+    <string name="home_kyc_body">Hoàn tất eKYC để dùng đầy đủ tính năng</string>
+    <string name="home_kyc_pending">Hồ sơ eKYC đang chờ duyệt</string>
+    <string name="home_kyc_rejected">Hồ sơ eKYC bị từ chối, chạm để nộp lại</string>
+
+    <!-- Tiện ích -->
+    <string name="util_deposit">Nạp tiền</string>
+    <string name="util_withdraw">Rút tiền</string>
+    <string name="util_electricity">Tiền điện</string>
+    <string name="util_water">Tiền nước</string>
+    <string name="util_topup">Nạp ĐT</string>
+    <string name="util_flight">Vé máy bay</string>
+    <string name="util_movie">Vé phim</string>
+    <string name="util_hotel">Khách sạn</string>
+    <string name="util_shopping">Mua sắm</string>
+    <string name="util_saving">Tiết kiệm</string>
+    <string name="util_branch">Chi nhánh</string>
+    <string name="util_assistant">Trợ lý AI</string>
+
+    <!-- Sắp ra mắt -->
+    <string name="coming_soon_title">Sắp ra mắt</string>
+    <string name="coming_soon_body">Tính năng %1$s đang được FLUX hoàn thiện. Bạn sẽ sớm dùng được ngay trong ứng dụng.</string>
+    <string name="coming_soon_home">Về trang chủ</string>
 </resources>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Thẻ Titanium theo tỉ lệ thẻ ngân hàng thật 1.586 : 1 -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="@dimen/space_4"
+    android:paddingTop="@dimen/space_4"
+    android:paddingEnd="@dimen/space_4"
+    android:paddingBottom="@dimen/space_12">
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_card_titanium"
+        android:elevation="8dp"
+        android:outlineSpotShadowColor="@color/flux_emerald"
+        android:padding="@dimen/space_16">
+
+        <TextView
+            android:id="@+id/tvBrand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold"
+            android:letterSpacing="0.2"
+            android:text="@string/card_brand"
+            android:textColor="@color/flux_text_primary"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@id/tvType"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvType" />
+
+        <TextView
+            android:id="@+id/tvType"
+            style="@style/Widget.Flux.StatusPill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/flux_emerald_light"
+            android:textColor="@color/flux_emerald_dark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/chip"
+            android:layout_width="32dp"
+            android:layout_height="23dp"
+            android:layout_marginTop="@dimen/space_12"
+            android:background="@drawable/bg_gold_chip"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvBrand" />
+
+        <TextView
+            android:id="@+id/tvBalanceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/card_available_balance"
+            android:textAppearance="@style/TextAppearance.Flux.Caption"
+            app:layout_constraintBottom_toTopOf="@id/tvBalance"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageButton
+            android:id="@+id/btnEye"
+            android:layout_width="@dimen/touch_min"
+            android:layout_height="@dimen/touch_min"
+            android:layout_marginEnd="-12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cd_toggle_balance"
+            android:src="@drawable/ic_eye"
+            app:layout_constraintBottom_toBottomOf="@id/tvBalance"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvBalanceLabel"
+            app:tint="@color/flux_text_secondary" />
+
+        <TextView
+            android:id="@+id/tvBalance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/space_8"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Flux.Amount"
+            android:textSize="26sp"
+            app:autoSizeMaxTextSize="26sp"
+            app:autoSizeMinTextSize="18sp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toTopOf="@id/tvNumber"
+            app:layout_constraintEnd_toStartOf="@id/btnEye"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tvNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFeatureSettings="tnum"
+            android:textAppearance="@style/TextAppearance.Flux.Caption"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/card_currency"
+            android:textAppearance="@style/TextAppearance.Flux.Caption"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
