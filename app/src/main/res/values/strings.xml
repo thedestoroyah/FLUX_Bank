@@ -11,9 +11,7 @@
     <string name="cd_back">Quay lại</string>
     <string name="action_ok">Đồng ý</string>
     <string name="action_cancel">Huỷ</string>
-    <string name="action_retry">Thử lại</string>
     <string name="err_generic">Đã có lỗi xảy ra. Vui lòng thử lại.</string>
-    <string name="err_network">Không thể kết nối. Kiểm tra mạng và thử lại.</string>
 
     <!-- Đăng nhập -->
     <string name="login_logo">FLUX</string>
@@ -23,7 +21,6 @@
     <string name="field_password">Mật khẩu</string>
     <string name="login_forgot">Quên mật khẩu?</string>
     <string name="login_submit">Đăng nhập</string>
-    <string name="login_or">hoặc</string>
     <string name="login_biometric">Đăng nhập bằng sinh trắc học</string>
     <string name="login_secure_note">Phiên đăng nhập được mã hoá</string>
     <string name="err_email_required">Vui lòng nhập email.</string>
@@ -80,7 +77,6 @@
     <string name="home_see_all">Xem tất cả</string>
     <string name="home_no_transactions">Chưa có giao dịch</string>
     <string name="home_no_transactions_hint">Giao dịch của bạn sẽ hiện ở đây</string>
-    <string name="home_no_account">Chưa có tài khoản. Liên hệ nhân viên ngân hàng.</string>
     <string name="home_kyc_title">Xác minh danh tính</string>
     <string name="home_kyc_body">Hoàn tất eKYC để dùng đầy đủ tính năng</string>
     <string name="home_kyc_pending">Hồ sơ eKYC đang chờ duyệt</string>

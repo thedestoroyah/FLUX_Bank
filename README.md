@@ -4,7 +4,8 @@
 
 ## Build & test
 
-Gradle cần JDK đầy đủ (JRE đi kèm extension VSCode thiếu `jlink`):
+Gradle cần JDK đầy đủ. JRE đi kèm extension Java của VSCode thiếu `jlink`; nếu build báo
+"jlink executable ... does not exist" thì chạy `./gradlew --stop` (dừng daemon do VSCode mở) rồi build lại:
 
 ```bash
 JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew testDebugUnitTest   # unit test
