@@ -71,7 +71,7 @@ class TransactionAuthSheet : BottomSheetDialogFragment() {
         notifier.autofill.observe(viewLifecycleOwner) { event -> event.consume()?.let(viewModel::fill) }
         notifier.inAppSms.observe(viewLifecycleOwner) { event ->
             event.consume()?.let { code ->
-                SimulatedSmsBanner.show(requireActivity(), notifier.smsText(code)) { notifier.requestAutofill(code) }
+                SimulatedSmsBanner.show(requireDialog().window!!, notifier.smsText(code)) { notifier.requestAutofill(code) }
             }
         }
         viewModel.state.observe(viewLifecycleOwner, ::render)
@@ -157,7 +157,8 @@ class TransactionAuthSheet : BottomSheetDialogFragment() {
         return FaceStepController(
             requireContext(), viewLifecycleOwner, binding.face.preview,
             onBlink = viewModel::onBlink,
-            onEmbedding = viewModel::onFaceEmbedding
+            onEmbedding = viewModel::onFaceEmbedding,
+            onError = viewModel::onCameraError
         ).also {
             camera = it
             it.start()

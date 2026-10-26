@@ -164,4 +164,11 @@ class TransactionAuthViewModelTest {
         assertEquals(delivered[0], (vm.state.value as AuthSheetState.EnteringOtp).digits)
         assertNotEquals(AuthSheetState.Verified, vm.state.value)
     }
+
+    @Test
+    fun cameraErrorFailsInsteadOfCrashing() {
+        toFaceStep()
+        vm.onCameraError()
+        assertEquals(AuthSheetState.Failed(R.string.face_camera_unavailable), vm.state.value)
+    }
 }

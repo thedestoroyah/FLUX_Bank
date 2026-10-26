@@ -92,10 +92,19 @@ class EkycViewModel(
                     submittedBy = submittedBy
                 )
             }
+            // Firestore giới hạn 1 MiB/document: chặn trước để không nhận lỗi chung chung từ server
+            if (record.idCardBase64.length + record.faceImageBase64.length > MAX_IMAGES_BASE64_CHARS) {
+                return@launch error(R.string.ekyc_too_large)
+            }
             kyc.submit(record)
                 .onSuccess { update { it.copy(loading = false, submitted = true, status = KycStatus.PENDING, rejectReason = null) } }
                 .onFailure { error(R.string.err_generic) }
         }
+    }
+
+    companion object {
+        /** Tổng 2 ảnh Base64 tối đa, chừa chỗ cho embedding và các field khác trong 1 MiB. */
+        const val MAX_IMAGES_BASE64_CHARS = 900_000
     }
 
     private fun error(@StringRes res: Int) = update { it.copy(loading = false, errorRes = res) }

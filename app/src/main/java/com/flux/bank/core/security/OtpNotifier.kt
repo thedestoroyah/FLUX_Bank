@@ -77,12 +77,26 @@ class OtpNotifier(private val context: Context) {
     fun smsText(code: String): String =
         context.getString(R.string.otp_sms_body, code.take(3) + " " + code.drop(3))
 
-    private fun canPostNotifications(): Boolean =
-        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
-            PackageManager.PERMISSION_GRANTED
+    private fun canPostNotifications(): Boolean {
+        val manager = NotificationManagerCompat.from(context)
+        val channel = manager.getNotificationChannelCompat(CHANNEL_ID)
+        return canNotify(
+            sdk = Build.VERSION.SDK_INT,
+            permissionGranted = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED,
+            appNotificationsEnabled = manager.areNotificationsEnabled(),
+            channelBlocked = channel?.importance == NotificationManagerCompat.IMPORTANCE_NONE
+        )
+    }
 
     companion object {
+        /**
+         * Có đăng được notification hay không. Người dùng có thể tắt thông báo của app hoặc của kênh OTP
+         * mà không thu hồi quyền — khi đó notify() bị bỏ qua âm thầm nên phải dùng banner trong app.
+         */
+        fun canNotify(sdk: Int, permissionGranted: Boolean, appNotificationsEnabled: Boolean, channelBlocked: Boolean): Boolean =
+            (sdk < Build.VERSION_CODES.TIRAMISU || permissionGranted) && appNotificationsEnabled && !channelBlocked
+
         const val CHANNEL_ID = "otp_sms"
         const val EXTRA_OTP_CODE = "extra_otp_code"
         private const val NOTIFICATION_ID = 6868

@@ -10,7 +10,16 @@ import com.flux.bank.utils.ImageUtils
 /** Ảnh chụp thật (Bitmap) cho màn eKYC. */
 class BitmapPhoto(val bitmap: Bitmap, private val context: Context) : CapturedPhoto {
 
-    override fun toBase64(): String = ImageUtils.bitmapToBase64(bitmap, quality = JPEG_QUALITY, maxDim = MAX_DIM)
+    /** Nén JPEG, giảm dần chất lượng cho tới khi mỗi ảnh không quá [MAX_BASE64_CHARS] ký tự. */
+    override fun toBase64(): String {
+        var quality = JPEG_QUALITY
+        var encoded = ImageUtils.bitmapToBase64(bitmap, quality = quality, maxDim = MAX_DIM)
+        while (encoded.length > MAX_BASE64_CHARS && quality > MIN_QUALITY) {
+            quality -= QUALITY_STEP
+            encoded = ImageUtils.bitmapToBase64(bitmap, quality = quality, maxDim = MAX_DIM)
+        }
+        return encoded
+    }
 
     /** Tìm khuôn mặt trong selfie; đúng một mặt thì tính embedding MobileFaceNet. */
     suspend fun analyzeFace(): FaceAnalysis {
@@ -25,5 +34,8 @@ class BitmapPhoto(val bitmap: Bitmap, private val context: Context) : CapturedPh
     companion object {
         const val MAX_DIM = 1024
         private const val JPEG_QUALITY = 80
+        private const val MIN_QUALITY = 40
+        private const val QUALITY_STEP = 10
+        private const val MAX_BASE64_CHARS = 420_000
     }
 }

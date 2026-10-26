@@ -18,8 +18,8 @@ class EkycViewModelTest {
     @get:Rule val instant = InstantTaskExecutorRule()
     @get:Rule val main = MainDispatcherRule()
 
-    private class FakePhoto(val tag: String) : CapturedPhoto {
-        override fun toBase64() = "b64-$tag"
+    private class FakePhoto(val tag: String, private val size: Int = 0) : CapturedPhoto {
+        override fun toBase64() = if (size > 0) "x".repeat(size) else "b64-$tag"
     }
 
     private val kyc = FakeKycRepository()
@@ -80,5 +80,15 @@ class EkycViewModelTest {
         assertEquals("b64-face", record.faceImageBase64)
         assertEquals(2, record.faceEmbedding.size)
         assertTrue(vm.state.value!!.submitted)
+    }
+
+    @Test
+    fun oversizedDocumentIsRejectedBeforeUpload() {
+        vm.load("c1")
+        vm.setIdPhoto(FakePhoto("id", size = 600_000))
+        vm.setSelfie(FakePhoto("face", size = 500_000))
+        vm.submit("c1", submittedBy = "c1")
+        assertEquals(R.string.ekyc_too_large, vm.state.value!!.errorRes)
+        assertTrue(kyc.submitted.isEmpty())
     }
 }

@@ -127,6 +127,7 @@
     <string name="face_failed">Không xác thực được khuôn mặt. Giao dịch bị huỷ.</string>
     <string name="face_not_verified">Bạn cần hoàn tất eKYC trước khi thực hiện giao dịch giá trị cao.</string>
     <string name="face_no_embedding">Hồ sơ eKYC chưa có dữ liệu khuôn mặt. Hãy nộp lại eKYC.</string>
+    <string name="face_camera_unavailable">Không mở được camera trước trên thiết bị này.</string>
     <string name="face_camera_denied">Cần quyền camera để xác thực khuôn mặt.</string>
     <string name="cd_face_preview">Khung hình camera trước</string>
 
@@ -146,6 +147,7 @@
     <string name="ekyc_rejected_reason">Lý do: %1$s</string>
     <string name="ekyc_pending_banner">Hồ sơ đang chờ nhân viên duyệt.</string>
     <string name="ekyc_verified_banner">Danh tính đã được xác minh.</string>
+    <string name="ekyc_too_large">Ảnh quá lớn để lưu. Hãy chụp lại ở nơi đủ sáng, giữ máy ổn định.</string>
     <string name="ekyc_camera_denied">Cần quyền camera để chụp ảnh eKYC.</string>
     <string name="cd_id_preview">Ảnh CCCD đã chụp</string>
     <string name="cd_selfie_preview">Ảnh chân dung đã chụp</string>

@@ -55,12 +55,16 @@ service cloud.firestore {
       allow update: if false;
     }
 
+    // Khách chỉ được (nộp lại) hồ sơ khi đang chưa nộp hoặc bị từ chối, và cùng batch phải chuyển users.kycStatus
+    // sang PENDING — không thể thay ảnh/embedding hay xoá dấu vết duyệt sau khi đã được duyệt.
     match /kyc/{uid} {
       allow read: if isOwner(uid) || isOfficer();
       allow create, update: if isOfficer()
         || (isOwner(uid)
             && request.resource.data.submittedBy == request.auth.uid
-            && request.resource.data.reviewedBy == null);
+            && request.resource.data.reviewedBy == null
+            && get(/databases/$(database)/documents/users/$(uid)).data.kycStatus in ['NOT_SUBMITTED', 'REJECTED']
+            && getAfter(/databases/$(database)/documents/users/$(uid)).data.kycStatus == 'PENDING');
       allow delete: if false;
     }
 

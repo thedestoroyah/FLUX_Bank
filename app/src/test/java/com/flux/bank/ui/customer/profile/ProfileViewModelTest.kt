@@ -27,10 +27,19 @@ class ProfileViewModelTest {
         val auth = FakeAuthRepository().apply { uid = "c1" }
         val users = FakeUserRepository(listOf(customer("c1")))
         val local = mutableMapOf<String, Boolean>()
-        val vm = ProfileViewModel(auth, users, setLocalBiometric = { uid, on -> local[uid] = on }).apply { load() }
+        val vm = ProfileViewModel(auth, users, setLocalBiometric = { uid, on -> local[uid] = on }, isLocalBiometric = { local[it] == true }).apply { load() }
         vm.setBiometric(true)
         assertEquals(true, local["c1"])
         assertEquals("c1" to mapOf<String, Any?>("biometricEnabled" to true), users.updates.single())
         assertTrue(vm.state.value!!.biometricEnabled)
+    }
+
+    @Test
+    fun switchReflectsLocalFlagNotFirestore() {
+        // Firestore còn true từ thiết bị/phiên trước, nhưng máy này chưa bật -> app sẽ không khoá
+        val auth = FakeAuthRepository().apply { uid = "c1" }
+        val users = FakeUserRepository(listOf(customer("c1").copy(biometricEnabled = true)))
+        val vm = ProfileViewModel(auth, users, setLocalBiometric = { _, _ -> }, isLocalBiometric = { false }).apply { load() }
+        assertEquals(false, vm.state.value!!.biometricEnabled)
     }
 }

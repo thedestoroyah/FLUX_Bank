@@ -1,6 +1,9 @@
 package com.flux.bank
 
 import android.app.Application
+import android.content.Intent
+import com.flux.bank.ui.auth.UnlockActivity
+import com.flux.bank.utils.BiometricHelper
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.flux.bank.core.security.AppLockObserver
 import com.flux.bank.core.security.LockPolicy
@@ -33,7 +36,19 @@ class FluxApp : Application() {
         CustomerOnboardingService(authRepository, userRepository, accountRepository) { authRepository.currentUid().orEmpty() }
     }
     val lockPolicy = LockPolicy()
-    val appLockObserver: AppLockObserver by lazy { AppLockObserver(this, lockPolicy, authRepository, sessionManager) }
+    val appLockObserver: AppLockObserver by lazy {
+        AppLockObserver(
+            policy = lockPolicy,
+            auth = authRepository,
+            biometricEnabled = sessionManager::isBiometricEnabled,
+            biometricAvailable = { BiometricHelper.canAuthenticate(this) },
+            startUnlock = {
+                startActivity(
+                    UnlockActivity.intent(this, UnlockActivity.Mode.RESUME).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
+            }
+        )
+    }
 
     override fun onCreate() {
         super.onCreate()

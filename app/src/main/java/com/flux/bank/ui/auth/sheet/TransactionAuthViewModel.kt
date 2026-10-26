@@ -116,6 +116,11 @@ class TransactionAuthViewModel(
         }
     }
 
+    /** Không mở được camera trước (thiết bị không có, đang bị app khác dùng...): huỷ an toàn thay vì crash. */
+    fun onCameraError() {
+        if (_state.value is AuthSheetState.FaceStep) _state.value = AuthSheetState.Failed(R.string.face_camera_unavailable)
+    }
+
     /** UI đã hiện dấu tích "khớp": hoàn tất xác thực. */
     fun onMatchShown() {
         if ((_state.value as? AuthSheetState.FaceStep)?.phase == FacePhase.MATCHED) _state.value = AuthSheetState.Verified

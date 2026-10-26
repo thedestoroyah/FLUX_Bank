@@ -30,6 +30,7 @@ class UnlockActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityUnlockBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        app.appLockObserver.markColdStartHandled()
 
         val uid = app.authRepository.currentUid()
         if (uid == null) {
