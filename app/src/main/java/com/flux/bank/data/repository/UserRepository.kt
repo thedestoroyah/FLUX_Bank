@@ -11,6 +11,8 @@ interface UserRepository {
     suspend fun getUser(uid: String): Result<User>
     suspend fun createProfile(user: User): Result<Unit>
     suspend fun updateFields(uid: String, fields: Map<String, Any?>): Result<Unit>
+    /** Chỉ dùng để rollback khi tạo khách hàng thất bại giữa chừng. */
+    suspend fun deleteProfile(uid: String): Result<Unit>
     suspend fun listCustomers(): Result<List<User>>
     suspend fun findByPhone(phone: String): Result<User?>
     suspend fun findByNationalId(nationalId: String): Result<User?>
@@ -35,6 +37,11 @@ class FirestoreUserRepository(
 
     override suspend fun updateFields(uid: String, fields: Map<String, Any?>): Result<Unit> = runCatching {
         users.document(uid).update(fields).await()
+        Unit
+    }
+
+    override suspend fun deleteProfile(uid: String): Result<Unit> = runCatching {
+        users.document(uid).delete().await()
         Unit
     }
 
