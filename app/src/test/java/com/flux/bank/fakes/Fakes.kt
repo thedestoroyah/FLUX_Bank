@@ -58,9 +58,20 @@ class FakeUserRepository(initial: List<User> = emptyList()) : UserRepository {
         return Result.success(Unit)
     }
     override suspend fun deleteProfile(uid: String): Result<Unit> { users.remove(uid); return Result.success(Unit) }
+    val phoneChanges = mutableListOf<Triple<String, String, String>>()
+    override suspend fun changePhone(uid: String, oldPhone: String, newPhone: String): Result<Unit> {
+        if (failUpdate) return Result.failure(IllegalStateException("update failed"))
+        phoneChanges += Triple(uid, oldPhone, newPhone)
+        users[uid]?.let { users[uid] = it.copy(phoneNumber = newPhone) }
+        return Result.success(Unit)
+    }
     override suspend fun listCustomers() = Result.success(users.values.filter { it.role == UserRole.CUSTOMER })
-    override suspend fun findByPhone(phone: String) = Result.success(users.values.firstOrNull { it.phoneNumber == phone })
-    override suspend fun findByNationalId(nationalId: String) = Result.success(users.values.firstOrNull { it.nationalId == nationalId })
+    override suspend fun findUidByPhone(phone: String) = Result.success(users.values.firstOrNull { it.phoneNumber == phone }?.uid)
+    var nationalIdQueries = 0
+    override suspend fun findByNationalId(nationalId: String): Result<User?> {
+        nationalIdQueries++
+        return Result.success(users.values.firstOrNull { it.nationalId == nationalId })
+    }
     override suspend fun countCustomers() = Result.success(users.values.count { it.role == UserRole.CUSTOMER })
 }
 

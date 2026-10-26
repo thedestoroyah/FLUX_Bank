@@ -80,6 +80,14 @@ class CustomerOnboardingService(
         return duplicateError(excludeUid = uid, phone = normalizedPhone, nationalId = normalizedId)
     }
 
+    /** Khách tự đổi SĐT: chỉ kiểm tra định dạng và `phoneIndex` (khách không được tra CCCD người khác). */
+    suspend fun validatePhoneChange(uid: String, phone: String): OnboardingError? {
+        val normalized = Validators.normalizePhone(phone)
+        if (!Validators.isValidVnPhone(normalized)) return OnboardingError.InvalidPhone
+        val owner = users.findUidByPhone(normalized).getOrElse { return OnboardingError.Failed(it) }
+        return if (owner != null && owner != uid) OnboardingError.PhoneTaken else null
+    }
+
     private fun validate(input: NewCustomerInput, phone: String, nationalId: String): OnboardingError? = when {
         input.fullName.isBlank() -> OnboardingError.EmptyName
         !Validators.isValidEmail(input.email) -> OnboardingError.InvalidEmail
@@ -90,8 +98,9 @@ class CustomerOnboardingService(
     }
 
     private suspend fun duplicateError(excludeUid: String?, phone: String, nationalId: String): OnboardingError? {
-        val byPhone = users.findByPhone(phone).getOrElse { return OnboardingError.Failed(it) }
-        if (byPhone != null && byPhone.uid != excludeUid) return OnboardingError.PhoneTaken
+        val phoneOwner = users.findUidByPhone(phone).getOrElse { return OnboardingError.Failed(it) }
+        if (phoneOwner != null && phoneOwner != excludeUid) return OnboardingError.PhoneTaken
+        // Chỉ nhân viên được tra CCCD (rules); khách không tự đổi CCCD nên không gọi tới đây
         val byId = users.findByNationalId(nationalId).getOrElse { return OnboardingError.Failed(it) }
         if (byId != null && byId.uid != excludeUid) return OnboardingError.NationalIdTaken
         return null
