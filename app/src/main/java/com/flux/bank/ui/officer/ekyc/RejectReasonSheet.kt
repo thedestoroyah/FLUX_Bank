@@ -9,6 +9,7 @@ import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.activityViewModels
 import com.flux.bank.R
 import com.flux.bank.databinding.SheetRejectReasonBinding
+import com.flux.bank.ui.common.padAboveKeyboard
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.radiobutton.MaterialRadioButton
 
@@ -25,6 +26,7 @@ class RejectReasonSheet : BottomSheetDialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.root.padAboveKeyboard()
         RejectReason.entries.forEach { reason ->
             binding.groupReasons.addView(MaterialRadioButton(requireContext()).apply {
                 id = View.generateViewId()

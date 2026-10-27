@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import com.flux.bank.R
 import com.flux.bank.core.format.MoneyFormatter
 import com.flux.bank.databinding.SheetEditRateBinding
+import com.flux.bank.ui.common.padAboveKeyboard
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 /** Bottom sheet sửa một mức lãi suất; dùng chung ViewModel với [RatesFragment] (fragment cha). */
@@ -28,6 +29,7 @@ class EditRateSheet : BottomSheetDialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.root.padAboveKeyboard()
         val rates = viewModel.state.value?.rates
         binding.tvTitle.setText(if (kind == RateKind.SAVING) R.string.rates_edit_saving else R.string.rates_edit_mortgage)
         if (savedInstanceState == null && rates != null) {
