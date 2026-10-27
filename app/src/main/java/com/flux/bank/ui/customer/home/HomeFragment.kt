@@ -19,7 +19,9 @@ import com.flux.bank.data.model.KycStatus
 import com.flux.bank.databinding.FragmentHomeBinding
 import com.flux.bank.ui.common.ComingSoonFragment
 import com.flux.bank.ui.customer.CustomerMainActivity
+import com.flux.bank.ui.customer.Utility
 import com.flux.bank.ui.customer.account.AccountDetailFragment
+import com.flux.bank.ui.customer.account.MoneyMoveFragment
 import com.flux.bank.ui.ekyc.EkycCaptureFragment
 
 /** Trang chủ khách hàng: lời chào, thẻ Titanium, nhắc eKYC, lưới tiện ích 4x3, giao dịch gần đây. */
@@ -47,9 +49,7 @@ class HomeFragment : Fragment() {
             override fun onPageSelected(position: Int) = renderDots(cardAdapter.itemCount, position)
         })
         binding.rvUtilities.layoutManager = GridLayoutManager(requireContext(), GRID_COLUMNS)
-        binding.rvUtilities.adapter = UtilityGridAdapter { utility ->
-            host().openScreen(ComingSoonFragment.newInstance(utility.label, utility.icon, utility.tint))
-        }
+        binding.rvUtilities.adapter = UtilityGridAdapter(::openUtility)
         binding.btnBell.setOnClickListener {
             host().openScreen(ComingSoonFragment.newInstance(R.string.cd_notifications, R.drawable.ic_bell, R.color.cat_blue))
         }
@@ -133,6 +133,15 @@ class HomeFragment : Fragment() {
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin = top + baseMargin }
             insets
         }
+    }
+
+    private fun openUtility(utility: Utility) {
+        val screen = when (utility) {
+            Utility.NAP_TIEN -> MoneyMoveFragment.newInstance(deposit = true)
+            Utility.RUT_TIEN -> MoneyMoveFragment.newInstance(deposit = false)
+            else -> ComingSoonFragment.newInstance(utility.label, utility.icon, utility.tint)
+        }
+        host().openScreen(screen)
     }
 
     private fun host() = requireActivity() as CustomerMainActivity
