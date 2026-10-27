@@ -206,4 +206,49 @@ class TransferViewModelTest {
         val vm = vm(prefill = TransferPrefill("886855309182"))
         assertEquals("bobchk", vm.s().payee!!.accountId)
     }
+
+    @Test
+    fun switchingSourceToPayeeAccountBlocksBeforeAuth() {
+        val vm = vm()
+        vm.selectSource("sav")
+        vm.setAccountNumber("886812034471")
+        assertNull(vm.s().recipientError)
+        vm.selectSource("chk")
+        vm.setAmount("500000")
+        vm.confirm()
+        assertEquals(TransferError.SAME_ACCOUNT, vm.s().recipientError)
+        assertNull(vm.askAuth.value)
+    }
+
+    @Test
+    fun payeeMatchingSourceBecomesUsableAfterSwitchingSource() {
+        val vm = vm()
+        vm.setAccountNumber("886812034471")
+        assertEquals(TransferError.SAME_ACCOUNT, vm.s().recipientError)
+        vm.selectSource("sav")
+        vm.setAmount("500000")
+        vm.confirm()
+        assertNotNull(vm.askAuth.value)
+    }
+
+    @Test
+    fun authResultUsesConfirmedRequestEvenIfFormChanged() {
+        val vm = vm()
+        vm.setAccountNumber("886855309182")
+        vm.setAmount("500000")
+        vm.confirm()
+        payees.findGate = CompletableDeferred()
+        vm.setAccountNumber("886899999999")
+        vm.onAuthResult(true)
+        assertEquals("886855309182", accounts.transfers.single().counterpartyAccount)
+    }
+
+    @Test
+    fun sameDigitsDoNotStartNewLookup() {
+        val vm = vm()
+        vm.setAccountNumber("886855309182")
+        payees.findGate = CompletableDeferred()
+        vm.setAccountNumber("8868 5530 9182")
+        assertEquals("bobchk", vm.s().payee!!.accountId)
+    }
 }

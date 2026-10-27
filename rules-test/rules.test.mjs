@@ -59,7 +59,7 @@ test('customer cannot open accounts', () => assertFails(setDoc(doc(cust(), 'acco
 // Feature 4: chuyển tiền (ghi đúng 4 document như spec §5) và danh bạ accountIndex.
 function transfer(db, o = {}) {
   const { from = 'acc1', to = 'bobchk', toOwner = 'bob', outId = 'o1', inId = 'i1', amount = 50000,
-          fromAfter = 100000 - amount, inAmount = amount, senderName = 'Nguyễn Văn An', debit = true, pair = inId } = o;
+          fromAfter = 100000 - amount, inAmount = amount, senderName = 'Nguyễn Văn An', debit = true, pair = inId, inOverride = {} } = o;
   const b = writeBatch(db);
   if (debit) b.update(doc(db, `accounts/${from}`), { balance: fromAfter, lastTxId: outId });
   b.set(doc(db, `transactions/${outId}`), { ...tx(outId, 'TRANSFER_OUT', amount, fromAfter, from), pairTxId: pair,
@@ -68,7 +68,7 @@ function transfer(db, o = {}) {
     b.update(doc(db, `accounts/${to}`), { balance: increment(inAmount), lastTxId: inId });
     b.set(doc(db, `transactions/${inId}`), { id: inId, ownerUid: toOwner, accountId: to, accountNumber: '886800000002',
       type: 'TRANSFER_IN', amount: inAmount, balanceAfter: null, pairTxId: outId, counterpartyName: senderName,
-      counterpartyAccount: '886800000001', counterpartyBank: 'FLUX', description: '', createdAt: 1 });
+      counterpartyAccount: from === 'rich' ? '886800000004' : '886800000001', counterpartyBank: 'FLUX', description: '', createdAt: 1, ...inOverride });
   }
   return b.commit();
 }
@@ -76,6 +76,9 @@ function transfer(db, o = {}) {
 test('valid internal transfer allowed', () => assertSucceeds(transfer(cust())));
 test('transfer to own saving allowed', () => assertSucceeds(transfer(cust(), { to: 'sav1', toOwner: 'cust' })));
 test('external transfer (OUT only) allowed', () => assertSucceeds(transfer(cust(), { to: null, pair: null })));
+test('TRANSFER_IN with forged balance denied', () => assertFails(transfer(cust(), { inOverride: { balanceAfter: 999999999 } })));
+test('TRANSFER_IN with forged source account denied', () => assertFails(transfer(cust(), { inOverride: { counterpartyAccount: '999999999999' } })));
+test('TRANSFER_IN with forged source bank denied', () => assertFails(transfer(cust(), { inOverride: { counterpartyBank: 'VCB' } })));
 test('credit without debit denied', () => assertFails(transfer(cust(), { debit: false })));
 test('credit amount differs from OUT denied', () => assertFails(transfer(cust(), { inAmount: 90000 })));
 test('reusing existing OUT id denied', () => assertFails(transfer(cust(), { outId: 'old' })));

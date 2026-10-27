@@ -54,6 +54,9 @@ class MoneyMoveViewModel(
     /** Đơn nạp đang chờ VNPay: [txId] là `vnp_TxnRef` và cũng là id giao dịch sẽ ghi. */
     private data class PendingPayment(val txId: String, val accountId: String, val amount: Long)
 
+    /** VNPay đã báo thành công ([transactionNo]) nhưng chưa ghi được vào Firestore: giữ để ghi lại cùng [pending] txId. */
+    private data class VerifiedPayment(val pending: PendingPayment, val transactionNo: String)
+
     private val _state = MutableLiveData(MoneyMoveState(deposit))
     val state: LiveData<MoneyMoveState> = _state
 
@@ -67,6 +70,7 @@ class MoneyMoveViewModel(
     val openPayment: LiveData<Event<String>> = _openPayment
 
     private var pending: PendingPayment? = null
+    private var verified: VerifiedPayment? = null
 
     // Đang chờ kết quả sheet xác thực: chặn bấm "Tiếp tục" lần 2 mở thêm sheet
     private var awaitingAuth = false
@@ -96,6 +100,8 @@ class MoneyMoveViewModel(
     fun setAmount(input: String) = update { it.copy(amount = Validators.parseAmount(input), amountError = null, errorRes = null) }
 
     fun confirm() {
+        // Tiền đã trả qua VNPay mà chưa ghi được: "Tiếp tục" chỉ ghi lại, không mở thanh toán mới
+        verified?.let { if (_state.value?.submitting != true) recordDeposit(it); return }
         val s = _state.value ?: return
         if (kycStatus != KycStatus.VERIFIED || s.submitting || awaitingAuth) return
         val account = s.selected ?: return
@@ -122,7 +128,7 @@ class MoneyMoveViewModel(
         val vnPay = payments ?: return
         pending = null
         when (val result = vnPay.parseReturn(query, p.txId, p.amount)) {
-            is VnPayResult.Success -> write { accounts.deposit(p.accountId, p.amount, p.txId, result.transactionNo) }
+            is VnPayResult.Success -> recordDeposit(VerifiedPayment(p, result.transactionNo))
             VnPayResult.Cancelled -> update { it.copy(errorRes = R.string.err_vnpay_cancelled) }
             is VnPayResult.Failed -> update { it.copy(errorRes = R.string.err_vnpay_failed) }
             VnPayResult.BadSignature, VnPayResult.Mismatch -> update { it.copy(errorRes = R.string.err_vnpay_bad_result) }
@@ -136,6 +142,15 @@ class MoneyMoveViewModel(
         update { it.copy(errorRes = R.string.err_vnpay_cancelled) }
     }
 
+    /** Ghi khoản nạp đã thanh toán. Lỗi (mạng) thì giữ [payment] để thử lại; dùng lại txId nên rules chặn ghi trùng. */
+    private fun recordDeposit(payment: VerifiedPayment) {
+        verified = payment
+        val p = payment.pending
+        write(onFailed = { R.string.err_vnpay_retry }) {
+            accounts.deposit(p.accountId, p.amount, p.txId, payment.transactionNo).onSuccess { verified = null }
+        }
+    }
+
     private fun openVnPay(accountId: String, amount: Long) {
         val vnPay = payments ?: return update { it.copy(errorRes = R.string.err_vnpay_not_configured) }
         val txId = accounts.newTransactionId()
@@ -144,8 +159,8 @@ class MoneyMoveViewModel(
         _openPayment.value = Event(vnPay.paymentUrl(txId, amount, "Nap tien FLUX $txId"))
     }
 
-    /** Ghi giao dịch bằng [call]; thành công phát [done], thiếu tiền thì tải lại số dư. */
-    private fun write(call: suspend () -> Result<Transaction>) {
+    /** Ghi giao dịch bằng [call]; thành công phát [done], thiếu tiền thì tải lại số dư. [onFailed] chọn thông báo cho lỗi khác. */
+    private fun write(onFailed: () -> Int = { R.string.err_generic }, call: suspend () -> Result<Transaction>) {
         update { it.copy(submitting = true, errorRes = null) }
         viewModelScope.launch {
             call()
@@ -161,7 +176,7 @@ class MoneyMoveViewModel(
                         it.copy(
                             submitting = false,
                             accounts = fresh ?: it.accounts,
-                            errorRes = if (insufficient) R.string.err_insufficient_funds else R.string.err_generic
+                            errorRes = if (insufficient) R.string.err_insufficient_funds else onFailed()
                         )
                     }
                 }

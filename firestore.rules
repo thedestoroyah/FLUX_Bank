@@ -132,10 +132,13 @@ service cloud.firestore {
             || (d.type == 'TRANSFER_IN' && d.ownerUid == acc.ownerUid && transferInBacked(d)));
     }
 
-    // TRANSFER_IN phải có cặp OUT của người ghi, cùng số tiền, và tên người gửi đúng hồ sơ (không giả tên được).
+    // TRANSFER_IN phải có cặp OUT của người ghi, cùng số tiền; thông tin người gửi hiện trên biên lai người nhận
+    // (tên, số tài khoản, ngân hàng) phải đúng hồ sơ và không kèm số dư bịa (người gửi không biết số dư người nhận).
     function transferInBacked(d) {
       let out = getAfter(/databases/$(database)/documents/transactions/$(d.pairTxId)).data;
       return out.type == 'TRANSFER_OUT' && out.ownerUid == request.auth.uid && out.amount == d.amount
+        && d.balanceAfter == null && d.counterpartyBank == 'FLUX'
+        && d.counterpartyAccount == getAfter(/databases/$(database)/documents/accounts/$(out.accountId)).data.accountNumber
         && d.counterpartyName == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.fullName;
     }
 

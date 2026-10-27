@@ -107,7 +107,8 @@ class QrFragment : Fragment() {
     }
 
     private fun startCamera() {
-        if (provider != null) return
+        // executor khác null nghĩa là camera đang bật hoặc đang khởi động (listener bên dưới chạy bất đồng bộ)
+        if (executor != null) return
         val scanner = BarcodeScanning.getClient(BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build())
         val executor = Executors.newSingleThreadExecutor()
         this.scanner = scanner
@@ -118,6 +119,8 @@ class QrFragment : Fragment() {
         future.addListener({
             val cameraProvider = future.get()
             val binding = _binding ?: return@addListener
+            // Người dùng đã chuyển sang "Mã của tôi" (stopCamera đã đóng executor) trước khi camera sẵn sàng
+            if (executor.isShutdown) return@addListener
             val preview = Preview.Builder().build().also { it.surfaceProvider = binding.previewView.surfaceProvider }
             val analysis = ImageAnalysis.Builder().setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
             analysis.setAnalyzer(executor) { image -> analyze(scanner, image, main) }

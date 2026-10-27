@@ -148,6 +148,8 @@ class MoneyMoveFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        // View mới (quay lại từ VNPay/eKYC) chưa có chip nào: buộc renderChips tạo lại
+        chipIds = emptyList()
         _binding = null
     }
 
