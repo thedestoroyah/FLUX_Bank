@@ -9,7 +9,7 @@ import java.time.ZoneId
 /** Lý do một lần chuyển tiền không hợp lệ (hiện ngay dưới ô tương ứng). */
 enum class TransferError {
     BELOW_MIN, ABOVE_MAX, INSUFFICIENT_FUNDS, DAILY_LIMIT, SAME_ACCOUNT,
-    INVALID_ACCOUNT_NUMBER, PAYEE_NOT_FOUND, NO_BANK, NO_NAME, DESCRIPTION_TOO_LONG
+    INVALID_ACCOUNT_NUMBER, PAYEE_NOT_FOUND, NO_BANK, NO_NAME
 }
 
 /** Kiểm tra chuyển tiền trước khi ghi: hạn mức mỗi lần, mỗi ngày (giờ Việt Nam), số dư, định dạng số tài khoản. */
