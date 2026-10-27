@@ -351,6 +351,13 @@
     <string name="receipt_bank_account">%1$s · %2$s</string>
     <string name="bank_flux">FLUX</string>
     <string name="vnpay">VNPay</string>
+    <string name="transfer_recent">Người nhận gần đây</string>
+    <string name="transfer_internal">Trong FLUX Bank</string>
+    <string name="transfer_internal_hint">Nhận ngay, tra tên theo số tài khoản</string>
+    <string name="transfer_external">Liên ngân hàng</string>
+    <string name="transfer_external_hint">Vietcombank, Techcombank, BIDV…</string>
+    <string name="transfer_own">Giữa tài khoản của tôi</string>
+    <string name="transfer_own_hint">Thanh toán ⇄ Tiết kiệm</string>
     <string name="tx_transfer_out">Chuyển đến %1$s</string>
     <string name="tx_transfer_in">Nhận từ %1$s</string>
     <string name="tx_deposit_vnpay">Nạp tiền qua VNPay</string>

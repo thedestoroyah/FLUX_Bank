@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tab Chuyển tiền (mockup F4 màn 1) -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/flux_bg"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/space_16"
+        android:paddingEnd="@dimen/space_16"
+        android:paddingBottom="96dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/space_16"
+            android:paddingBottom="@dimen/space_12"
+            android:text="@string/tab_transfer"
+            android:textAppearance="@style/TextAppearance.Flux.TitleL" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Flux.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <include android:id="@+id/optInternal" layout="@layout/item_transfer_option" />
+
+                <include android:id="@+id/optExternal" layout="@layout/item_transfer_option" />
+
+                <include android:id="@+id/optOwn" layout="@layout/item_transfer_option" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/tvRecentLabel"
+            style="@style/Widget.Flux.SectionLabel"
+            android:text="@string/transfer_recent" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardRecent"
+            style="@style/Widget.Flux.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRecent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

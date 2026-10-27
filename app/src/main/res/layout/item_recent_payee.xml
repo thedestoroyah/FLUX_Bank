@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Một người nhận gần đây: avatar chữ tắt · tên · ngân hàng và số tài khoản -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="56dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/space_16"
+    android:paddingTop="@dimen/space_8"
+    android:paddingEnd="@dimen/space_16"
+    android:paddingBottom="@dimen/space_8">
+
+    <TextView
+        android:id="@+id/tvInitials"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/bg_avatar"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.Flux.Caption"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_12"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Flux.Label" />
+
+        <TextView
+            android:id="@+id/tvDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFeatureSettings="tnum"
+            android:textAppearance="@style/TextAppearance.Flux.Caption" />
+    </LinearLayout>
+</LinearLayout>
