@@ -41,7 +41,7 @@ App không có chức năng tự đăng ký nhân viên; mọi khách hàng đ�
 
 ### 3. Tạo index cho lịch sử giao dịch (Feature 3)
 Tab Lịch sử truy vấn `transactions` theo `ownerUid` và sắp theo `createdAt` giảm dần, nên cần một composite index (miễn phí):
-Console → **Firestore Database → Indexes → Composite → Create index**: collection `transactions`, field `ownerUid` **Ascending**, `createdAt` **Descending**, query scope Collection.
+Console → **Firestore Database → Indexes → Composite → Create index**: collection `transactions`, field `ownerUid` **Ascending**, `createdAt` **Descending**, query scope Collection. Chú ý chiều của `createdAt`: index Ascending không dùng được cho truy vấn này.
 Cách khác: mở tab Lịch sử một lần, Logcat sẽ in lỗi `FAILED_PRECONDITION` kèm link tạo sẵn index; mở link và bấm Create. Index mất vài phút để chuyển sang Enabled.
 
 ### 4. Kiểm tra rules bằng Rules Playground
