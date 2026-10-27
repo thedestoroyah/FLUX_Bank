@@ -15,7 +15,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 
 ## 2. Trạng thái hiện tại
 
-- Repo git ở `FLUX_Bank/`, chưa có remote. `main` có F1–F3. **F4 nằm trên nhánh `feature/f4-transfers`** (chưa merge, chờ chạy end-to-end trên máy thật, mục 3).
+- Repo git ở `FLUX_Bank/`, chưa có remote. `main` có F1–F3. **F4 nằm trên nhánh `feature/f4-transfers`** (đã chạy end-to-end đạt trên máy thật 2026-10-28, mục 3; chủ dự án chọn giữ nhánh, **chưa merge**). Working tree đang đứng ở nhánh này.
 - **Unit test: 216/216 pass**, rules test trên emulator 40/40. F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test). `assembleDebug` và `lintDebug` pass (lint 0 error).
 - F1–F2 và F3 đều đã được reviewer độc lập review toàn nhánh, đã sửa hết lỗi Important; lỗi Minor còn lại ở mục 7. F3 đã chạy demo đạt trên máy thật (mục 3).
 
@@ -26,8 +26,8 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 | Khung app | `CustomerMainActivity` (5 tab có nút QR nổi ở giữa) · `OfficerMainActivity` (5 tab) · `ScreenHost.openScreen()` |
 | Feature 1 | Nhân viên tạo / tìm / sửa khách (FirebaseApp phụ, có rollback, cấp tài khoản Checking 0 ₫, mật khẩu tạm), gửi email đặt lại mật khẩu, chụp eKYC hộ khách. Khách xem hồ sơ, tự sửa SĐT (qua OTP), địa chỉ, avatar. Bắt đổi mật khẩu ở lần đăng nhập đầu |
 | Feature 2 | eKYC (ML Kit + MobileFaceNet embedding), nhân viên duyệt / từ chối có lý do. Khoá app sinh trắc học (cold start, khi app bị khôi phục, sau ≥ 60 s ở nền). OTP 6 số / 120 s / dùng 1 lần / gắn với giao dịch / sai 5 lần thì khoá, gửi qua SMS giả lập kèm banner dự phòng. `TransactionAuthSheet` (bàn phím riêng + bước quét mặt khi giao dịch ≥ 10.000.000 ₫). Security Rules |
-| Feature 4 (nhánh) | Tab Chuyển tiền: trong FLUX (tra tên theo số TK qua `accountIndex`), giữa tài khoản của tôi, liên ngân hàng giả lập (10 ngân hàng), người nhận gần đây. Kiểm tra trước khi ghi (`TransferPolicy`: 10k–100tr/lần, 200tr/ngày giờ VN). Rules: cộng tiền cho người khác phải có TRANSFER_OUT cặp đã trừ nguồn cùng lần ghi, thông tin người gửi trên TRANSFER_IN không giả được (40 ca test). Nạp tiền qua VNPay sandbox (WebView, kiểm HMAC-SHA512). Nút QR giữa: quét / "Mã của tôi" |
 | Feature 3 | Chi tiết riêng cho Checking/Saving/Mortgage, lãi suất chung + lãi dự kiến, tiền trả mỗi tháng / 2 tuần, nạp/rút qua OTP (+ mặt khi ≥ 10 tr) bằng Firestore transaction, biên lai, tab Lịch sử, tab Lãi suất và mở tài khoản cho nhân viên. Rules có test trên emulator (`rules-test/`, 20/20) |
+| Feature 4 (nhánh) | Tab Chuyển tiền: trong FLUX (tra tên theo số TK qua `accountIndex`), giữa tài khoản của tôi, liên ngân hàng giả lập (10 ngân hàng), người nhận gần đây. Kiểm tra trước khi ghi (`TransferPolicy`: 10k–100tr/lần, 200tr/ngày giờ VN). Rules: cộng tiền cho người khác phải có TRANSFER_OUT cặp đã trừ nguồn cùng lần ghi, thông tin người gửi trên TRANSFER_IN không giả được (40 ca test). Nạp tiền qua VNPay sandbox (WebView, kiểm HMAC-SHA512). Nút QR giữa: quét / "Mã của tôi" |
 
 ### Chưa làm (các feature tiếp theo)
 - **Feature 5** Utilities: tiền điện, tiền nước, nạp điện thoại, vé máy bay, vé phim, khách sạn, mua sắm.
@@ -170,12 +170,14 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 ## 9. Cách bắt đầu session mới
 
 Gợi ý câu lệnh mở đầu:
-> Đọc `FLUX_Bank/HANDOFF.md` và `FLUX_Bank/PROJECT_CONTEXT.md`. Tôi đã [làm/chưa làm] mục 3 (F4). Tiếp theo brainstorm Feature 5 (Utilities) bằng `/superpowers:brainstorming`.
+> Đọc `FLUX_Bank/HANDOFF.md` và `FLUX_Bank/PROJECT_CONTEXT.md`. Merge nhánh `feature/f4-transfers` vào `main` (chạy lại `./gradlew testDebugUnitTest` sau merge), rồi brainstorm Feature 5 (Utilities) bằng `/superpowers:brainstorming`.
+
+Lưu ý: nếu chưa merge F4 thì **đừng** tạo nhánh F5 từ `main` (sẽ thiếu F4, mà F5 cần `TransferPolicy`, `transferExternal`, `TransactionAuthSheet`).
 
 Quy trình đã dùng và nên giữ: `superpowers:brainstorming` (hỏi từng câu, mockup HTML trên visual companion) → viết spec vào `docs/superpowers/specs/` → `superpowers:writing-plans` → `superpowers:executing-plans` (chủ dự án chọn chế độ **Native**) → review toàn nhánh → `finishing-a-development-branch`.
 
-Thứ tự đề xuất cho 5 tuần còn lại (khoảng 36 ngày):
-1. Feature 3 + 4: phần chính và nặng điểm nhất. Cần rules cho số dư và Firestore transaction.
+Thứ tự đề xuất cho khoảng 34 ngày còn lại (tính từ 2026-10-28; F1–F4 đã xong):
+1. Merge F4.
 2. Feature 5: tận dụng `TransactionAuthSheet` và lưới tiện ích có sẵn.
 3. Feature 6: Google Maps (cần API key, có hạn mức miễn phí) hoặc OSMDroid nếu muốn tránh billing.
 4. Feature 7: chatbot. Cần quyết định dùng LLM API hay luật cố định; lưu ý chi phí và không để API key nằm trong app.
