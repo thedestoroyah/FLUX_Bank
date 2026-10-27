@@ -95,6 +95,8 @@ class QrFragment : Fragment() {
         binding.header.tvHeaderTitle.setTextColor(
             ContextCompat.getColor(requireContext(), if (scan) R.color.flux_text_on_dark else R.color.flux_text_primary)
         )
+        binding.root.setBackgroundColor(ContextCompat.getColor(requireContext(), if (scan) R.color.flux_primary else R.color.flux_bg))
+        binding.previewView.isVisible = scan
         binding.scanFrame.isVisible = scan
         binding.tvScanHint.isVisible = scan
         binding.myCode.isVisible = !scan
