@@ -81,7 +81,7 @@ Giữ như đợt 1: Kotlin + XML/ViewBinding, MVVM, Firestore Spark, chỉ giao
 **`transactions/{id}`** (mới, chỉ tạo, không sửa/xoá):
 `accountId`, `ownerUid`, `accountNumber`, `type` (`DEPOSIT` | `WITHDRAW`; Feature 4/5 thêm loại khác), `amount: Long` (> 0), `balanceAfter: Long`, `description: String`, `createdAt: Long`.
 
-**`config/rates`** (một document): `savingRate: Double`, `mortgageRate: Double` (đều là %/năm, ví dụ 4.5 và 8.5), `updatedAt: Long`, `updatedBy: String`. Chưa có document thì app dùng mặc định 4.5 / 8.5, và nhân viên lưu lần đầu sẽ tạo document.
+**`config/rates`** (một document): `savingRate: Double`, `mortgageRate: Double` (đều là %/năm, ví dụ 4.5 và 8.5), `updatedAt: Long`, `updatedBy: String` (uid), `updatedByName: String` (để hiện "sửa bởi …"). Chưa có document thì app dùng mặc định 4.5 / 8.5, và nhân viên lưu lần đầu sẽ tạo document.
 
 **Index**: một composite index `transactions (ownerUid ASC, createdAt DESC)`, tạo một lần qua link trong lỗi Firestore hoặc Console (miễn phí). README hướng dẫn cách tạo.
 - shortcut: màn chi tiết tài khoản và bộ lọc theo tài khoản ở tab Lịch sử đều lọc ở client trên 100 giao dịch mới nhất của khách. Như vậy chỉ cần một index. Nếu sau này cần xem xa hơn thì thêm index `(accountId, createdAt)` và phân trang.

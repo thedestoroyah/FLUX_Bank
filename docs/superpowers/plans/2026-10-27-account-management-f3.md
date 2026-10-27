@@ -25,7 +25,7 @@
 
 1. **Double submit.** Tapping "Tiếp tục" twice, or the auth result arriving twice, must produce exactly one deposit and one sheet. Pinned in Task 7 (`secondConfirmWhileSubmittingIsIgnored`).
 2. **Balance changed since the preview.** Another device withdrew after the form showed "Số dư sau giao dịch". The repository's `InsufficientFundsException` must show a specific message and no receipt. Pinned in Task 7 (`insufficientFundsFromRepositoryShowsMessage`).
-3. **Amount typing.** `"2.000.000"`, `"2000000"`, `""`, `"000"` and a 20-digit paste must all parse to a sane `Long` (digits only, capped at 12 digits) without crashing. Pinned in Task 7 (`parseAmountHandlesSeparatorsEmptyAndOverflow`).
+3. **Amount typing.** `"2.000.000"`, `"2000000"`, `""`, `"000"` and a 20-digit paste must all parse to a sane `Long` (digits only, capped at 12 digits) without crashing. Pinned in Task 1 (`parseAmountHandlesSeparatorsEmptyAndOverflow`).
 4. **Rate typed with a decimal comma.** `"5,0"` and `"5.0"` must both mean 5.0. `"abc"`, `"0"` and `"30,01"` are rejected with a message. Pinned in Task 4 (`acceptsCommaDecimal`, `rejectsOutOfRange`).
 5. **Day grouping at midnight.** A transaction at 23:59 yesterday is under "Hôm qua", one at 00:01 today is under "Hôm nay", using the device zone. Pinned in Task 8 (`groupsByLocalDay`).
 
@@ -47,7 +47,7 @@
     - `fun installment(principal: Long, annualRatePercent: Double, termMonths: Int, frequency: PaymentFrequency): Long`
     - `fun totalInterest(principal: Long, annualRatePercent: Double, termMonths: Int, frequency: PaymentFrequency): Long`
     - `fun nextDueDate(startDate: LocalDate, frequency: PaymentFrequency, today: LocalDate): LocalDate`
-- Produces (in `Validators`): `enum class AmountError { BELOW_MIN, ABOVE_DEPOSIT_MAX, INSUFFICIENT_FUNDS }`, `const val MIN_AMOUNT = 10_000L`, `const val MAX_DEPOSIT = 100_000_000L`, `fun amountError(isDeposit: Boolean, amount: Long, balance: Long): AmountError?`, `fun parseRate(input: String): Double?` (returns null when the input is not a number or is outside (0, 30]).
+- Produces (in `Validators`): `enum class AmountError { BELOW_MIN, ABOVE_DEPOSIT_MAX, INSUFFICIENT_FUNDS }`, `const val MIN_AMOUNT = 10_000L`, `const val MAX_DEPOSIT = 100_000_000L`, `fun amountError(isDeposit: Boolean, amount: Long, balance: Long): AmountError?`, `fun parseRate(input: String): Double?` (returns null when the input is not a number or is outside (0, 30]), `const val MAX_AMOUNT_DIGITS = 12`, `fun parseAmount(input: String): Long` (keeps digits only and the first 12 of them; empty input → 0).
 
 - [ ] **Step 1: Write failing tests**
 
@@ -77,7 +77,7 @@
     assertEquals(LocalDate.of(2026, 2, 28), InterestCalculator.nextDueDate(LocalDate.of(2026, 1, 31), MONTHLY, LocalDate.of(2026, 2, 10)))
 }
 ```
-In `ValidatorsTest`: `amountError(true, 9_999, 0) == BELOW_MIN`, `amountError(true, 100_000_001, 0) == ABOVE_DEPOSIT_MAX`, `amountError(true, 100_000_000, 0) == null`, `amountError(false, 500_000, 499_999) == INSUFFICIENT_FUNDS`, `amountError(false, 500_000, 500_000) == null`. Add `acceptsCommaDecimal`: `parseRate("5,0") == 5.0`, `parseRate("5.0") == 5.0`, `parseRate(" 4,5 ") == 4.5`. Add `rejectsOutOfRange`: `parseRate("0")`, `parseRate("30,01")`, `parseRate("abc")` and `parseRate("")` are all null, and `parseRate("30") == 30.0`.
+In `ValidatorsTest`: `amountError(true, 9_999, 0) == BELOW_MIN`, `amountError(true, 100_000_001, 0) == ABOVE_DEPOSIT_MAX`, `amountError(true, 100_000_000, 0) == null`, `amountError(false, 500_000, 499_999) == INSUFFICIENT_FUNDS`, `amountError(false, 500_000, 500_000) == null`. Add `acceptsCommaDecimal`: `parseRate("5,0") == 5.0`, `parseRate("5.0") == 5.0`, `parseRate(" 4,5 ") == 4.5`. Add `rejectsOutOfRange`: `parseRate("0")`, `parseRate("30,01")`, `parseRate("abc")` and `parseRate("")` are all null, and `parseRate("30") == 30.0`. Add `parseAmountHandlesSeparatorsEmptyAndOverflow`: `"2.000.000"` → 2_000_000, `"2000000"` → 2_000_000, `""` → 0, `"000"` → 0, `"9".repeat(20)` → 999_999_999_999.
 
 - [ ] **Step 2: Run and confirm they fail.** Run `./gradlew testDebugUnitTest --tests '*InterestCalculatorTest*' --tests '*ValidatorsTest*'`. Expected: compilation failure (unresolved references).
 
@@ -209,7 +209,7 @@ In `ValidatorsTest`: `amountError(true, 9_999, 0) == BELOW_MIN`, `amountError(tr
   - `OpenAccountViewModel(accounts, rates)` with:
     - `load()`
     - `selectType(AccountType)`
-    - `setLoanAmount(input: String)` (uses `parseAmount` from Task 7's `AmountInput`; if Task 7 has not run yet, create `AmountInput` here and Task 7 reuses it)
+    - `setLoanAmount(input: String)` (uses `Validators.parseAmount` from Task 1)
     - `setTerm(months: Int)`
     - `submit(ownerUid: String)`
     - `val opened: LiveData<Event<BankAccount>>`
@@ -233,7 +233,7 @@ In `ValidatorsTest`: `amountError(true, 9_999, 0) == BELOW_MIN`, `amountError(tr
 ### Task 6: Customer — account detail for each type (screens 1, 2)
 
 **Files:**
-- Create: `app/src/main/java/com/flux/bank/ui/customer/account/AccountDetailViewModel.kt`, `AccountDetailFragment.kt`, `fragment_account_detail.xml`, `item_transaction.xml`, `TransactionRowAdapter.kt` (reused by Tasks 8)
+- Create: `app/src/main/java/com/flux/bank/ui/customer/account/AccountDetailViewModel.kt`, `AccountDetailFragment.kt`, `fragment_account_detail.xml`, `item_transaction.xml`, `TransactionRowAdapter.kt` (reused by Task 8)
 - Modify:
   - `HomeViewModel.AccountCardUi`: add `accountId: String` and `@StringRes balanceLabel: Int`. The label is `card_outstanding` ("Dư nợ") for MORTGAGE and the existing `card_available_balance` otherwise.
   - `AccountCardAdapter`: add `onCardClick: (String) -> Unit` and bind `tvBalanceLabel`.
@@ -269,14 +269,13 @@ In `ValidatorsTest`: `amountError(true, 9_999, 0) == BELOW_MIN`, `amountError(tr
 ### Task 7: Customer — deposit / withdraw and receipt (screens 3, 4)
 
 **Files:**
-- Create: `app/src/main/java/com/flux/bank/ui/customer/account/AmountInput.kt`, `MoneyMoveViewModel.kt`, `MoneyMoveFragment.kt`, `ReceiptFragment.kt`, `fragment_money_move.xml`, `fragment_receipt.xml`
+- Create: `app/src/main/java/com/flux/bank/ui/customer/account/MoneyMoveViewModel.kt`, `MoneyMoveFragment.kt`, `ReceiptFragment.kt`, `fragment_money_move.xml`, `fragment_receipt.xml`
 - Modify: `AccountDetailFragment` (enable the Nạp/Rút buttons), `HomeFragment` (utilities `NAP_TIEN` → `MoneyMoveFragment.newInstance(deposit = true)`, `RUT_TIEN` → `deposit = false`), `strings.xml`
-- Test: `app/src/test/java/com/flux/bank/ui/customer/MoneyMoveViewModelTest.kt`, `app/src/test/java/com/flux/bank/ui/customer/AmountInputTest.kt`
+- Test: `app/src/test/java/com/flux/bank/ui/customer/MoneyMoveViewModelTest.kt`
 
 **Interfaces:**
-- Consumes: `AccountRepository.listByOwner/deposit/withdraw`, `InsufficientFundsException`, `UserRepository.getUser` (kycStatus), `Validators.amountError`, `TransactionAuthSheet.show` / `KEY_VERIFIED`.
+- Consumes: `AccountRepository.listByOwner/deposit/withdraw`, `InsufficientFundsException`, `UserRepository.getUser` (kycStatus), `Validators.amountError/parseAmount`, `TransactionAuthSheet.show` / `KEY_VERIFIED`.
 - Produces:
-  - `object AmountInput { const val MAX_DIGITS = 12; fun parseAmount(input: String): Long }`. It keeps digits only, keeps the first 12 of them, and returns 0 for empty input.
   - `data class MoneyMoveState(val deposit: Boolean, val accounts: List<BankAccount> = emptyList(), val selectedId: String? = null, val amount: Long = 0, val balanceAfter: Long? = null, val amountError: AmountError? = null, val kycBlocked: Boolean = false, val submitting: Boolean = false, @StringRes val errorRes: Int? = null)`. `accounts` holds only CHECKING/SAVING. `selectedId` defaults to the `preselectedAccountId` argument, or else to the first checking account.
   - `MoneyMoveViewModel(deposit: Boolean, accounts, users, auth)` with:
     - `load(preselectedAccountId: String?)`
@@ -288,7 +287,6 @@ In `ValidatorsTest`: `amountError(true, 9_999, 0) == BELOW_MIN`, `amountError(tr
   - `ReceiptFragment.newInstance(tx: Transaction, accountLabel: String, viewOnly: Boolean)`. It stores the fields as bundle primitives. Its "Mã giao dịch" is `tx.id.take(10).uppercase()`.
 
 - [ ] **Step 1: Write failing tests.**
-  - `parseAmountHandlesSeparatorsEmptyAndOverflow`: `"2.000.000"` → 2_000_000, `"2000000"` → 2_000_000, `""` → 0, `"000"` → 0, `"9".repeat(20)` → 999_999_999_999.
   - `notVerifiedIsBlocked`: kyc PENDING → `kycBlocked == true` and `confirm()` emits nothing.
   - `withdrawOverBalanceShowsError`: balance 499_999, amount 500_000 → `amountError == INSUFFICIENT_FUNDS`, no `askAuth`.
   - `balanceAfterPreview`: deposit 2_000_000 into 120_000_000 → 122_000_000.
