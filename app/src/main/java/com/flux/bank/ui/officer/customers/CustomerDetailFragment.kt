@@ -5,17 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.flux.bank.FluxApp
 import com.flux.bank.R
-import com.flux.bank.core.format.MoneyFormatter
 import com.flux.bank.databinding.FragmentCustomerDetailBinding
 import com.flux.bank.ui.common.screenHost
 import com.flux.bank.ui.common.showKycPill
-import com.flux.bank.ui.customer.home.HomeViewModel
 import com.flux.bank.ui.ekyc.EkycCaptureFragment
 import com.google.android.material.snackbar.Snackbar
 
@@ -29,6 +28,7 @@ class CustomerDetailFragment : Fragment() {
         viewModelFactory { initializer { CustomerDetailViewModel(accounts = FluxApp.instance.accountRepository) } }
     }
     private var filled = false
+    private val accountAdapter = CustomerAccountAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCustomerDetailBinding.inflate(inflater, container, false)
@@ -45,6 +45,11 @@ class CustomerDetailFragment : Fragment() {
             )
         }
         binding.btnReset.setOnClickListener { viewModel.resetPassword() }
+        binding.rvAccounts.adapter = accountAdapter
+        binding.btnOpenAccount.setOnClickListener {
+            val user = viewModel.state.value?.user ?: return@setOnClickListener
+            screenHost.openScreen(OpenAccountFragment.newInstance(uid, user.fullName, user.phoneNumber))
+        }
         binding.btnEkyc.setOnClickListener {
             val officer = FluxApp.instance.authRepository.currentUid() ?: return@setOnClickListener
             screenHost.openScreen(EkycCaptureFragment.newInstance(uid, submittedBy = officer))
@@ -65,11 +70,8 @@ class CustomerDetailFragment : Fragment() {
             binding.etEmail.setText(user.email)
         }
         binding.tvKycPill.showKycPill(user.kycStatus)
-        val account = state.accounts.firstOrNull()
-        binding.tvAccountLabel.text = account?.let {
-            getString(HomeViewModel.labelFor(it.type)) + " · •••• " + it.accountNumber.takeLast(4)
-        } ?: getString(R.string.detail_no_account)
-        binding.tvAccountBalance.text = account?.let { MoneyFormatter.formatVnd(it.balance) }.orEmpty()
+        accountAdapter.submit(state.accounts)
+        binding.tvNoAccount.isVisible = state.accounts.isEmpty()
         mapOf(
             CustomerField.NAME to binding.tilName,
             CustomerField.PHONE to binding.tilPhone,

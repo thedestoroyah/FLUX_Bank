@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/flux_bg"
+    android:clickable="true"
+    android:fitsSystemWindows="true"
+    android:focusable="true">
+
+    <include
+        android:id="@+id/header"
+        layout="@layout/view_screen_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/btnSubmit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/space_16"
+            android:paddingEnd="@dimen/space_16"
+            android:paddingBottom="@dimen/space_16">
+
+            <TextView
+                android:id="@+id/tvCustomer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Flux.Caption" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/groupType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipSaving"
+                    style="@style/Widget.Flux.FilterChip"
+                    android:text="@string/account_saving" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipMortgage"
+                    style="@style/Widget.Flux.FilterChip"
+                    android:text="@string/account_mortgage" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <TextView
+                android:id="@+id/tvSavingInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:background="@drawable/bg_dashed_tile"
+                android:padding="@dimen/space_12"
+                android:text="@string/open_account_saving_info"
+                android:textAppearance="@style/TextAppearance.Flux.Body" />
+
+            <LinearLayout
+                android:id="@+id/groupMortgage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilLoan"
+                    style="@style/Widget.Flux.TextField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_12"
+                    android:hint="@string/open_account_loan_amount"
+                    app:suffixText="₫">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etLoan"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionDone"
+                        android:inputType="number"
+                        android:maxLength="17" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    style="@style/Widget.Flux.SectionLabel"
+                    android:text="@string/open_account_term" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/groupTerm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilTerm"
+                    style="@style/Widget.Flux.TextField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_8"
+                    android:hint="@string/open_account_term_custom">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTerm"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionDone"
+                        android:inputType="number"
+                        android:maxLength="3" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.Flux.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_12">
+
+                    <LinearLayout
+                        android:id="@+id/rows"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingStart="@dimen/space_16"
+                        android:paddingEnd="@dimen/space_16"
+                        android:paddingTop="@dimen/space_4"
+                        android:paddingBottom="@dimen/space_4" />
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:textAppearance="@style/TextAppearance.Flux.Caption"
+                android:textColor="@color/flux_error_dark"
+                android:visibility="gone" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSubmit"
+        style="@style/Widget.Flux.Button.Primary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/space_16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
