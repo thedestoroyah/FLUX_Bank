@@ -15,8 +15,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 
 ## 2. Trạng thái hiện tại
 
-- Repo git ở `FLUX_Bank/`. Nhánh làm việc: **`feat/ui-foundation-f1-f2`** (18 commit trên `main`). **Chưa merge**, chưa có remote.
-- **Đang chờ chủ dự án chọn**: (1) merge vào `main` ở local, (2) thêm remote, push và tạo PR, hoặc (3) giữ nguyên nhánh.
+- Repo git ở `FLUX_Bank/`, nhánh `main` (đã merge F1–F2), chưa có remote.
 - **Unit test: 118/118 pass.** `assembleDebug` và `lintDebug` pass (lint 0 error).
 - Đã review toàn bộ nhánh bằng một reviewer độc lập. Đã sửa hết lỗi Important; danh sách lỗi Minor còn lại ở mục 7.
 
@@ -36,12 +35,9 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 - **Feature 7** AI chatbot: trả lời kèm link tới các chức năng.
 - Đưa lên Play Store, viết báo cáo, quay video demo.
 
-## 3. Việc chủ dự án cần làm (chưa xác nhận đã xong)
+## 3. Việc chủ dự án cần làm
 
-1. **Publish lại `firestore.rules`**. Lần sửa cuối có siết thêm rule của `kyc/{uid}`. Rules cũ và officer đầu tiên đã được tạo theo README.
-2. **Chạy thử toàn bộ luồng trên máy thật** (chưa ai chạy end-to-end): tạo khách → khách đăng nhập lần đầu và đổi mật khẩu → nộp eKYC → nhân viên duyệt → bật sinh trắc học, khoá và mở khoá → đổi SĐT qua OTP → "Kiểm tra xác thực khuôn mặt" (chính mình phải qua, người khác phải bị từ chối).
-3. **Hiệu chỉnh `FaceMatcher.MATCH_THRESHOLD`** (`app/src/main/java/com/flux/bank/face/FaceMatcher.kt`, hiện là 0.6): log cosine giữa các ảnh cùng một người và giữa hai người khác nhau, đặt ngưỡng ở giữa, rồi ghi số đo vào KDoc.
-4. Chọn cách xử lý nhánh (mục 2).
+Đã xong ngày 2026-10-27: publish `firestore.rules`; chạy end-to-end trên máy thật (Xiaomi), mọi luồng F1–F2 đều đạt; hiệu chỉnh `MATCH_THRESHOLD` (giữ 0.6, số đo ở KDoc); nhánh `feat/ui-foundation-f1-f2` đã merge vào `main`.
 
 ## 4. Những điều chủ dự án đã quyết định (đừng hỏi lại)
 

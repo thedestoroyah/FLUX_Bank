@@ -21,7 +21,7 @@ Firebase Console → **Firestore Database → Rules** → dán toàn bộ nội 
 App không có chức năng tự đăng ký nhân viên; mọi khách hàng đều do nhân viên tạo trong app.
 
 1. Console → **Authentication → Users → Add user**: nhập email và mật khẩu của nhân viên, rồi copy **User UID**.
-2. Console → **Firestore Database** → collection `users` → **Add document** với Document ID = UID vừa copy, và các field:
+2. Console → **Firestore Database** → collection `users` → **Add document** với Document ID = UID vừa copy, và các field (**gõ tay tên field**, đừng copy từ bảng dưới: trình xem markdown có thể chèn ký tự ẩn U+200B khiến app không đọc được field và coi nhân viên là khách):
 
 | Field | Kiểu | Giá trị |
 |---|---|---|

@@ -10,7 +10,8 @@ object FaceMatcher {
      *
      * Suy từ repo gốc của model (syaringan357, MIT): họ chấp nhận khi bình phương khoảng cách L2 giữa hai
      * embedding đã chuẩn hoá ≤ 0.8; với vector đơn vị cos = 1 - d²/2 nên tương đương cos ≥ 0.6.
-     * Cần hiệu chỉnh lại trên máy thật (Task 11 bước 4) và ghi số đo vào đây.
+     * Đo ngày 2026-10-27 trên Xiaomi 2511FPC34G (so với selfie eKYC): cùng người 0.716–0.733 (n=2 còn trong log,
+     * mọi lần thử khác đều qua); người khác -0.191–0.007 (n=6). Hai nhóm cách xa nhau nên giữ 0.6.
      */
     const val MATCH_THRESHOLD = 0.6f
 
