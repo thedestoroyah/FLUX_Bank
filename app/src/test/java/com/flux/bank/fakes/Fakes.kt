@@ -4,12 +4,19 @@ import com.flux.bank.data.model.AccountType
 import com.flux.bank.data.model.BankAccount
 import com.flux.bank.data.model.KycRecord
 import com.flux.bank.data.model.KycStatus
+import com.flux.bank.data.model.Rates
+import com.flux.bank.data.model.Transaction
+import com.flux.bank.data.model.TransactionType
 import com.flux.bank.data.model.User
 import com.flux.bank.data.model.UserRole
 import com.flux.bank.data.repository.AccountRepository
 import com.flux.bank.data.repository.AuthRepository
+import com.flux.bank.data.repository.InsufficientFundsException
 import com.flux.bank.data.repository.KycRepository
+import com.flux.bank.data.repository.RatesRepository
+import com.flux.bank.data.repository.TransactionRepository
 import com.flux.bank.data.repository.UserRepository
+import kotlinx.coroutines.CompletableDeferred
 
 /** Repository giả trong bộ nhớ, dùng chung cho unit test. */
 class FakeAuthRepository : AuthRepository {
@@ -78,6 +85,13 @@ class FakeUserRepository(initial: List<User> = emptyList()) : UserRepository {
 class FakeAccountRepository : AccountRepository {
     val accounts = mutableListOf<BankAccount>()
     var failNextCreate = false
+    /** Lỗi trả về cho lần nạp/rút kế tiếp (ví dụ [InsufficientFundsException]). */
+    var failNextMove: Throwable? = null
+    /** Nếu khác null, nạp/rút sẽ treo tới khi gate được complete (để test bấm 2 lần). */
+    var moveGate: CompletableDeferred<Unit>? = null
+    val deposits = mutableListOf<Pair<String, Long>>()
+    val withdrawals = mutableListOf<Pair<String, Long>>()
+    val opened = mutableListOf<BankAccount>()
 
     override suspend fun createChecking(ownerUid: String): Result<BankAccount> {
         if (failNextCreate) { failNextCreate = false; return Result.failure(IllegalStateException("account failed")) }
@@ -86,6 +100,46 @@ class FakeAccountRepository : AccountRepository {
         return Result.success(a)
     }
     override suspend fun listByOwner(ownerUid: String) = Result.success(accounts.filter { it.ownerUid == ownerUid })
+    override suspend fun getAccount(accountId: String) =
+        accounts.firstOrNull { it.accountId == accountId }?.let { Result.success(it) } ?: Result.failure(NoSuchElementException(accountId))
+
+    override suspend fun openSaving(ownerUid: String) = open(BankAccount(ownerUid = ownerUid, type = AccountType.SAVING))
+    override suspend fun openMortgage(ownerUid: String, loanAmount: Long, termMonths: Int, annualRate: Double) =
+        open(BankAccount(ownerUid = ownerUid, type = AccountType.MORTGAGE, balance = loanAmount, loanAmount = loanAmount, termMonths = termMonths, annualRate = annualRate))
+
+    private fun open(template: BankAccount): Result<BankAccount> {
+        val a = template.copy(accountId = "a${accounts.size}", accountNumber = "886800000${accounts.size}")
+        accounts += a; opened += a
+        return Result.success(a)
+    }
+
+    override suspend fun deposit(accountId: String, amount: Long): Result<Transaction> { deposits += accountId to amount; return move(accountId, amount, TransactionType.DEPOSIT) }
+    override suspend fun withdraw(accountId: String, amount: Long): Result<Transaction> { withdrawals += accountId to amount; return move(accountId, amount, TransactionType.WITHDRAW) }
+
+    private suspend fun move(accountId: String, amount: Long, type: TransactionType): Result<Transaction> {
+        moveGate?.await()
+        failNextMove?.let { failNextMove = null; return Result.failure(it) }
+        val i = accounts.indexOfFirst { it.accountId == accountId }
+        if (i < 0) return Result.failure(NoSuchElementException(accountId))
+        val account = accounts[i]
+        val newBalance = if (type.isIncoming) account.balance + amount else account.balance - amount
+        if (newBalance < 0) return Result.failure(InsufficientFundsException())
+        val tx = Transaction(id = "tx${deposits.size + withdrawals.size}", accountId = accountId, ownerUid = account.ownerUid,
+            accountNumber = account.accountNumber, type = type, amount = amount, balanceAfter = newBalance)
+        accounts[i] = account.copy(balance = newBalance, lastTxId = tx.id)
+        return Result.success(tx)
+    }
+}
+
+class FakeTransactionRepository(val items: MutableList<Transaction> = mutableListOf()) : TransactionRepository {
+    override suspend fun listRecent(ownerUid: String, limit: Long) =
+        Result.success(items.filter { it.ownerUid == ownerUid }.sortedByDescending { it.createdAt }.take(limit.toInt()))
+}
+
+class FakeRatesRepository(var rates: Rates = Rates()) : RatesRepository {
+    val saved = mutableListOf<Rates>()
+    override suspend fun get() = Result.success(rates)
+    override suspend fun save(rates: Rates): Result<Unit> { saved += rates; this.rates = rates; return Result.success(Unit) }
 }
 
 class FakeKycRepository : KycRepository {
