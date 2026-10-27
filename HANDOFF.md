@@ -47,12 +47,17 @@ Cho Feature 3 (đã xong 2026-10-27, nhánh đã merge vào `main`):
    - Lỗi tìm thấy khi chạy và đã sửa: thanh tab mất sau khi vuốt back (predictive back, có từ F1); bàn phím che sheet sửa lãi suất / lý do từ chối; xem trước số dư âm khi rút quá; lịch sử tải lỗi lại hiện "Chưa có giao dịch nào".
    - Sau khi tạo đúng index (createdAt **Descending**): tab Lịch sử (nhóm "Hôm nay", lọc theo tài khoản, mở biên lai) và "Giao dịch gần đây" đạt. Chủ dự án tự nạp 10.000.000 ₫ (OTP + quét mặt) thành công.
 
-Cho Feature 4 (nhánh `feature/f4-transfers`):
-1. **Publish lại `firestore.rules`** (luật chuyển tiền + `accountIndex`).
-2. **Đăng ký VNPay sandbox** (README mục 6) và thêm `vnpay.tmn.code`, `vnpay.hash.secret` vào `local.properties`, build lại.
-3. **Chạy demo F4 trên máy thật** theo README "Luồng demo" (cần 2 khách; khách nhận phải đăng nhập một lần để có `accountIndex`).
-   - Đã thử trên Xiaomi (2026-10-28, rules cũ): tab Chuyển tiền, form liên ngân hàng, sheet chọn ngân hàng, lỗi vượt 100 tr/lần hiện đúng. Chưa thử ghi giao dịch, VNPay, QR (cần rules mới + khoá VNPay).
-4. Sau khi đạt: merge nhánh vào `main`.
+Cho Feature 4 (nhánh `feature/f4-transfers`, chủ dự án chọn giữ nhánh, chưa merge):
+1. Đã xong 2026-10-28: publish rules F4, thêm `vnpay.tmn.code` / `vnpay.hash.secret` vào `local.properties`.
+2. **Chạy end-to-end trên Xiaomi 2026-10-28 (rules thật trên Firebase) — đạt:**
+   - Nhân viên tạo khách mới Tran Thi Binh (`binh@flux.com`, SĐT 0911222333, mật khẩu đã đổi thành `Binh2026a`); Bình đăng nhập lần đầu → `accountIndex` tự tạo (số TK 886810968242).
+   - Customer nạp 1.000.000 ₫ qua VNPay sandbox (NCB test card, OTP 123456) → biên lai có mã VNPay, số dư 11.000.000 ₫. Đóng WebView giữa chừng → báo "đã huỷ", số dư không đổi, chip tài khoản còn đủ.
+   - Chuyển 500.000 ₫ cho Bình theo số TK (tra ra "TRAN THI BINH") → OTP → biên lai; Bình thấy +500.000 ₫, lịch sử "Nhận từ NGUYEN CUSTOMER", biên lai nhận không có số dư.
+   - Liên ngân hàng 2.000.000 ₫ sang Vietcombank; chuyển 1.000.000 ₫ Thanh toán → Tiết kiệm; "Người nhận gần đây", hạn mức còn lại, tab Lịch sử đều đúng.
+   - QR: "Mã của tôi" hiện đúng cho cả hai khách; bấm qua lại nhanh không crash.
+   - **Chưa thử trên máy**: quét QR bằng camera (cần hướng camera vào mã trên máy khác), bước quét mặt khi chuyển ≥ 10.000.000 ₫ (đã thử ở F3 cho nạp tiền), chặn hạn mức 200 tr/ngày (unit test có).
+3. Sau khi chủ dự án thử thêm QR (tuỳ chọn): merge nhánh vào `main`.
+- Mẹo adb cho F4: bàn phím Telex đổi "ff"→"f" và "us"→"ú" (gõ thiếu rồi đưa con trỏ về chèn chữ còn thiếu); chỉ bấm BACK để ẩn bàn phím khi `dumpsys input_method` báo `mInputShown=true`, nếu không BACK sẽ đóng màn (đóng WebView VNPay = huỷ). Phím số của sheet OTP là view tự vẽ, phải chạm theo toạ độ.
 
 ## 4. Những điều chủ dự án đã quyết định (đừng hỏi lại)
 
