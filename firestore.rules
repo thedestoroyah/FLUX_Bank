@@ -68,11 +68,60 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // Số dư chỉ thay đổi qua Feature 4 (transaction); hiện tại không ai được sửa/xoá.
+    // Khách chỉ đổi số dư Checking/Saving của chính mình, và chỉ khi cùng lúc tạo một giao dịch mới khớp:
+    // lastTxId trỏ tới giao dịch chưa tồn tại trước đó, cùng tài khoản, balanceAfter = số dư mới, đúng phép cộng/trừ.
+    function ownerMoneyMoveAllowed(accountId) {
+      let newData = request.resource.data;
+      let txPath = /databases/$(database)/documents/transactions/$(newData.lastTxId);
+      let tx = getAfter(txPath).data;
+      return signedIn()
+        && resource.data.ownerUid == request.auth.uid
+        && resource.data.type in ['CHECKING', 'SAVING']
+        && changedKeys().hasOnly(['balance', 'lastTxId'])
+        && newData.balance is int
+        && !exists(txPath)
+        && tx.accountId == accountId
+        && tx.ownerUid == request.auth.uid
+        && tx.balanceAfter == newData.balance
+        && ((tx.type == 'DEPOSIT' && newData.balance == resource.data.balance + tx.amount)
+            || (tx.type == 'WITHDRAW' && newData.balance == resource.data.balance - tx.amount && newData.balance >= 0));
+    }
+
+    function validNewAccount() {
+      let data = request.resource.data;
+      return data.balance is int && data.balance >= 0
+        && (data.type != 'MORTGAGE'
+            || (data.loanAmount is int && data.loanAmount > 0 && data.termMonths >= 1 && data.termMonths <= 360));
+    }
+
     match /accounts/{accountId} {
       allow read: if isOfficer() || (signedIn() && resource.data.ownerUid == request.auth.uid);
-      allow create: if isOfficer();
+      allow create: if isOfficer() && validNewAccount();
+      allow update: if ownerMoneyMoveAllowed(accountId);
+      allow delete: if false;
+    }
+
+    // Giao dịch chỉ được tạo cùng batch với lần đổi số dư (tài khoản sau khi ghi phải trỏ lastTxId về đây).
+    match /transactions/{txId} {
+      allow read: if isOfficer() || (signedIn() && resource.data.ownerUid == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.type in ['DEPOSIT', 'WITHDRAW']
+        && request.resource.data.amount is int
+        && request.resource.data.amount >= 10000
+        && (request.resource.data.type != 'DEPOSIT' || request.resource.data.amount <= 100000000)
+        && getAfter(/databases/$(database)/documents/accounts/$(request.resource.data.accountId)).data.lastTxId == txId;
       allow update, delete: if false;
+    }
+
+    // Lãi suất chung: ai đăng nhập cũng đọc được, chỉ nhân viên sửa, mỗi mức trong (0, 30].
+    match /config/rates {
+      allow read: if signedIn();
+      allow write: if isOfficer()
+        && request.resource.data.savingRate is number
+        && request.resource.data.savingRate > 0 && request.resource.data.savingRate <= 30
+        && request.resource.data.mortgageRate is number
+        && request.resource.data.mortgageRate > 0 && request.resource.data.mortgageRate <= 30;
     }
   }
 }
