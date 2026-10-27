@@ -125,4 +125,11 @@ class MoneyMoveViewModelTest {
         vm.confirm()
         assertNull(vm.askAuth.value)
     }
+
+    @Test
+    fun noNegativeBalancePreviewWhenWithdrawingTooMuch() {
+        val vm = vm(deposit = false)
+        vm.setAmount("500000")
+        assertNull(vm.state.value!!.balanceAfter)
+    }
 }
