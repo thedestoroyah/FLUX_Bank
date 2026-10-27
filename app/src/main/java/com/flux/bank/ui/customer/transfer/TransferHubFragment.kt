@@ -18,7 +18,6 @@ import com.flux.bank.data.model.Banks
 import com.flux.bank.databinding.FragmentTransferHubBinding
 import com.flux.bank.databinding.ItemRecentPayeeBinding
 import com.flux.bank.databinding.ItemTransferOptionBinding
-import com.flux.bank.ui.common.ComingSoonFragment
 import com.flux.bank.ui.common.screenHost
 import com.flux.bank.ui.customer.home.HomeViewModel
 
@@ -56,8 +55,8 @@ class TransferHubFragment : Fragment() {
     }
 
     private fun open(mode: TransferMode, recent: RecentPayee? = null) {
-        // Task 8 thay bằng TransferFragment.newInstance(mode, prefill từ recent)
-        screenHost.openScreen(ComingSoonFragment.newInstance(R.string.tab_transfer, R.drawable.ic_arrows_swap, R.color.cat_blue))
+        val prefill = recent?.let { TransferPrefill(it.accountNumber, it.bankCode, it.name) }
+        screenHost.openScreen(TransferFragment.newInstance(mode, prefill))
     }
 
     private fun ItemTransferOptionBinding.bind(
