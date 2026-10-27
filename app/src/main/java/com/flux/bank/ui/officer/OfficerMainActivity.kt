@@ -8,12 +8,12 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import com.flux.bank.R
 import com.flux.bank.databinding.ActivityOfficerMainBinding
-import com.flux.bank.ui.common.ComingSoonFragment
 import com.flux.bank.ui.common.ScreenHost
 import com.flux.bank.ui.customer.profile.ProfileFragment
 import com.flux.bank.ui.officer.customers.CustomerListFragment
 import com.flux.bank.ui.officer.ekyc.EkycReviewFragment
 import com.flux.bank.ui.officer.overview.OfficerOverviewFragment
+import com.flux.bank.ui.officer.rates.RatesFragment
 
 /** Khung app nhân viên: Tổng quan · Khách hàng · eKYC · Lãi suất · Cá nhân. */
 class OfficerMainActivity : AppCompatActivity(), ScreenHost {
@@ -67,7 +67,7 @@ class OfficerMainActivity : AppCompatActivity(), ScreenHost {
         OfficerTab.OVERVIEW -> OfficerOverviewFragment()
         OfficerTab.CUSTOMERS -> CustomerListFragment()
         OfficerTab.EKYC -> EkycReviewFragment()
-        OfficerTab.RATES -> ComingSoonFragment.newInstance(R.string.otab_rates, R.drawable.ic_percent, R.color.cat_emerald, showBack = false)
+        OfficerTab.RATES -> RatesFragment()
         OfficerTab.PROFILE -> ProfileFragment.newInstance(officer = true)
     }
 }

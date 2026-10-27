@@ -250,4 +250,22 @@
     <string name="reject_other_hint">Nhập lý do</string>
     <string name="reject_confirm">Xác nhận từ chối</string>
     <string name="reject_reason_required">Vui lòng chọn hoặc nhập lý do từ chối.</string>
+    <!-- Feature 3: lãi suất (nhân viên) -->
+    <string name="err_rate_range">Lãi suất phải là số từ 0,01 đến 30.</string>
+    <string name="rates_title">Lãi suất</string>
+    <string name="rates_saving">Tiết kiệm</string>
+    <string name="rates_mortgage">Vay thế chấp</string>
+    <string name="rate_per_year">%1$s%%/năm</string>
+    <string name="rates_saving_note">Áp dụng ngay cho mọi tài khoản tiết kiệm</string>
+    <string name="rates_mortgage_note">Chỉ áp dụng cho khoản vay mở sau khi sửa</string>
+    <string name="rates_updated_by">Sửa bởi %1$s, %2$s</string>
+    <string name="rates_never_updated">Đang dùng mức mặc định</string>
+    <string name="rates_edit_saving">Sửa lãi suất tiết kiệm</string>
+    <string name="rates_edit_mortgage">Sửa lãi suất vay thế chấp</string>
+    <string name="rates_input_hint">Lãi suất (%/năm)</string>
+    <string name="rates_input_helper">Từ 0,01 đến 30</string>
+    <string name="rates_example_saving">100.000.000 ₫ gửi tiết kiệm → lãi %1$s/tháng</string>
+    <string name="rates_example_mortgage">Vay 1.000.000.000 ₫ trong 240 tháng → trả %1$s/tháng</string>
+    <string name="rates_saved">Đã lưu lãi suất mới</string>
+    <string name="action_save">Lưu</string>
 </resources>

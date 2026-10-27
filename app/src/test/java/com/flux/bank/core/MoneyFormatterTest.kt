@@ -18,4 +18,12 @@ class MoneyFormatterTest {
         assertEquals("+2.000.000", MoneyFormatter.formatSignedVnd(2_000_000))
         assertEquals("−55.000", MoneyFormatter.formatSignedVnd(-55_000))
     }
+
+    @Test
+    fun formatsRateWithVietnameseComma() {
+        assertEquals("4,5", MoneyFormatter.formatRate(4.5))
+        assertEquals("5", MoneyFormatter.formatRate(5.0))
+        assertEquals("8,25", MoneyFormatter.formatRate(8.25))
+        assertEquals("10", MoneyFormatter.formatRate(10.0))
+    }
 }

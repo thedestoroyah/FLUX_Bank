@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/flux_bg"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/space_16">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/space_8"
+            android:text="@string/rates_title"
+            android:textAppearance="@style/TextAppearance.Flux.TitleL" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardSaving"
+            style="@style/Widget.Flux.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_12"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/space_16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        style="@style/Widget.Flux.IconTile"
+                        android:backgroundTint="@color/cat_emerald_bg"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_piggy"
+                        app:tint="@color/cat_emerald" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_12"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/rates_saving"
+                            android:textAppearance="@style/TextAppearance.Flux.Caption" />
+
+                        <TextView
+                            android:id="@+id/tvSavingRate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.Flux.AmountSmall" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="@dimen/touch_min"
+                        android:layout_height="@dimen/touch_min"
+                        android:importantForAccessibility="no"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_pencil"
+                        app:tint="@color/flux_text_secondary" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvSavingNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_8"
+                    android:textAppearance="@style/TextAppearance.Flux.Caption" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardMortgage"
+            style="@style/Widget.Flux.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_12"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/space_16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        style="@style/Widget.Flux.IconTile"
+                        android:backgroundTint="@color/cat_gold_bg"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_house"
+                        app:tint="@color/cat_gold" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_12"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/rates_mortgage"
+                            android:textAppearance="@style/TextAppearance.Flux.Caption" />
+
+                        <TextView
+                            android:id="@+id/tvMortgageRate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.Flux.AmountSmall" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="@dimen/touch_min"
+                        android:layout_height="@dimen/touch_min"
+                        android:importantForAccessibility="no"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_pencil"
+                        app:tint="@color/flux_text_secondary" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvMortgageNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_8"
+                    android:textAppearance="@style/TextAppearance.Flux.Caption" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/tvError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_12"
+            android:textAppearance="@style/TextAppearance.Flux.Caption"
+            android:textColor="@color/flux_error_dark"
+            android:visibility="gone" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

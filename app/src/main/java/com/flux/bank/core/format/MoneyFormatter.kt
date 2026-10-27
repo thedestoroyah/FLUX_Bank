@@ -19,6 +19,10 @@ object MoneyFormatter {
         return "$sign${group(abs(amount))}"
     }
 
+    /** Lãi suất %/năm kiểu Việt Nam, bỏ số 0 thừa: 4.5 -> "4,5", 5.0 -> "5", 8.25 -> "8,25". */
+    fun formatRate(rate: Double): String =
+        "%.2f".format(java.util.Locale.ROOT, rate).trimEnd('0').trimEnd('.').replace('.', ',')
+
     private fun group(value: Long): String =
         value.toString().reversed().chunked(3).joinToString(".").reversed()
 }
