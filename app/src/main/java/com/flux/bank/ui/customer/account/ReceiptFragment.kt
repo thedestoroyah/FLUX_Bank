@@ -53,7 +53,7 @@ class ReceiptFragment : Fragment() {
                     getString(if (type.isIncoming) R.string.move_source_value else R.string.move_destination_value),
                 getString(R.string.receipt_time) to TIME_FORMAT.format(Date(tx.createdAt)),
                 getString(R.string.receipt_id) to displayId(tx.id),
-                getString(R.string.receipt_balance_after) to MoneyFormatter.formatVnd(tx.balanceAfter)
+                getString(R.string.receipt_balance_after) to MoneyFormatter.formatVnd(tx.balanceAfter ?: 0)
             )
         )
         binding.btnHome.setOnClickListener { leaveTo(CustomerMainActivity.CustomerTab.HOME) }

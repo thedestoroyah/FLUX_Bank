@@ -47,6 +47,7 @@ class TransactionRowAdapter(
         fun labelFor(type: TransactionType): Int = when (type) {
             TransactionType.DEPOSIT -> R.string.util_deposit
             TransactionType.WITHDRAW -> R.string.util_withdraw
+            TransactionType.TRANSFER_OUT, TransactionType.TRANSFER_IN -> R.string.tab_transfer
         }
 
         /** "+2.000.000 ₫" cho tiền vào, "−500.000 ₫" cho tiền ra. */
