@@ -15,7 +15,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 
 ## 2. Trạng thái hiện tại
 
-- Repo git ở `FLUX_Bank/`, chưa có remote. `main` có F1–F2. Feature 3 nằm trên nhánh **`feat/account-management-f3`** (chưa merge).
+- Repo git ở `FLUX_Bank/`, chưa có remote. `main` có F1–F3.
 - **Unit test: 118/118 pass.** `assembleDebug` và `lintDebug` pass (lint 0 error).
 - Đã review toàn bộ nhánh bằng một reviewer độc lập. Đã sửa hết lỗi Important; danh sách lỗi Minor còn lại ở mục 7.
 
@@ -40,14 +40,13 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 
 Đã xong ngày 2026-10-27: publish rules F1–F2, chạy end-to-end F1–F2 trên máy thật, hiệu chỉnh `MATCH_THRESHOLD` (giữ 0.6), merge F1–F2 vào `main`.
 
-Cho Feature 3 (chưa xác nhận):
+Cho Feature 3 (đã xong 2026-10-27, nhánh đã merge vào `main`):
 1. **Publish lại `firestore.rules`** (thêm `transactions`, `config/rates`, quyền đổi số dư có đối chiếu).
 2. **Tạo composite index** `transactions` (`ownerUid` ASC, `createdAt` DESC) — README mục 3.
 3. **Chạy demo F3 trên máy thật** — kết quả 2026-10-27 (Xiaomi, rules mới đã publish):
    - Đạt: nhân viên mở Tiết kiệm + khoản vay 1,5 tỷ/240 tháng (xem trước 13.017.349 / 6.003.662 ₫); tab Lãi suất đổi tiết kiệm 4,5 → 5% (ghi "Sửa bởi …"); khách nạp 2.000.000 ₫ vào Tiết kiệm qua OTP (mã hết hạn báo đúng, gửi lại mã được); rút quá số dư bị chặn trên form; rút 500.000 ₫ thành công; biên lai đúng; chi tiết Tiết kiệm hiện 5%, lãi +6.250 ₫/tháng cho 1,5 tr; chi tiết khoản vay đổi Hàng tháng / 2 tuần đúng số.
    - Lỗi tìm thấy khi chạy và đã sửa: thanh tab mất sau khi vuốt back (predictive back, có từ F1); bàn phím che sheet sửa lãi suất / lý do từ chối; xem trước số dư âm khi rút quá; lịch sử tải lỗi lại hiện "Chưa có giao dịch nào".
-   - Chưa xong: tab Lịch sử và "Giao dịch gần đây" cần index (Firestore còn báo `FAILED_PRECONDITION`); nạp ≥ 10.000.000 ₫ (OTP + quét mặt) cần chính chủ tài khoản thử.
-4. Chọn cách xử lý nhánh `feat/account-management-f3` sau review.
+   - Sau khi tạo đúng index (createdAt **Descending**): tab Lịch sử (nhóm "Hôm nay", lọc theo tài khoản, mở biên lai) và "Giao dịch gần đây" đạt. Chủ dự án tự nạp 10.000.000 ₫ (OTP + quét mặt) thành công.
 
 ## 4. Những điều chủ dự án đã quyết định (đừng hỏi lại)
 
@@ -151,7 +150,7 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 ## 9. Cách bắt đầu session mới
 
 Gợi ý câu lệnh mở đầu:
-> Đọc `FLUX_Bank/HANDOFF.md` và `FLUX_Bank/PROJECT_CONTEXT.md`. Tôi đã [làm/chưa làm] mục 3. Nhánh `feat/account-management-f3`: [merge / giữ]. Tiếp theo brainstorm Feature 4 (Transaction) bằng `/superpowers:brainstorming`.
+> Đọc `FLUX_Bank/HANDOFF.md` và `FLUX_Bank/PROJECT_CONTEXT.md`. Tôi đã [làm/chưa làm] mục 3. Tiếp theo brainstorm Feature 4 (Transaction) bằng `/superpowers:brainstorming`.
 
 Quy trình đã dùng và nên giữ: `superpowers:brainstorming` (hỏi từng câu, mockup HTML trên visual companion) → viết spec vào `docs/superpowers/specs/` → `superpowers:writing-plans` → `superpowers:executing-plans` (chủ dự án chọn chế độ **Native**) → review toàn nhánh → `finishing-a-development-branch`.
 
