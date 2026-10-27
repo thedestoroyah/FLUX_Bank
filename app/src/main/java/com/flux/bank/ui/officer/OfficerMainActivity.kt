@@ -9,6 +9,8 @@ import androidx.fragment.app.commit
 import com.flux.bank.R
 import com.flux.bank.databinding.ActivityOfficerMainBinding
 import com.flux.bank.ui.common.ScreenHost
+import com.flux.bank.ui.common.markAsSubScreen
+import com.flux.bank.ui.common.trackSubScreens
 import com.flux.bank.ui.customer.profile.ProfileFragment
 import com.flux.bank.ui.officer.customers.CustomerListFragment
 import com.flux.bank.ui.officer.ekyc.EkycReviewFragment
@@ -34,12 +36,14 @@ class OfficerMainActivity : AppCompatActivity(), ScreenHost {
             replaceRoot(fragmentFor(tab))
             true
         }
-        supportFragmentManager.addOnBackStackChangedListener {
-            val sub = supportFragmentManager.backStackEntryCount > 0
-            binding.bottomNav.isVisible = !sub
-            binding.navDivider.isVisible = !sub
-        }
+        trackSubScreens(R.id.container, ::syncChrome)
         if (savedInstanceState == null) showTab(OfficerTab.OVERVIEW)
+    }
+
+    /** Ẩn thanh tab khi đang ở màn phụ. */
+    private fun syncChrome(sub: Boolean) {
+        binding.bottomNav.isVisible = !sub
+        binding.navDivider.isVisible = !sub
     }
 
     fun showTab(tab: OfficerTab) {
@@ -50,7 +54,7 @@ class OfficerMainActivity : AppCompatActivity(), ScreenHost {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out)
-            replace(R.id.container, fragment)
+            replace(R.id.container, fragment.markAsSubScreen())
             addToBackStack(null)
         }
     }
