@@ -56,18 +56,22 @@ class MoneyMoveViewModel(
 
     // Đang chờ kết quả sheet xác thực: chặn bấm "Tiếp tục" lần 2 mở thêm sheet
     private var awaitingAuth = false
+    private var kycStatus: String? = null
 
     /** [preselectedAccountId] là tài khoản đang xem (mở từ chi tiết); null thì chọn Checking đầu tiên. */
     fun load(preselectedAccountId: String?) {
         val uid = auth.currentUid() ?: return
         viewModelScope.launch {
-            val kyc = users.getUser(uid).getOrNull()?.kycStatus
+            // Lỗi đọc hồ sơ (mạng) không có nghĩa là chưa eKYC: báo lỗi chung thay vì bảo khách đi xác minh lại
+            val user = users.getUser(uid)
+            kycStatus = user.getOrNull()?.kycStatus
             val list = movable(uid)
             update { s ->
                 s.copy(
                     accounts = list,
                     selectedId = s.selectedId ?: (list.firstOrNull { it.accountId == preselectedAccountId } ?: list.firstOrNull())?.accountId,
-                    kycBlocked = kyc != KycStatus.VERIFIED
+                    kycBlocked = user.isSuccess && kycStatus != KycStatus.VERIFIED,
+                    errorRes = if (user.isFailure) R.string.err_generic else s.errorRes
                 )
             }
         }
@@ -79,7 +83,7 @@ class MoneyMoveViewModel(
 
     fun confirm() {
         val s = _state.value ?: return
-        if (s.kycBlocked || s.submitting || awaitingAuth) return
+        if (kycStatus != KycStatus.VERIFIED || s.submitting || awaitingAuth) return
         val account = s.selected ?: return
         Validators.amountError(deposit, s.amount, account.balance)?.let { error ->
             return update { it.copy(amountError = error) }
