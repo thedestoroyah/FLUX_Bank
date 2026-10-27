@@ -128,8 +128,11 @@ class MoneyMoveViewModel(
     private fun update(block: (MoneyMoveState) -> MoneyMoveState) {
         val next = block(_state.value ?: MoneyMoveState(deposit))
         val balance = next.selected?.balance
-        _state.value = next.copy(
-            balanceAfter = if (balance == null || next.amount <= 0) null else if (deposit) balance + next.amount else balance - next.amount
-        )
+        val after = when {
+            balance == null || next.amount <= 0 -> null
+            deposit -> balance + next.amount
+            else -> (balance - next.amount).takeIf { it >= 0 }
+        }
+        _state.value = next.copy(balanceAfter = after)
     }
 }
