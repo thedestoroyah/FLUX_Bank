@@ -70,9 +70,9 @@
     <string name="card_available_balance">Số dư khả dụng</string>
     <string name="cd_toggle_balance">Ẩn hoặc hiện số dư</string>
     <string name="card_currency">VND</string>
-    <string name="account_checking">Checking</string>
-    <string name="account_saving">Saving</string>
-    <string name="account_mortgage">Mortgage</string>
+    <string name="account_checking">Thanh toán</string>
+    <string name="account_saving">Tiết kiệm</string>
+    <string name="account_mortgage">Vay thế chấp</string>
     <string name="home_recent">Giao dịch gần đây</string>
     <string name="home_see_all">Xem tất cả</string>
     <string name="home_no_transactions">Chưa có giao dịch</string>
