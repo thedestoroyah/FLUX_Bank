@@ -7,13 +7,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.flux.bank.R
 import com.flux.bank.databinding.ActivityCustomerMainBinding
-import com.flux.bank.ui.common.ComingSoonFragment
 import com.flux.bank.ui.common.ScreenHost
 import com.flux.bank.ui.common.markAsSubScreen
 import com.flux.bank.ui.common.trackSubScreens
 import com.flux.bank.ui.customer.history.HistoryFragment
 import com.flux.bank.ui.customer.home.HomeFragment
 import com.flux.bank.ui.customer.profile.ProfileFragment
+import com.flux.bank.ui.customer.qr.QrFragment
 import com.flux.bank.ui.customer.transfer.TransferHubFragment
 
 /**
@@ -39,7 +39,7 @@ class CustomerMainActivity : AppCompatActivity(), ScreenHost {
             true
         }
         binding.btnQr.setOnClickListener {
-            openScreen(ComingSoonFragment.newInstance(R.string.tab_qr, R.drawable.ic_scan, R.color.cat_emerald))
+            openScreen(QrFragment())
         }
         trackSubScreens(R.id.container, ::syncChrome)
         if (savedInstanceState == null) {
