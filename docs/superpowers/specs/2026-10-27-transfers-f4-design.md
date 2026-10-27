@@ -2,7 +2,7 @@
 
 - Ngày: 2026-10-27 · Hạn nộp đồ án: 2026-12-01
 - Nền tảng: F1–F3 đã xong. Dùng lại `TransactionAuthSheet`, `MoneyMoveFragment`, `ReceiptFragment`, `TransactionRowAdapter`, tab Lịch sử và hợp đồng "số dư chỉ đổi kèm một giao dịch mới" của F3 ([2026-10-27-account-management-f3-design.md](2026-10-27-account-management-f3-design.md)).
-- Mockup: [mockups/2026-10-27-f4-transfers.html](mockups/2026-10-27-f4-transfers.html) (**chờ duyệt**)
+- Mockup: [mockups/2026-10-27-f4-transfers.html](mockups/2026-10-27-f4-transfers.html) (**đã duyệt 2026-10-27**)
 
 Ký hiệu: **[Đề]** = yêu cầu của đề bài. **[Chủ dự án]** = chủ dự án đã quyết định. **[Claude]** = Claude tự quyết (chủ dự án bỏ qua phần hỏi đáp và bảo "bắt tay vào làm luôn"); mọi mục [Claude] đều có thể bị chủ dự án sửa khi duyệt.
 
