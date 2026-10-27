@@ -45,7 +45,7 @@ class OpenAccountViewModel(
     private val _opened = MutableLiveData<Event<BankAccount>>()
     val opened: LiveData<Event<BankAccount>> = _opened
 
-    /** Lãi suất vay lấy theo chính sách hiện tại; lỗi đọc thì giữ mức mặc định. */
+    /** Lãi suất vay để xem trước; lỗi đọc thì tạm hiện mức mặc định (lúc mở khoản vay sẽ đọc lại, xem [submit]). */
     fun load() {
         viewModelScope.launch {
             rates.get().onSuccess { r -> update { it.copy(mortgageRate = r.mortgageRate) } }
@@ -68,7 +68,11 @@ class OpenAccountViewModel(
         update { it.copy(submitting = true, errorRes = null) }
         viewModelScope.launch {
             val result = if (s.type == AccountType.MORTGAGE) {
-                accounts.openMortgage(ownerUid, s.loanAmount, s.termMonths, s.mortgageRate)
+                // Lãi vay được cố định vào khoản vay: đọc lại mức hiện hành, không dùng số mặc định khi tải lỗi
+                val rate = rates.get().getOrElse {
+                    return@launch update { it.copy(submitting = false, errorRes = R.string.err_generic) }
+                }.mortgageRate
+                accounts.openMortgage(ownerUid, s.loanAmount, s.termMonths, rate)
             } else {
                 accounts.openSaving(ownerUid)
             }
