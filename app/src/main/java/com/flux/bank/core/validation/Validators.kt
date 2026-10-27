@@ -1,5 +1,8 @@
 package com.flux.bank.core.validation
 
+/** Lý do số tiền nạp/rút không hợp lệ. */
+enum class AmountError { BELOW_MIN, ABOVE_DEPOSIT_MAX, INSUFFICIENT_FUNDS }
+
 /** Kiểm tra dữ liệu nhập; thuần Kotlin để unit test được trên JVM. */
 object Validators {
 
@@ -23,4 +26,25 @@ object Validators {
     /** Mật khẩu tối thiểu 8 ký tự, có cả chữ và số. */
     fun isStrongEnoughPassword(s: String): Boolean =
         s.length >= MIN_PASSWORD_LENGTH && s.any { it.isLetter() } && s.any { it.isDigit() }
+
+    const val MIN_AMOUNT = 10_000L
+    const val MAX_DEPOSIT = 100_000_000L
+    const val MAX_AMOUNT_DIGITS = 12
+    private const val MAX_RATE = 30.0
+
+    /** Kiểm tra số tiền nạp ([isDeposit]) hoặc rút so với [balance]; null nếu hợp lệ. */
+    fun amountError(isDeposit: Boolean, amount: Long, balance: Long): AmountError? = when {
+        amount < MIN_AMOUNT -> AmountError.BELOW_MIN
+        isDeposit && amount > MAX_DEPOSIT -> AmountError.ABOVE_DEPOSIT_MAX
+        !isDeposit && amount > balance -> AmountError.INSUFFICIENT_FUNDS
+        else -> null
+    }
+
+    /** Lãi suất %/năm, nhận cả dấu phẩy thập phân ("5,0"); null nếu không phải số hoặc ngoài (0, 30]. */
+    fun parseRate(input: String): Double? =
+        input.trim().replace(',', '.').toDoubleOrNull()?.takeIf { it > 0 && it <= MAX_RATE }
+
+    /** Số tiền người dùng gõ: chỉ giữ chữ số, tối đa 12 chữ số để không tràn Long; rỗng → 0. */
+    fun parseAmount(input: String): Long =
+        input.filter(Char::isDigit).take(MAX_AMOUNT_DIGITS).toLongOrNull() ?: 0L
 }
