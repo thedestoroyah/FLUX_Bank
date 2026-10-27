@@ -19,6 +19,7 @@ import com.flux.bank.data.model.KycStatus
 import com.flux.bank.databinding.FragmentHomeBinding
 import com.flux.bank.ui.common.ComingSoonFragment
 import com.flux.bank.ui.customer.CustomerMainActivity
+import com.flux.bank.ui.customer.account.AccountDetailFragment
 import com.flux.bank.ui.ekyc.EkycCaptureFragment
 
 /** Trang chủ khách hàng: lời chào, thẻ Titanium, nhắc eKYC, lưới tiện ích 4x3, giao dịch gần đây. */
@@ -27,7 +28,10 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: HomeViewModel by viewModels()
-    private val cardAdapter = AccountCardAdapter { viewModel.toggleBalance() }
+    private val cardAdapter = AccountCardAdapter(
+        onToggleBalance = { viewModel.toggleBalance() },
+        onCardClick = { id -> host().openScreen(AccountDetailFragment.newInstance(id)) }
+    )
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)

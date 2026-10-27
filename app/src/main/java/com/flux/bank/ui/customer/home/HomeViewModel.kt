@@ -19,7 +19,9 @@ import java.util.Calendar
 
 /** Một thẻ tài khoản trên trang chủ, đã định dạng sẵn để hiển thị. */
 data class AccountCardUi(
+    val accountId: String,
     @StringRes val typeLabel: Int,
+    @StringRes val balanceLabel: Int,
     val maskedNumber: String,
     val balanceText: String
 )
@@ -75,7 +77,9 @@ class HomeViewModel(
 
     private fun cards(hidden: Boolean) = rawAccounts.map { account ->
         AccountCardUi(
+            accountId = account.accountId,
             typeLabel = labelFor(account.type),
+            balanceLabel = if (account.type == AccountType.MORTGAGE) R.string.card_outstanding else R.string.card_available_balance,
             maskedNumber = "•••• " + account.accountNumber.takeLast(4),
             balanceText = if (hidden) HIDDEN_BALANCE else MoneyFormatter.formatVnd(account.balance)
         )

@@ -7,7 +7,10 @@ import com.flux.bank.R
 import com.flux.bank.databinding.ItemAccountCardBinding
 
 /** Trang của ViewPager2: mỗi trang là một thẻ Titanium. */
-class AccountCardAdapter(private val onToggleBalance: () -> Unit) :
+class AccountCardAdapter(
+    private val onToggleBalance: () -> Unit,
+    private val onCardClick: (String) -> Unit
+) :
     RecyclerView.Adapter<AccountCardAdapter.Holder>() {
 
     private var items: List<AccountCardUi> = emptyList()
@@ -34,6 +37,8 @@ class AccountCardAdapter(private val onToggleBalance: () -> Unit) :
             tvNumber.text = card.maskedNumber
             btnEye.setImageResource(if (hidden) R.drawable.ic_eye_slash else R.drawable.ic_eye)
             btnEye.setOnClickListener { onToggleBalance() }
+            tvBalanceLabel.setText(card.balanceLabel)
+            this.card.setOnClickListener { onCardClick(card.accountId) }
         }
     }
 }
