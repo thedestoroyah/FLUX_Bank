@@ -340,4 +340,11 @@
     <string name="receipt_balance_after">Số dư sau giao dịch</string>
     <string name="receipt_home">Về trang chủ</string>
     <string name="receipt_history">Xem lịch sử</string>
+    <!-- Feature 3: lịch sử -->
+    <string name="history_all">Tất cả</string>
+    <string name="history_today">Hôm nay</string>
+    <string name="history_yesterday">Hôm qua</string>
+    <string name="history_load_failed">Không tải được lịch sử giao dịch. Kiểm tra kết nối rồi thử lại.</string>
+    <string name="saving_none_title">Chưa có tài khoản tiết kiệm</string>
+    <string name="saving_none">Liên hệ nhân viên FLUX để mở tài khoản tiết kiệm.</string>
 </resources>

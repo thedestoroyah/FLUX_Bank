@@ -14,14 +14,21 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import com.flux.bank.R
+import com.flux.bank.data.model.AccountType
 import com.flux.bank.data.model.KycStatus
+import com.flux.bank.data.model.Transaction
 import com.flux.bank.databinding.FragmentHomeBinding
 import com.flux.bank.ui.common.ComingSoonFragment
 import com.flux.bank.ui.customer.CustomerMainActivity
 import com.flux.bank.ui.customer.Utility
 import com.flux.bank.ui.customer.account.AccountDetailFragment
 import com.flux.bank.ui.customer.account.MoneyMoveFragment
+import com.flux.bank.ui.customer.account.ReceiptFragment
+import com.flux.bank.ui.customer.account.TransactionRowAdapter
 import com.flux.bank.ui.ekyc.EkycCaptureFragment
 
 /** Trang chủ khách hàng: lời chào, thẻ Titanium, nhắc eKYC, lưới tiện ích 4x3, giao dịch gần đây. */
@@ -30,6 +37,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: HomeViewModel by viewModels()
+    private val recentAdapter = TransactionRowAdapter(subtitle = ::recentSubtitle, onClick = ::openRecent)
     private val cardAdapter = AccountCardAdapter(
         onToggleBalance = { viewModel.toggleBalance() },
         onCardClick = { id -> host().openScreen(AccountDetailFragment.newInstance(id)) }
@@ -45,6 +53,7 @@ class HomeFragment : Fragment() {
         sizeCardToRealRatio()
 
         binding.pagerCards.adapter = cardAdapter
+        binding.rvRecent.adapter = recentAdapter
         binding.pagerCards.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) = renderDots(cardAdapter.itemCount, position)
         })
@@ -77,6 +86,20 @@ class HomeFragment : Fragment() {
         cardAdapter.submit(state.accounts, state.balanceHidden)
         renderDots(state.accounts.size, binding.pagerCards.currentItem)
         renderKyc(state.kycStatus)
+        recentAdapter.submit(state.recent)
+        binding.cardRecent.isVisible = state.recent.isNotEmpty()
+        binding.cardEmpty.isVisible = state.recent.isEmpty()
+    }
+
+    private fun recentSubtitle(tx: Transaction): String {
+        val label = viewModel.state.value?.accounts?.firstOrNull { it.accountId == tx.accountId }?.let { getString(it.typeLabel) }
+        return listOfNotNull(label, RECENT_TIME.format(Date(tx.createdAt))).joinToString(" · ")
+    }
+
+    private fun openRecent(tx: Transaction) {
+        val card = viewModel.state.value?.accounts?.firstOrNull { it.accountId == tx.accountId }
+        val label = card?.let { getString(it.typeLabel) + " · " + tx.accountNumber } ?: tx.accountNumber
+        host().openScreen(ReceiptFragment.newInstance(tx, label, viewOnly = true))
     }
 
     private fun renderKyc(status: String) {
@@ -139,6 +162,10 @@ class HomeFragment : Fragment() {
         val screen = when (utility) {
             Utility.NAP_TIEN -> MoneyMoveFragment.newInstance(deposit = true)
             Utility.RUT_TIEN -> MoneyMoveFragment.newInstance(deposit = false)
+            Utility.TIET_KIEM -> viewModel.firstAccountId(AccountType.SAVING)?.let(AccountDetailFragment::newInstance)
+                ?: ComingSoonFragment.newInstance(
+                    utility.label, utility.icon, utility.tint, titleRes = R.string.saving_none_title, messageRes = R.string.saving_none
+                )
             else -> ComingSoonFragment.newInstance(utility.label, utility.icon, utility.tint)
         }
         host().openScreen(screen)
@@ -154,5 +181,6 @@ class HomeFragment : Fragment() {
     private companion object {
         const val GRID_COLUMNS = 4
         const val CARD_RATIO = 1.586f
+        val RECENT_TIME = SimpleDateFormat("dd/MM HH:mm", Locale("vi"))
     }
 }

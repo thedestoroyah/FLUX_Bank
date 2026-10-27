@@ -40,7 +40,9 @@ class ComingSoonFragment : Fragment() {
         ImageViewCompat.setImageTintList(binding.ivIcon, ColorStateList.valueOf(tint))
         // Nền ô icon: cùng màu với icon nhưng rất nhạt
         binding.ivIcon.backgroundTintList = ColorStateList.valueOf(tint).withAlpha(BG_ALPHA)
-        binding.tvBody.text = getString(R.string.coming_soon_body, label)
+        val messageRes = args.getInt(ARG_MESSAGE)
+        binding.tvBody.text = if (messageRes != 0) getString(messageRes) else getString(R.string.coming_soon_body, label)
+        args.getInt(ARG_TITLE).takeIf { it != 0 }?.let(binding.tvTitle::setText)
         binding.btnHome.isVisible = showBack
         binding.btnHome.setOnClickListener { parentFragmentManager.popBackStack() }
     }
@@ -55,11 +57,23 @@ class ComingSoonFragment : Fragment() {
         private const val ARG_ICON = "icon"
         private const val ARG_TINT = "tint"
         private const val ARG_SHOW_BACK = "show_back"
+        private const val ARG_TITLE = "title"
+        private const val ARG_MESSAGE = "message"
         private const val BG_ALPHA = 26
 
-        fun newInstance(@StringRes label: Int, @DrawableRes icon: Int, @ColorRes tint: Int, showBack: Boolean = true) =
-            ComingSoonFragment().apply {
-                arguments = bundleOf(ARG_LABEL to label, ARG_ICON to icon, ARG_TINT to tint, ARG_SHOW_BACK to showBack)
-            }
+        /** [titleRes]/[messageRes] khác 0 thì thay chữ "Sắp ra mắt" — dùng làm empty state (ví dụ chưa có sổ tiết kiệm). */
+        fun newInstance(
+            @StringRes label: Int,
+            @DrawableRes icon: Int,
+            @ColorRes tint: Int,
+            showBack: Boolean = true,
+            @StringRes titleRes: Int = 0,
+            @StringRes messageRes: Int = 0
+        ) = ComingSoonFragment().apply {
+            arguments = bundleOf(
+                ARG_LABEL to label, ARG_ICON to icon, ARG_TINT to tint, ARG_SHOW_BACK to showBack,
+                ARG_TITLE to titleRes, ARG_MESSAGE to messageRes
+            )
+        }
     }
 }
