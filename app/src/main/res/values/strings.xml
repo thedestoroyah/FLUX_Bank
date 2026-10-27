@@ -388,7 +388,7 @@
     <string name="vnpay_sandbox">sandbox</string>
     <string name="move_source_vnpay">VNPay · thẻ ATM / QR (sandbox)</string>
     <string name="move_vnpay_note">Xác nhận OTP xong, app mở trang thanh toán VNPay. Số dư chỉ cộng khi VNPay báo thành công.</string>
-    <string name="err_vnpay_not_configured">Chưa cấu hình VNPay. Thêm VNPAY_TMN_CODE và VNPAY_HASH_SECRET vào local.properties rồi build lại.</string>
+    <string name="err_vnpay_not_configured">Chưa cấu hình VNPay. Thêm vnpay.tmn.code và vnpay.hash.secret vào local.properties rồi build lại.</string>
     <string name="err_vnpay_cancelled">Bạn đã huỷ thanh toán VNPay. Số dư không thay đổi.</string>
     <string name="err_vnpay_failed">VNPay báo thanh toán không thành công. Số dư không thay đổi, vui lòng thử lại.</string>
     <string name="err_vnpay_retry">VNPay đã thanh toán nhưng chưa ghi được vào tài khoản (lỗi mạng). Bấm Tiếp tục để thử ghi lại, bạn không bị trừ tiền thêm.</string>

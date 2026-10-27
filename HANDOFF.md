@@ -49,7 +49,7 @@ Cho Feature 3 (đã xong 2026-10-27, nhánh đã merge vào `main`):
 
 Cho Feature 4 (nhánh `feature/f4-transfers`):
 1. **Publish lại `firestore.rules`** (luật chuyển tiền + `accountIndex`).
-2. **Đăng ký VNPay sandbox** (README mục 6) và thêm `VNPAY_TMN_CODE`, `VNPAY_HASH_SECRET` vào `local.properties`, build lại.
+2. **Đăng ký VNPay sandbox** (README mục 6) và thêm `vnpay.tmn.code`, `vnpay.hash.secret` vào `local.properties`, build lại.
 3. **Chạy demo F4 trên máy thật** theo README "Luồng demo" (cần 2 khách; khách nhận phải đăng nhập một lần để có `accountIndex`).
    - Đã thử trên Xiaomi (2026-10-28, rules cũ): tab Chuyển tiền, form liên ngân hàng, sheet chọn ngân hàng, lỗi vượt 100 tr/lần hiện đúng. Chưa thử ghi giao dịch, VNPay, QR (cần rules mới + khoá VNPay).
 4. Sau khi đạt: merge nhánh vào `main`.
