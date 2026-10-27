@@ -1,6 +1,13 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
+}
+
+// Khoá VNPay sandbox đọc từ local.properties (vnpay.tmn.code, vnpay.hash.secret; không commit); thiếu thì để rỗng và app báo "Chưa cấu hình VNPay"
+val localProps = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
 }
 
 android {
@@ -17,10 +24,14 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "VNPAY_TMN_CODE", "\"${localProps.getProperty("vnpay.tmn.code", "").trim()}\"")
+        buildConfigField("String", "VNPAY_HASH_SECRET", "\"${localProps.getProperty("vnpay.hash.secret", "").trim()}\"")
     }
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     buildTypes {
@@ -68,6 +79,8 @@ dependencies {
 
     // --- Nhận diện & đối chiếu khuôn mặt on-device ---
     implementation("com.google.mlkit:face-detection:16.1.7")
+    implementation("com.google.mlkit:barcode-scanning:17.3.0") // Quét QR nhận tiền (F4)
+    implementation("com.google.zxing:core:3.5.3") // Sinh mã QR "Mã của tôi" (Apache-2.0)
     implementation("com.google.ai.edge.litert:litert:1.4.2")
     implementation("androidx.camera:camera-core:1.6.2")
     implementation("androidx.camera:camera-camera2:1.6.2")

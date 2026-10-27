@@ -7,6 +7,7 @@ import com.flux.bank.data.model.BankAccount
 import com.flux.bank.data.model.Transaction
 import com.flux.bank.fakes.FakeAccountRepository
 import com.flux.bank.fakes.FakeAuthRepository
+import com.flux.bank.fakes.FakePayeeRepository
 import com.flux.bank.fakes.FakeTransactionRepository
 import com.flux.bank.fakes.FakeUserRepository
 import com.flux.bank.fakes.customer
@@ -30,7 +31,18 @@ class HomeViewModelTest {
     }
 
     private val transactions = FakeTransactionRepository()
-    private fun vm(hour: Int = 9) = HomeViewModel(auth, users, accounts, transactions) { hour }
+    private val payees = FakePayeeRepository()
+    private fun vm(hour: Int = 9) = HomeViewModel(auth, users, accounts, transactions, payees) { hour }
+
+    @Test
+    fun indexesOwnAccountsWithFullName() {
+        accounts.accounts += BankAccount(accountId = "s1", ownerUid = "c1", type = AccountType.SAVING)
+        accounts.accounts += BankAccount(accountId = "m1", ownerUid = "c1", type = AccountType.MORTGAGE)
+        vm().load()
+        val (indexed, name) = payees.ensured.single()
+        assertEquals(listOf("a1", "s1", "m1"), indexed.map { it.accountId })
+        assertEquals("Nguyễn Minh Anh", name)
+    }
 
     @Test
     fun greetingDependsOnHour() {

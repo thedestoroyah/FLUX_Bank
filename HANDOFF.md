@@ -1,4 +1,4 @@
-# FLUX Bank — Handoff (cập nhật 2026-10-27)
+# FLUX Bank — Handoff (cập nhật 2026-10-28)
 
 Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc file này trước, sau đó đọc `PROJECT_CONTEXT.md` (kiến trúc, design system, dữ liệu).
 
@@ -15,8 +15,8 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 
 ## 2. Trạng thái hiện tại
 
-- Repo git ở `FLUX_Bank/`, chưa có remote. `main` có F1–F3.
-- **Unit test: 160/160 pass**, rules test trên emulator 20/20. `assembleDebug` và `lintDebug` pass (lint 0 error).
+- Repo git ở `FLUX_Bank/`, chưa có remote. `main` có F1–F3. **F4 nằm trên nhánh `feature/f4-transfers`** (đã chạy end-to-end đạt trên máy thật 2026-10-28, mục 3; chủ dự án chọn giữ nhánh, **chưa merge**). Working tree đang đứng ở nhánh này.
+- **Unit test: 216/216 pass**, rules test trên emulator 40/40. F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test). `assembleDebug` và `lintDebug` pass (lint 0 error).
 - F1–F2 và F3 đều đã được reviewer độc lập review toàn nhánh, đã sửa hết lỗi Important; lỗi Minor còn lại ở mục 7. F3 đã chạy demo đạt trên máy thật (mục 3).
 
 ### Đã hoàn thành
@@ -27,9 +27,9 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 | Feature 1 | Nhân viên tạo / tìm / sửa khách (FirebaseApp phụ, có rollback, cấp tài khoản Checking 0 ₫, mật khẩu tạm), gửi email đặt lại mật khẩu, chụp eKYC hộ khách. Khách xem hồ sơ, tự sửa SĐT (qua OTP), địa chỉ, avatar. Bắt đổi mật khẩu ở lần đăng nhập đầu |
 | Feature 2 | eKYC (ML Kit + MobileFaceNet embedding), nhân viên duyệt / từ chối có lý do. Khoá app sinh trắc học (cold start, khi app bị khôi phục, sau ≥ 60 s ở nền). OTP 6 số / 120 s / dùng 1 lần / gắn với giao dịch / sai 5 lần thì khoá, gửi qua SMS giả lập kèm banner dự phòng. `TransactionAuthSheet` (bàn phím riêng + bước quét mặt khi giao dịch ≥ 10.000.000 ₫). Security Rules |
 | Feature 3 | Chi tiết riêng cho Checking/Saving/Mortgage, lãi suất chung + lãi dự kiến, tiền trả mỗi tháng / 2 tuần, nạp/rút qua OTP (+ mặt khi ≥ 10 tr) bằng Firestore transaction, biên lai, tab Lịch sử, tab Lãi suất và mở tài khoản cho nhân viên. Rules có test trên emulator (`rules-test/`, 20/20) |
+| Feature 4 (nhánh) | Tab Chuyển tiền: trong FLUX (tra tên theo số TK qua `accountIndex`), giữa tài khoản của tôi, liên ngân hàng giả lập (10 ngân hàng), người nhận gần đây. Kiểm tra trước khi ghi (`TransferPolicy`: 10k–100tr/lần, 200tr/ngày giờ VN). Rules: cộng tiền cho người khác phải có TRANSFER_OUT cặp đã trừ nguồn cùng lần ghi, thông tin người gửi trên TRANSFER_IN không giả được (40 ca test). Nạp tiền qua VNPay sandbox (WebView, kiểm HMAC-SHA512). Nút QR giữa: quét / "Mã của tôi" |
 
 ### Chưa làm (các feature tiếp theo)
-- **Feature 4** Transaction: chuyển tiền cùng ngân hàng (tra người nhận qua `phoneIndex`) và khác ngân hàng, kiểm tra hợp lệ trước khi ghi (Firestore transaction), tích hợp VNPay hoặc Stripe (sandbox).
 - **Feature 5** Utilities: tiền điện, tiền nước, nạp điện thoại, vé máy bay, vé phim, khách sạn, mua sắm.
 - **Feature 6** Navigation: bản đồ, vị trí người dùng, chi nhánh gần nhất, đường đi bộ ngắn nhất.
 - **Feature 7** AI chatbot: trả lời kèm link tới các chức năng.
@@ -47,6 +47,18 @@ Cho Feature 3 (đã xong 2026-10-27, nhánh đã merge vào `main`):
    - Lỗi tìm thấy khi chạy và đã sửa: thanh tab mất sau khi vuốt back (predictive back, có từ F1); bàn phím che sheet sửa lãi suất / lý do từ chối; xem trước số dư âm khi rút quá; lịch sử tải lỗi lại hiện "Chưa có giao dịch nào".
    - Sau khi tạo đúng index (createdAt **Descending**): tab Lịch sử (nhóm "Hôm nay", lọc theo tài khoản, mở biên lai) và "Giao dịch gần đây" đạt. Chủ dự án tự nạp 10.000.000 ₫ (OTP + quét mặt) thành công.
 
+Cho Feature 4 (nhánh `feature/f4-transfers`, chủ dự án chọn giữ nhánh, chưa merge):
+1. Đã xong 2026-10-28: publish rules F4, thêm `vnpay.tmn.code` / `vnpay.hash.secret` vào `local.properties`.
+2. **Chạy end-to-end trên Xiaomi 2026-10-28 (rules thật trên Firebase) — đạt:**
+   - Nhân viên tạo khách mới Tran Thi Binh (`binh@flux.com`, SĐT 0911222333, mật khẩu đã đổi thành `Binh2026a`); Bình đăng nhập lần đầu → `accountIndex` tự tạo (số TK 886810968242).
+   - Customer nạp 1.000.000 ₫ qua VNPay sandbox (NCB test card, OTP 123456) → biên lai có mã VNPay, số dư 11.000.000 ₫. Đóng WebView giữa chừng → báo "đã huỷ", số dư không đổi, chip tài khoản còn đủ.
+   - Chuyển 500.000 ₫ cho Bình theo số TK (tra ra "TRAN THI BINH") → OTP → biên lai; Bình thấy +500.000 ₫, lịch sử "Nhận từ NGUYEN CUSTOMER", biên lai nhận không có số dư.
+   - Liên ngân hàng 2.000.000 ₫ sang Vietcombank; chuyển 1.000.000 ₫ Thanh toán → Tiết kiệm; "Người nhận gần đây", hạn mức còn lại, tab Lịch sử đều đúng.
+   - QR: "Mã của tôi" hiện đúng cho cả hai khách; bấm qua lại nhanh không crash.
+   - **Chưa thử trên máy**: quét QR bằng camera (cần hướng camera vào mã trên máy khác), bước quét mặt khi chuyển ≥ 10.000.000 ₫ (đã thử ở F3 cho nạp tiền), chặn hạn mức 200 tr/ngày (unit test có).
+3. Sau khi chủ dự án thử thêm QR (tuỳ chọn): merge nhánh vào `main`.
+- Mẹo adb cho F4: bàn phím Telex đổi "ff"→"f" và "us"→"ú" (gõ thiếu rồi đưa con trỏ về chèn chữ còn thiếu); chỉ bấm BACK để ẩn bàn phím khi `dumpsys input_method` báo `mInputShown=true`, nếu không BACK sẽ đóng màn (đóng WebView VNPay = huỷ). Phím số của sheet OTP là view tự vẽ, phải chạm theo toạ độ.
+
 ## 4. Những điều chủ dự án đã quyết định (đừng hỏi lại)
 
 - Giữ design system gốc (Apple Bento, nền trắng / `#F5F5F7`, chữ Obsidian `#0A0D12`) và bổ sung token. **Emerald `#10B981` chỉ dùng cho điểm tương tác**. Trang chủ có **dải mint `#E7F8EF` phía sau thẻ**. Icon **duotone**. Nút chính màu **đen**.
@@ -57,6 +69,7 @@ Cho Feature 3 (đã xong 2026-10-27, nhánh đã merge vào `main`):
 - Xác thực khuôn mặt **mức A**: ML Kit kiểm tra chớp mắt + MobileFaceNet so với ảnh eKYC.
 - Mọi màn hình mới phải được **duyệt mockup trước khi code giao diện**. Chủ dự án thích xem mockup HTML so sánh trên trình duyệt.
 - Nếu thiếu thời gian, cắt theo thứ tự: skeleton/haptic → nhân viên chụp eKYC hộ → kiểm tra chớp mắt. Không cắt phần đối chiếu khuôn mặt.
+- F4 (chủ dự án duyệt toàn bộ spec + mockup 2026-10-27): tra người nhận **chỉ theo số tài khoản** (không theo SĐT); liên ngân hàng giả lập; nạp tiền **chỉ qua VNPay** (không Stripe); hạn mức 100 tr/lần, 200 tr/ngày; QR dạng `fluxbank:<số TK>`.
 
 ## 5. Tài liệu & file quan trọng
 
@@ -68,6 +81,7 @@ Cho Feature 3 (đã xong 2026-10-27, nhánh đã merge vào `main`):
 | `docs/superpowers/specs/2026-10-26-ui-foundation-f1-f2-design.md` | Thiết kế đợt 1, đã duyệt |
 | `docs/superpowers/plans/2026-10-26-ui-foundation-f1-f2.md` | Kế hoạch 17 task, đã thực hiện xong |
 | `docs/superpowers/specs/mockups/*.html` | Mockup đã duyệt (mở bằng trình duyệt) |
+| `docs/superpowers/specs/2026-10-27-transfers-f4-design.md`, `docs/superpowers/plans/2026-10-27-transfers-f4.md` | Spec + plan F4 (đã làm xong trên nhánh) |
 | `docs/licenses/` | Giấy phép Inter (OFL), Phosphor (MIT), MobileFaceNet (MIT) |
 
 ### Bản đồ code (`app/src/main/java/com/flux/bank/`)
@@ -80,7 +94,8 @@ Cho Feature 3 (đã xong 2026-10-27, nhánh đã merge vào `main`):
 - `face/`: `FaceMatcher`, `BlinkDetector`, `FaceEmbedder` (LiteRT), `FaceDetectorHelper` (ML Kit). Model nằm ở `assets/mobilefacenet.tflite`.
 - `ui/auth/`: Login, Unlock, ChangePassword, `RoleRouter`. `ui/auth/sheet/`: `TransactionAuthSheet`, `TransactionAuthViewModel`, `FaceStepController`.
 - `ui/common/`: `ComingSoonFragment`, `ScreenHost`, `showKycPill`, `NumericKeypadView`, `OtpCellsView`, `SimulatedSmsBanner`, `Event`.
-- `ui/customer/`: `CustomerMainActivity`, `Utility` (enum 12 tiện ích), `home/`, `profile/`. `ui/ekyc/`: `EkycCaptureFragment`. `ui/officer/`: `overview/`, `customers/`, `ekyc/`.
+- `ui/customer/`: `CustomerMainActivity`, `Utility` (enum 12 tiện ích), `home/`, `profile/`, `account/` (chi tiết, nạp/rút, `VnPayFragment`, biên lai), `history/`, `transfer/` (hub, form 3 chế độ, `BankPickerSheet`), `qr/`.
+- F4: `domain/TransferPolicy`, `domain/QrPayload`, `payment/VnPay`, `data/repository/PayeeRepository`, `data/model/Bank`, `Payee`, `core/format/TextNormalizer`. `ui/ekyc/`: `EkycCaptureFragment`. `ui/officer/`: `overview/`, `customers/`, `ekyc/`.
 - Test: `app/src/test/...`. Repository giả nằm ở `fakes/Fakes.kt`, `testutil/MainDispatcherRule`.
 
 ### API để các feature sau dùng lại
@@ -95,10 +110,10 @@ screenHost.openScreen(SomeFragment())
 // Tra người nhận theo SĐT
 FluxApp.instance.userRepository.findUidByPhone("0912345678")
 ```
-- Hiện tab Chuyển tiền / Quét QR và 9 ô tiện ích (trừ Nạp tiền, Rút tiền, Tiết kiệm) vẫn mở `ComingSoonFragment`. Khi làm Feature 4–7 thì thay vào `CustomerMainActivity.fragmentFor()`, `HomeFragment` (click tiện ích) và `OfficerMainActivity.fragmentFor()`.
+- Hiện 9 ô tiện ích (trừ Nạp tiền, Rút tiền, Tiết kiệm) vẫn mở `ComingSoonFragment`. Khi làm Feature 5–7 thì thay vào `HomeFragment` (click tiện ích).
+- Feature 5 (thanh toán hoá đơn) nên dùng lại `AccountRepository.transferExternal` (trừ tiền + TRANSFER_OUT, `counterpartyBank` = mã nhà cung cấp) hoặc thêm `type` mới cùng nhánh `ownerMoneyMoveAllowed` trong rules; `TransferPolicy.checkAmount` cho hạn mức.
 - Số dư chỉ đổi qua `AccountRepository.deposit/withdraw`: một `runTransaction` ghi `accounts/{id}` (`balance`, `lastTxId`) và `transactions/{txId}` mới. Rules `ownerMoneyMoveAllowed` bắt `lastTxId` trỏ tới giao dịch **chưa tồn tại trước đó**, cùng tài khoản, `balanceAfter` = số dư mới, đúng phép cộng/trừ.
-- Feature 4 (chuyển tiền) cần mở rộng hợp đồng này: thêm `type` (ví dụ `TRANSFER_OUT`/`TRANSFER_IN`), và vì phải **cộng vào tài khoản người khác**, rules cho tài khoản nhận phải kiểm tra giao dịch cặp (cùng batch, cùng số tiền) — người gửi không phải chủ tài khoản nhận. Thêm ca test vào `rules-test/rules.test.mjs` trước khi sửa rules.
-- `TransactionType` có `isIncoming`; `TransactionRowAdapter.labelFor()` cần thêm nhãn cho loại mới. `ReceiptFragment.newInstance(tx, accountLabel, viewOnly)` dùng lại được cho chuyển tiền.
+- F4 mở rộng hợp đồng: `TRANSFER_OUT` (chủ là người gửi) + `TRANSFER_IN` (chủ là người nhận) trỏ nhau qua `pairTxId`; rules `transferCreditAllowed`/`transferInBacked`. Loại giao dịch mới: thêm nhánh ở `TransactionRowAdapter.labelFor(tx)` và `ReceiptFragment.rowsFor`, thêm ca test vào `rules-test/rules.test.mjs` trước khi sửa rules.
 
 ### Dữ liệu Firestore
 `users/{uid}` · `phoneIndex/{sđt}` → `{uid}` · `kyc/{uid}` (ảnh Base64 + `faceEmbedding`) · `accounts/{id}` (`ownerUid`, `type`, `accountNumber` `8868xxxxxxxx`, `balance` Long VND). Chi tiết ở `PROJECT_CONTEXT.md`.
@@ -141,7 +156,12 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 16. `installment()` dùng `ceil` trên số thực, có thể cao hơn 1 ₫ khi chia hết.
 17. Vài kích thước `dp` cứng trong layout mới (96dp, 64dp, 36dp, 56dp).
 
-**Lưu ý cho Feature 4**: nạp tiền đang là "giả lập" (khách tự nạp tối đa 100 tr/lần). Khi có chuyển tiền, số tiền này chuyển được cho người khác, nên cần chặn (giới hạn theo ngày trong rules, hoặc chỉ cho nạp qua VNPay/Stripe sandbox).
+**Feature 4** đã đổi nạp tiền sang VNPay; rules vẫn không biết VNPay đã thu tiền (giới hạn Spark, ghi ở README).
+
+### Lỗi nhỏ của Feature 4 (review 2026-10-28, để lại sau)
+18. VNPay chuyển về khi app đang ở nền: `VnPayFragment` gọi `popBackStack()` sau `onSaveInstanceState` có thể crash (hiếm, chỉ khi redirect lúc app không ở trước).
+19. Trang chủ chờ `ensureIndexed` xong mới tải giao dịch gần đây (lần đầu mỗi phiên chậm hơn); nên chạy trong `launch` riêng.
+20. Tra người nhận lỗi mạng thì phải gõ lại số tài khoản mới tra lại được.
 
 ## 8. Giới hạn đã biết (ghi vào báo cáo)
 - Gói Spark: OTP và đối chiếu khuôn mặt chỉ được kiểm tra trên thiết bị; rules chỉ giới hạn field nào được sửa. Hướng nâng cấp: Cloud Functions phát và kiểm token xác thực.
@@ -150,12 +170,14 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 ## 9. Cách bắt đầu session mới
 
 Gợi ý câu lệnh mở đầu:
-> Đọc `FLUX_Bank/HANDOFF.md` và `FLUX_Bank/PROJECT_CONTEXT.md`. Tôi đã [làm/chưa làm] mục 3. Tiếp theo brainstorm Feature 4 (Transaction) bằng `/superpowers:brainstorming`.
+> Đọc `FLUX_Bank/HANDOFF.md` và `FLUX_Bank/PROJECT_CONTEXT.md`. Merge nhánh `feature/f4-transfers` vào `main` (chạy lại `./gradlew testDebugUnitTest` sau merge), rồi brainstorm Feature 5 (Utilities) bằng `/superpowers:brainstorming`.
+
+Lưu ý: nếu chưa merge F4 thì **đừng** tạo nhánh F5 từ `main` (sẽ thiếu F4, mà F5 cần `TransferPolicy`, `transferExternal`, `TransactionAuthSheet`).
 
 Quy trình đã dùng và nên giữ: `superpowers:brainstorming` (hỏi từng câu, mockup HTML trên visual companion) → viết spec vào `docs/superpowers/specs/` → `superpowers:writing-plans` → `superpowers:executing-plans` (chủ dự án chọn chế độ **Native**) → review toàn nhánh → `finishing-a-development-branch`.
 
-Thứ tự đề xuất cho 5 tuần còn lại (khoảng 36 ngày):
-1. Feature 3 + 4: phần chính và nặng điểm nhất. Cần rules cho số dư và Firestore transaction.
+Thứ tự đề xuất cho khoảng 34 ngày còn lại (tính từ 2026-10-28; F1–F4 đã xong):
+1. Merge F4.
 2. Feature 5: tận dụng `TransactionAuthSheet` và lưới tiện ích có sẵn.
 3. Feature 6: Google Maps (cần API key, có hạn mức miễn phí) hoặc OSMDroid nếu muốn tránh billing.
 4. Feature 7: chatbot. Cần quyết định dùng LLM API hay luật cố định; lưu ý chi phí và không để API key nằm trong app.

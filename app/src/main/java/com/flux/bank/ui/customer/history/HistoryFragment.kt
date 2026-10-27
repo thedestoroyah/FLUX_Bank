@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.flux.bank.R
 import com.flux.bank.data.model.BankAccount
+import com.flux.bank.data.model.Banks
 import com.flux.bank.data.model.Transaction
 import com.flux.bank.databinding.FragmentHistoryBinding
 import com.flux.bank.databinding.ItemFilterChipBinding
@@ -74,7 +75,9 @@ class HistoryFragment : Fragment() {
         getString(HomeViewModel.labelFor(account.type)) + " ••" + account.accountNumber.takeLast(4)
 
     private fun subtitleFor(tx: Transaction): String {
-        val label = accounts[tx.accountId]?.let { getString(HomeViewModel.labelFor(it.type)) } ?: tx.accountNumber
+        // Liên ngân hàng: hiện tên ngân hàng nhận thay cho tài khoản nguồn (mockup F4 màn 6)
+        val label = Banks.byCode(tx.counterpartyBank)?.shortName
+            ?: accounts[tx.accountId]?.let { getString(HomeViewModel.labelFor(it.type)) } ?: tx.accountNumber
         return label + " · " + TIME_FORMAT.format(Date(tx.createdAt))
     }
 

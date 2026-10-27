@@ -2,6 +2,7 @@ package com.flux.bank.data
 
 import com.flux.bank.data.model.AccountType
 import com.flux.bank.data.model.BankAccount
+import com.flux.bank.data.model.Banks
 import com.flux.bank.data.model.KycRecord
 import com.flux.bank.data.model.KycStatus
 import com.flux.bank.data.model.Rates
@@ -60,5 +61,22 @@ class ModelDefaultsTest {
         assertEquals(4.5, Rates().savingRate, 0.0)
         assertEquals(8.5, Rates().mortgageRate, 0.0)
         assertNull(BankAccount().lastTxId)
+    }
+
+    @Test
+    fun transferFieldsDefaultEmpty() {
+        val tx = Transaction()
+        assertNull(tx.pairTxId)
+        assertNull(tx.paymentRef)
+        assertEquals("", tx.counterpartyBank)
+        assertTrue(TransactionType.TRANSFER_IN.isIncoming)
+        assertFalse(TransactionType.TRANSFER_OUT.isIncoming)
+    }
+
+    @Test
+    fun bankListHasTenBanksWithoutFlux() {
+        assertEquals("Vietcombank", Banks.byCode("VCB")!!.shortName)
+        assertEquals(10, Banks.ALL.size)
+        assertNull(Banks.byCode(Banks.FLUX))
     }
 }

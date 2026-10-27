@@ -17,6 +17,8 @@ import com.flux.bank.data.repository.AccountRepository
 import com.flux.bank.data.repository.AuthRepository
 import com.flux.bank.data.repository.InsufficientFundsException
 import com.flux.bank.data.repository.UserRepository
+import com.flux.bank.payment.VnPay
+import com.flux.bank.payment.VnPayResult
 import com.flux.bank.ui.common.Event
 import kotlinx.coroutines.launch
 
@@ -35,15 +37,25 @@ data class MoneyMoveState(
 }
 
 /**
- * Nạp ([deposit] = true) hoặc rút tiền trên Checking/Saving (mockup màn 3).
- * Luồng: [confirm] kiểm tra rồi phát [askAuth] → màn hình mở `TransactionAuthSheet` → [onAuthResult] → ghi giao dịch → [done].
+ * Nạp ([deposit] = true) hoặc rút tiền trên Checking/Saving (mockup F3 màn 3, F4 màn 7–8).
+ * Rút: [confirm] kiểm tra rồi phát [askAuth] → `TransactionAuthSheet` → [onAuthResult] → ghi giao dịch → [done].
+ * Nạp: sau xác thực phát [openPayment] (URL VNPay) → WebView trả về [onPaymentResult] → chỉ ghi khi VNPay báo thành công.
+ *
+ * @param payments cổng VNPay; null khi chưa cấu hình khoá thì nạp báo lỗi.
  */
 class MoneyMoveViewModel(
     private val deposit: Boolean,
     private val accounts: AccountRepository = FluxApp.instance.accountRepository,
     private val users: UserRepository = FluxApp.instance.userRepository,
-    private val auth: AuthRepository = FluxApp.instance.authRepository
+    private val auth: AuthRepository = FluxApp.instance.authRepository,
+    private val payments: VnPay? = FluxApp.instance.vnPay
 ) : ViewModel() {
+
+    /** Đơn nạp đang chờ VNPay: [txId] là `vnp_TxnRef` và cũng là id giao dịch sẽ ghi. */
+    private data class PendingPayment(val txId: String, val accountId: String, val amount: Long)
+
+    /** VNPay đã báo thành công ([transactionNo]) nhưng chưa ghi được vào Firestore: giữ để ghi lại cùng [pending] txId. */
+    private data class VerifiedPayment(val pending: PendingPayment, val transactionNo: String)
 
     private val _state = MutableLiveData(MoneyMoveState(deposit))
     val state: LiveData<MoneyMoveState> = _state
@@ -53,6 +65,12 @@ class MoneyMoveViewModel(
 
     private val _done = MutableLiveData<Event<Transaction>>()
     val done: LiveData<Event<Transaction>> = _done
+
+    private val _openPayment = MutableLiveData<Event<String>>()
+    val openPayment: LiveData<Event<String>> = _openPayment
+
+    private var pending: PendingPayment? = null
+    private var verified: VerifiedPayment? = null
 
     // Đang chờ kết quả sheet xác thực: chặn bấm "Tiếp tục" lần 2 mở thêm sheet
     private var awaitingAuth = false
@@ -82,6 +100,8 @@ class MoneyMoveViewModel(
     fun setAmount(input: String) = update { it.copy(amount = Validators.parseAmount(input), amountError = null, errorRes = null) }
 
     fun confirm() {
+        // Tiền đã trả qua VNPay mà chưa ghi được: "Tiếp tục" chỉ ghi lại, không mở thanh toán mới
+        verified?.let { if (_state.value?.submitting != true) recordDeposit(it); return }
         val s = _state.value ?: return
         if (kycStatus != KycStatus.VERIFIED || s.submitting || awaitingAuth) return
         val account = s.selected ?: return
@@ -98,10 +118,52 @@ class MoneyMoveViewModel(
         if (!verified) return
         val s = _state.value ?: return
         val account = s.selected ?: return
+        if (deposit) return openVnPay(account.accountId, s.amount)
+        write { accounts.withdraw(account.accountId, s.amount) }
+    }
+
+    /** Kết quả VNPay (query của URL trả về). Chỉ xử lý một lần cho mỗi đơn đang chờ. */
+    fun onPaymentResult(query: Map<String, String>) {
+        val p = pending ?: return
+        val vnPay = payments ?: return
+        pending = null
+        when (val result = vnPay.parseReturn(query, p.txId, p.amount)) {
+            is VnPayResult.Success -> recordDeposit(VerifiedPayment(p, result.transactionNo))
+            VnPayResult.Cancelled -> update { it.copy(errorRes = R.string.err_vnpay_cancelled) }
+            is VnPayResult.Failed -> update { it.copy(errorRes = R.string.err_vnpay_failed) }
+            VnPayResult.BadSignature, VnPayResult.Mismatch -> update { it.copy(errorRes = R.string.err_vnpay_bad_result) }
+        }
+    }
+
+    /** Người dùng đóng WebView trước khi VNPay trả kết quả. */
+    fun onPaymentClosed() {
+        if (pending == null) return
+        pending = null
+        update { it.copy(errorRes = R.string.err_vnpay_cancelled) }
+    }
+
+    /** Ghi khoản nạp đã thanh toán. Lỗi (mạng) thì giữ [payment] để thử lại; dùng lại txId nên rules chặn ghi trùng. */
+    private fun recordDeposit(payment: VerifiedPayment) {
+        verified = payment
+        val p = payment.pending
+        write(onFailed = { R.string.err_vnpay_retry }) {
+            accounts.deposit(p.accountId, p.amount, p.txId, payment.transactionNo).onSuccess { verified = null }
+        }
+    }
+
+    private fun openVnPay(accountId: String, amount: Long) {
+        val vnPay = payments ?: return update { it.copy(errorRes = R.string.err_vnpay_not_configured) }
+        val txId = accounts.newTransactionId()
+        pending = PendingPayment(txId, accountId, amount)
+        update { it.copy(errorRes = null) }
+        _openPayment.value = Event(vnPay.paymentUrl(txId, amount, "Nap tien FLUX $txId"))
+    }
+
+    /** Ghi giao dịch bằng [call]; thành công phát [done], thiếu tiền thì tải lại số dư. [onFailed] chọn thông báo cho lỗi khác. */
+    private fun write(onFailed: () -> Int = { R.string.err_generic }, call: suspend () -> Result<Transaction>) {
         update { it.copy(submitting = true, errorRes = null) }
         viewModelScope.launch {
-            val result = if (deposit) accounts.deposit(account.accountId, s.amount) else accounts.withdraw(account.accountId, s.amount)
-            result
+            call()
                 .onSuccess { tx ->
                     update { it.copy(submitting = false) }
                     _done.value = Event(tx)
@@ -114,7 +176,7 @@ class MoneyMoveViewModel(
                         it.copy(
                             submitting = false,
                             accounts = fresh ?: it.accounts,
-                            errorRes = if (insufficient) R.string.err_insufficient_funds else R.string.err_generic
+                            errorRes = if (insufficient) R.string.err_insufficient_funds else onFailed()
                         )
                     }
                 }
