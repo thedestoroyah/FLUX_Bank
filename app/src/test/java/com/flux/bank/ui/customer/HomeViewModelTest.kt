@@ -4,8 +4,10 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.flux.bank.R
 import com.flux.bank.data.model.AccountType
 import com.flux.bank.data.model.BankAccount
+import com.flux.bank.data.model.Transaction
 import com.flux.bank.fakes.FakeAccountRepository
 import com.flux.bank.fakes.FakeAuthRepository
+import com.flux.bank.fakes.FakeTransactionRepository
 import com.flux.bank.fakes.FakeUserRepository
 import com.flux.bank.fakes.customer
 import com.flux.bank.testutil.MainDispatcherRule
@@ -27,7 +29,8 @@ class HomeViewModelTest {
         this.accounts += BankAccount(accountId = "a1", ownerUid = "c1", accountNumber = "886812345678", balance = 48_250_000)
     }
 
-    private fun vm(hour: Int = 9) = HomeViewModel(auth, users, accounts) { hour }
+    private val transactions = FakeTransactionRepository()
+    private fun vm(hour: Int = 9) = HomeViewModel(auth, users, accounts, transactions) { hour }
 
     @Test
     fun greetingDependsOnHour() {
@@ -70,5 +73,12 @@ class HomeViewModelTest {
         val cards = vm().apply { load() }.state.value!!.accounts
         assertEquals(R.string.card_available_balance, cards.first { it.accountId == "a1" }.balanceLabel)
         assertEquals(R.string.card_outstanding, cards.first { it.accountId == "m1" }.balanceLabel)
+    }
+
+    @Test
+    fun homeShowsThreeNewest() {
+        repeat(5) { i -> transactions.items += Transaction(id = "t$i", ownerUid = "c1", accountId = "a1", createdAt = 1_000L + i) }
+        val recent = vm().apply { load() }.state.value!!.recent
+        assertEquals(listOf("t4", "t3", "t2"), recent.map { it.id })
     }
 }

@@ -9,6 +9,7 @@ import com.flux.bank.R
 import com.flux.bank.databinding.ActivityCustomerMainBinding
 import com.flux.bank.ui.common.ComingSoonFragment
 import com.flux.bank.ui.common.ScreenHost
+import com.flux.bank.ui.customer.history.HistoryFragment
 import com.flux.bank.ui.customer.home.HomeFragment
 import com.flux.bank.ui.customer.profile.ProfileFragment
 
@@ -79,7 +80,7 @@ class CustomerMainActivity : AppCompatActivity(), ScreenHost {
     private fun fragmentFor(tab: CustomerTab): Fragment = when (tab) {
         CustomerTab.HOME -> HomeFragment()
         CustomerTab.TRANSFER -> ComingSoonFragment.newInstance(R.string.tab_transfer, R.drawable.ic_arrows_swap, R.color.cat_blue, showBack = false)
-        CustomerTab.HISTORY -> ComingSoonFragment.newInstance(R.string.tab_history, R.drawable.ic_history, R.color.cat_blue, showBack = false)
+        CustomerTab.HISTORY -> HistoryFragment()
         CustomerTab.PROFILE -> ProfileFragment.newInstance()
     }
 

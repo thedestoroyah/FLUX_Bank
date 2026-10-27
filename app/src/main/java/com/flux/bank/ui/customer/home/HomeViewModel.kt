@@ -11,8 +11,10 @@ import com.flux.bank.core.format.MoneyFormatter
 import com.flux.bank.data.model.AccountType
 import com.flux.bank.data.model.BankAccount
 import com.flux.bank.data.model.KycStatus
+import com.flux.bank.data.model.Transaction
 import com.flux.bank.data.repository.AccountRepository
 import com.flux.bank.data.repository.AuthRepository
+import com.flux.bank.data.repository.TransactionRepository
 import com.flux.bank.data.repository.UserRepository
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -33,11 +35,12 @@ data class HomeUiState(
     val initials: String = "",
     val accounts: List<AccountCardUi> = emptyList(),
     val balanceHidden: Boolean = false,
-    val kycStatus: String = KycStatus.VERIFIED
+    val kycStatus: String = KycStatus.VERIFIED,
+    val recent: List<Transaction> = emptyList()
 )
 
 /**
- * Dữ liệu trang chủ khách hàng: lời chào theo giờ, tên gọi, các thẻ tài khoản và trạng thái eKYC.
+ * Dữ liệu trang chủ khách hàng: lời chào theo giờ, tên gọi, các thẻ tài khoản, trạng thái eKYC và 3 giao dịch mới nhất.
  *
  * @param hourOfDay nguồn giờ hiện tại (0-23), tách ra để test lời chào.
  */
@@ -45,6 +48,7 @@ class HomeViewModel(
     private val auth: AuthRepository = FluxApp.instance.authRepository,
     private val users: UserRepository = FluxApp.instance.userRepository,
     private val accountsRepo: AccountRepository = FluxApp.instance.accountRepository,
+    private val transactions: TransactionRepository = FluxApp.instance.transactionRepository,
     private val hourOfDay: () -> Int = { Calendar.getInstance().get(Calendar.HOUR_OF_DAY) }
 ) : ViewModel() {
 
@@ -57,6 +61,7 @@ class HomeViewModel(
         viewModelScope.launch {
             val user = users.getUser(uid).getOrNull()
             rawAccounts = accountsRepo.listByOwner(uid).getOrDefault(emptyList())
+            val recent = transactions.listRecent(uid, RECENT_COUNT).getOrDefault(emptyList())
             val current = _state.value ?: HomeUiState()
             _state.value = current.copy(
                 loading = false,
@@ -64,7 +69,8 @@ class HomeViewModel(
                 firstName = shortName(user?.fullName.orEmpty()),
                 initials = initials(user?.fullName.orEmpty()),
                 kycStatus = user?.kycStatus ?: KycStatus.NOT_SUBMITTED,
-                accounts = cards(current.balanceHidden)
+                accounts = cards(current.balanceHidden),
+                recent = recent
             )
         }
     }
@@ -74,6 +80,9 @@ class HomeViewModel(
         val hidden = !current.balanceHidden
         _state.value = current.copy(balanceHidden = hidden, accounts = cards(hidden))
     }
+
+    /** Tài khoản đầu tiên thuộc [type] (ô Tiết kiệm mở sổ tiết kiệm đầu tiên); null nếu khách chưa có. */
+    fun firstAccountId(type: AccountType): String? = rawAccounts.firstOrNull { it.type == type }?.accountId
 
     private fun cards(hidden: Boolean) = rawAccounts.map { account ->
         AccountCardUi(
@@ -87,6 +96,7 @@ class HomeViewModel(
 
     companion object {
         private const val HIDDEN_BALANCE = "••••••• ₫"
+        private const val RECENT_COUNT = 3L
 
         @StringRes
         fun greetingFor(hour: Int): Int = when {
