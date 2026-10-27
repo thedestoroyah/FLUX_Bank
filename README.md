@@ -77,8 +77,8 @@ npx firebase emulators:exec --only firestore --project demo-flux "node --test ru
 1. Đăng ký merchant thử nghiệm tại https://sandbox.vnpayment.vn/devreg/ (miễn phí). VNPay gửi email có `vnp_TmnCode` và `vnp_HashSecret`.
 2. Thêm hai dòng vào `local.properties` (file này không commit) rồi build lại:
    ```properties
-   VNPAY_TMN_CODE=XXXXXXXX
-   VNPAY_HASH_SECRET=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+   vnpay.tmn.code=XXXXXXXX
+   vnpay.hash.secret=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
    ```
    Thiếu khoá thì nút Nạp tiền báo "Chưa cấu hình VNPay".
 3. Khi thanh toán trên trang VNPay, chọn thẻ nội địa và dùng thẻ test VNPay công bố (hướng dẫn plugin trên sandbox.vnpayment.vn):

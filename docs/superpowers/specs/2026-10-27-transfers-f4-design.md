@@ -164,7 +164,7 @@ Hai khách A và B (B có thể đăng nhập trên máy ảo).
 7. A quét QR "Mã của tôi" trên máy B → form điền sẵn.
 
 ## 10. Việc chủ dự án cần làm
-1. Đăng ký tài khoản merchant **VNPay sandbox** (miễn phí, có email trả về `vnp_TmnCode` và `vnp_HashSecret`), rồi thêm hai dòng `VNPAY_TMN_CODE=…` và `VNPAY_HASH_SECRET=…` vào `local.properties`. Builder ghi hướng dẫn chi tiết vào README, kèm thẻ test do VNPay công bố.
+1. Đăng ký tài khoản merchant **VNPay sandbox** (miễn phí, có email trả về `vnp_TmnCode` và `vnp_HashSecret`), rồi thêm hai dòng `vnpay.tmn.code=…` và `vnpay.hash.secret=…` vào `local.properties`. Builder ghi hướng dẫn chi tiết vào README, kèm thẻ test do VNPay công bố.
 2. Publish lại `firestore.rules` sau khi rules test đã pass.
 3. Chạy kịch bản §9 trên máy thật.
 
