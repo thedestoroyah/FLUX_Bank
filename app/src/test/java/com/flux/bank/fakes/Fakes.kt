@@ -141,7 +141,8 @@ class FakeTransactionRepository(val items: MutableList<Transaction> = mutableLis
 
 class FakeRatesRepository(var rates: Rates = Rates()) : RatesRepository {
     val saved = mutableListOf<Rates>()
-    override suspend fun get() = Result.success(rates)
+    var failGet = false
+    override suspend fun get(): Result<Rates> = if (failGet) Result.failure(IllegalStateException("offline")) else Result.success(rates)
     override suspend fun save(rates: Rates): Result<Unit> { saved += rates; this.rates = rates; return Result.success(Unit) }
 }
 

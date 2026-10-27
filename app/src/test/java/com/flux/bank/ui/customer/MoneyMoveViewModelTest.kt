@@ -115,4 +115,14 @@ class MoneyMoveViewModelTest {
         assertEquals(R.string.err_insufficient_funds, vm.state.value!!.errorRes)
         assertNull(vm.done.value)
     }
+
+    @Test
+    fun profileLoadFailureIsNotTreatedAsMissingKyc() {
+        val vm = MoneyMoveViewModel(true, accounts, FakeUserRepository(), FakeAuthRepository().apply { uid = "c1" }).apply { load(null) }
+        assertFalse(vm.state.value!!.kycBlocked)
+        assertEquals(R.string.err_generic, vm.state.value!!.errorRes)
+        vm.setAmount("100000")
+        vm.confirm()
+        assertNull(vm.askAuth.value)
+    }
 }

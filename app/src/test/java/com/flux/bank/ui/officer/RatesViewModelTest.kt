@@ -56,4 +56,23 @@ class RatesViewModelTest {
         assertEquals(416_666L, vm.examplePreview(RateKind.SAVING, "5"))
         assertNull(vm.examplePreview(RateKind.SAVING, "x"))
     }
+
+    @Test
+    fun saveRereadsRatesSoTheOtherRateIsNotOverwritten() {
+        val vm = vm()
+        // Nhân viên khác đã đổi lãi vay sau khi màn này tải
+        rates.rates = Rates(savingRate = 4.5, mortgageRate = 9.0)
+        vm.save(RateKind.SAVING, "5")
+        assertEquals(9.0, rates.saved.single().mortgageRate, 0.0)
+        assertEquals(5.0, rates.saved.single().savingRate, 0.0)
+    }
+
+    @Test
+    fun saveRefusedWhenRatesCannotBeRead() {
+        val vm = vm()
+        rates.failGet = true
+        vm.save(RateKind.SAVING, "5")
+        assertTrue(rates.saved.isEmpty())
+        assertEquals(R.string.err_generic, vm.state.value!!.errorRes)
+    }
 }

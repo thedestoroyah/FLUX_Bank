@@ -64,7 +64,7 @@ class RatesViewModel(
         }
     }
 
-    /** Lưu mức mới cho [kind]; mức kia giữ nguyên. Ghi kèm ai sửa và lúc nào. */
+    /** Lưu mức mới cho [kind]; mức kia giữ nguyên theo giá trị mới nhất trên Firestore. Ghi kèm ai sửa và lúc nào. */
     fun save(kind: RateKind, input: String) {
         val current = _state.value ?: return
         if (current.saving) return
@@ -72,8 +72,12 @@ class RatesViewModel(
         val uid = auth.currentUid() ?: return
         update { it.copy(saving = true, errorRes = null) }
         viewModelScope.launch {
+            // Đọc lại ngay trước khi ghi: tránh ghi đè mức còn lại bằng số cũ (nhân viên khác vừa sửa) hoặc số mặc định (tải lỗi)
+            val fresh = repo.get().getOrElse {
+                return@launch update { it.copy(saving = false, errorRes = R.string.err_generic) }
+            }
             val name = users.getUser(uid).getOrNull()?.fullName.orEmpty()
-            val base = current.rates.copy(updatedAt = clock(), updatedBy = uid, updatedByName = name)
+            val base = fresh.copy(updatedAt = clock(), updatedBy = uid, updatedByName = name)
             val next = if (kind == RateKind.SAVING) base.copy(savingRate = rate) else base.copy(mortgageRate = rate)
             repo.save(next)
                 .onSuccess {
