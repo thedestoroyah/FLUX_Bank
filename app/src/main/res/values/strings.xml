@@ -268,4 +268,22 @@
     <string name="rates_example_mortgage">Vay 1.000.000.000 ₫ trong 240 tháng → trả %1$s/tháng</string>
     <string name="rates_saved">Đã lưu lãi suất mới</string>
     <string name="action_save">Lưu</string>
+    <!-- Feature 3: mở tài khoản (nhân viên) -->
+    <string name="err_loan_amount">Nhập số tiền vay lớn hơn 0.</string>
+    <string name="err_loan_term">Thời hạn vay phải từ 1 đến 360 tháng.</string>
+    <string name="open_account_title">Mở tài khoản</string>
+    <string name="open_account_customer">Khách hàng: %1$s · %2$s</string>
+    <string name="open_account_saving_info">Tài khoản tiết kiệm mở với số dư 0 ₫ và hưởng mức lãi suất tiết kiệm chung (xem tab Lãi suất).</string>
+    <string name="open_account_loan_amount">Số tiền vay</string>
+    <string name="open_account_term">Thời hạn</string>
+    <string name="open_account_term_custom">Số tháng khác</string>
+    <string name="term_months">%1$d tháng</string>
+    <string name="open_account_rate_row">Lãi suất (theo chính sách)</string>
+    <string name="open_account_monthly_row">Trả hàng tháng</string>
+    <string name="open_account_biweekly_row">Hoặc mỗi 2 tuần</string>
+    <string name="open_account_submit_saving">Mở tài khoản tiết kiệm</string>
+    <string name="open_account_submit_mortgage">Mở khoản vay</string>
+    <string name="open_account_done">Đã mở tài khoản %1$s</string>
+    <string name="customer_accounts">Tài khoản</string>
+    <string name="card_outstanding">Dư nợ</string>
 </resources>

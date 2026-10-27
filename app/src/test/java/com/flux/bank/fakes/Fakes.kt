@@ -92,6 +92,8 @@ class FakeAccountRepository : AccountRepository {
     val deposits = mutableListOf<Pair<String, Long>>()
     val withdrawals = mutableListOf<Pair<String, Long>>()
     val opened = mutableListOf<BankAccount>()
+    /** Nếu khác null, mở tài khoản sẽ treo tới khi gate được complete. */
+    var openGate: CompletableDeferred<Unit>? = null
 
     override suspend fun createChecking(ownerUid: String): Result<BankAccount> {
         if (failNextCreate) { failNextCreate = false; return Result.failure(IllegalStateException("account failed")) }
@@ -107,7 +109,8 @@ class FakeAccountRepository : AccountRepository {
     override suspend fun openMortgage(ownerUid: String, loanAmount: Long, termMonths: Int, annualRate: Double) =
         open(BankAccount(ownerUid = ownerUid, type = AccountType.MORTGAGE, balance = loanAmount, loanAmount = loanAmount, termMonths = termMonths, annualRate = annualRate))
 
-    private fun open(template: BankAccount): Result<BankAccount> {
+    private suspend fun open(template: BankAccount): Result<BankAccount> {
+        openGate?.await()
         val a = template.copy(accountId = "a${accounts.size}", accountNumber = "886800000${accounts.size}")
         accounts += a; opened += a
         return Result.success(a)
