@@ -1,7 +1,11 @@
 package com.flux.bank.fakes
 
+import com.flux.bank.core.format.TextNormalizer
 import com.flux.bank.data.model.AccountType
+import com.flux.bank.data.model.Bank
 import com.flux.bank.data.model.BankAccount
+import com.flux.bank.data.model.Banks
+import com.flux.bank.data.model.Payee
 import com.flux.bank.data.model.KycRecord
 import com.flux.bank.data.model.KycStatus
 import com.flux.bank.data.model.Rates
@@ -13,6 +17,7 @@ import com.flux.bank.data.repository.AccountRepository
 import com.flux.bank.data.repository.AuthRepository
 import com.flux.bank.data.repository.InsufficientFundsException
 import com.flux.bank.data.repository.KycRepository
+import com.flux.bank.data.repository.PayeeRepository
 import com.flux.bank.data.repository.RatesRepository
 import com.flux.bank.data.repository.TransactionRepository
 import com.flux.bank.data.repository.UserRepository
@@ -116,8 +121,34 @@ class FakeAccountRepository : AccountRepository {
         return Result.success(a)
     }
 
-    override suspend fun deposit(accountId: String, amount: Long): Result<Transaction> { deposits += accountId to amount; return move(accountId, amount, TransactionType.DEPOSIT) }
+    /** Các giao dịch TRANSFER_OUT đã ghi (cả trong FLUX và liên ngân hàng). */
+    val transfers = mutableListOf<Transaction>()
+    private var nextTxId = 0
+
+    override fun newTransactionId() = "vnp${nextTxId++}"
+
+    override suspend fun deposit(accountId: String, amount: Long, txId: String?, paymentRef: String?): Result<Transaction> {
+        deposits += accountId to amount
+        return move(accountId, amount, TransactionType.DEPOSIT)
+            .map { tx -> tx.copy(id = txId ?: tx.id, paymentRef = paymentRef) }
+    }
     override suspend fun withdraw(accountId: String, amount: Long): Result<Transaction> { withdrawals += accountId to amount; return move(accountId, amount, TransactionType.WITHDRAW) }
+
+    override suspend fun transfer(fromId: String, payee: Payee, amount: Long, description: String, senderName: String): Result<Transaction> =
+        move(fromId, amount, TransactionType.TRANSFER_OUT).map { out ->
+            accounts.indexOfFirst { it.accountId == payee.accountId }.takeIf { it >= 0 }?.let { i ->
+                accounts[i] = accounts[i].copy(balance = accounts[i].balance + amount)
+            }
+            out.copy(description = description, counterpartyName = TextNormalizer.holderName(payee.holderName),
+                counterpartyAccount = payee.accountNumber, counterpartyBank = Banks.FLUX, pairTxId = "in-${out.id}")
+                .also { transfers += it }
+        }
+
+    override suspend fun transferExternal(fromId: String, bank: Bank, accountNumber: String, holderName: String, amount: Long, description: String) =
+        move(fromId, amount, TransactionType.TRANSFER_OUT).map { out ->
+            out.copy(description = description, counterpartyName = TextNormalizer.holderName(holderName),
+                counterpartyAccount = accountNumber, counterpartyBank = bank.code).also { transfers += it }
+        }
 
     private suspend fun move(accountId: String, amount: Long, type: TransactionType): Result<Transaction> {
         moveGate?.await()
@@ -127,10 +158,26 @@ class FakeAccountRepository : AccountRepository {
         val account = accounts[i]
         val newBalance = if (type.isIncoming) account.balance + amount else account.balance - amount
         if (newBalance < 0) return Result.failure(InsufficientFundsException())
-        val tx = Transaction(id = "tx${deposits.size + withdrawals.size}", accountId = accountId, ownerUid = account.ownerUid,
+        val tx = Transaction(id = "tx${deposits.size + withdrawals.size + transfers.size}", accountId = accountId, ownerUid = account.ownerUid,
             accountNumber = account.accountNumber, type = type, amount = amount, balanceAfter = newBalance)
         accounts[i] = account.copy(balance = newBalance, lastTxId = tx.id)
         return Result.success(tx)
+    }
+}
+
+class FakePayeeRepository(val index: MutableMap<String, Payee> = mutableMapOf()) : PayeeRepository {
+    /** Nếu khác null, tra cứu sẽ treo tới khi gate được complete (để test kết quả về muộn). */
+    var findGate: CompletableDeferred<Unit>? = null
+    val ensured = mutableListOf<Pair<List<BankAccount>, String>>()
+
+    override suspend fun find(accountNumber: String): Result<Payee?> {
+        findGate?.await()
+        return Result.success(index[accountNumber])
+    }
+
+    override suspend fun ensureIndexed(accounts: List<BankAccount>, fullName: String): Result<Unit> {
+        ensured += accounts to fullName
+        return Result.success(Unit)
     }
 }
 

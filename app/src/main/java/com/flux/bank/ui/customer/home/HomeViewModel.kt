@@ -14,6 +14,7 @@ import com.flux.bank.data.model.KycStatus
 import com.flux.bank.data.model.Transaction
 import com.flux.bank.data.repository.AccountRepository
 import com.flux.bank.data.repository.AuthRepository
+import com.flux.bank.data.repository.PayeeRepository
 import com.flux.bank.data.repository.TransactionRepository
 import com.flux.bank.data.repository.UserRepository
 import kotlinx.coroutines.launch
@@ -49,6 +50,7 @@ class HomeViewModel(
     private val users: UserRepository = FluxApp.instance.userRepository,
     private val accountsRepo: AccountRepository = FluxApp.instance.accountRepository,
     private val transactions: TransactionRepository = FluxApp.instance.transactionRepository,
+    private val payees: PayeeRepository = FluxApp.instance.payeeRepository,
     private val hourOfDay: () -> Int = { Calendar.getInstance().get(Calendar.HOUR_OF_DAY) }
 ) : ViewModel() {
 
@@ -61,6 +63,8 @@ class HomeViewModel(
         viewModelScope.launch {
             val user = users.getUser(uid).getOrNull()
             rawAccounts = accountsRepo.listByOwner(uid).getOrDefault(emptyList())
+            // Để người khác tra được tên khi chuyển tiền; lỗi ở đây không được chặn trang chủ
+            user?.let { payees.ensureIndexed(rawAccounts, it.fullName) }
             val recent = transactions.listRecent(uid, RECENT_COUNT).getOrDefault(emptyList())
             val current = _state.value ?: HomeUiState()
             _state.value = current.copy(
