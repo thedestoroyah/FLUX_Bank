@@ -6,7 +6,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 
 ## 1. Bối cảnh
 
-- **Đồ án**: Final Project môn Mobile Apps Development (TDTU). Đề: `../FinalProject_2026_2027.pdf`. Barem: `../Marking.xlsx`.
+- **Đồ án**: Final Project môn Mobile Apps Development (TDTU). Đề: `docs/FinalProject_2026_2027.pdf`. Barem: `docs/Marking.xlsx`.
 - **Hạn nộp: 2026-12-01.** Làm **một mình**. Cần nộp: app chạy được, đưa lên Google Play, báo cáo (class diagram, ERD, use case, kiến trúc...), video demo.
 - **Barem tóm tắt** (10 điểm): Architecture 1 · Class diagram 1 · UI 1 · Database design 1 · User profiles 1 · Security 1 · Account mgmt 0.5 · Transaction 1 · Utilities 0.5 · Navigation 0.5 · Chatbot 0.5 · Hình thức báo cáo/demo 1.
 - **Tech**: Android native, Kotlin, XML + ViewBinding (không Compose), MVVM, Firebase Auth + Firestore **gói Spark miễn phí**: không Storage, không Cloud Functions, không SMS thật. Chủ dự án muốn **tiết kiệm chi phí tối đa**.
@@ -16,8 +16,8 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 ## 2. Trạng thái hiện tại
 
 - Repo git ở `FLUX_Bank/`, chưa có remote. `main` có F1–F3.
-- **Unit test: 118/118 pass.** `assembleDebug` và `lintDebug` pass (lint 0 error).
-- Đã review toàn bộ nhánh bằng một reviewer độc lập. Đã sửa hết lỗi Important; danh sách lỗi Minor còn lại ở mục 7.
+- **Unit test: 160/160 pass**, rules test trên emulator 20/20. `assembleDebug` và `lintDebug` pass (lint 0 error).
+- F1–F2 và F3 đều đã được reviewer độc lập review toàn nhánh, đã sửa hết lỗi Important; lỗi Minor còn lại ở mục 7. F3 đã chạy demo đạt trên máy thật (mục 3).
 
 ### Đã hoàn thành
 | Phần | Nội dung |
@@ -26,7 +26,6 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 | Khung app | `CustomerMainActivity` (5 tab có nút QR nổi ở giữa) · `OfficerMainActivity` (5 tab) · `ScreenHost.openScreen()` |
 | Feature 1 | Nhân viên tạo / tìm / sửa khách (FirebaseApp phụ, có rollback, cấp tài khoản Checking 0 ₫, mật khẩu tạm), gửi email đặt lại mật khẩu, chụp eKYC hộ khách. Khách xem hồ sơ, tự sửa SĐT (qua OTP), địa chỉ, avatar. Bắt đổi mật khẩu ở lần đăng nhập đầu |
 | Feature 2 | eKYC (ML Kit + MobileFaceNet embedding), nhân viên duyệt / từ chối có lý do. Khoá app sinh trắc học (cold start, khi app bị khôi phục, sau ≥ 60 s ở nền). OTP 6 số / 120 s / dùng 1 lần / gắn với giao dịch / sai 5 lần thì khoá, gửi qua SMS giả lập kèm banner dự phòng. `TransactionAuthSheet` (bàn phím riêng + bước quét mặt khi giao dịch ≥ 10.000.000 ₫). Security Rules |
-
 | Feature 3 | Chi tiết riêng cho Checking/Saving/Mortgage, lãi suất chung + lãi dự kiến, tiền trả mỗi tháng / 2 tuần, nạp/rút qua OTP (+ mặt khi ≥ 10 tr) bằng Firestore transaction, biên lai, tab Lịch sử, tab Lãi suất và mở tài khoản cho nhân viên. Rules có test trên emulator (`rules-test/`, 20/20) |
 
 ### Chưa làm (các feature tiếp theo)
@@ -116,6 +115,7 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
   adb exec-out screencap -p > shot.png
   ```
 - **Chụp màn hình khi không có tài khoản đăng nhập**: tạo tạm `app/src/debug/AndroidManifest.xml` để export `CustomerMainActivity`/`OfficerMainActivity` (`tools:replace="android:exported"`), rồi `adb shell am start -n com.flux.bank/.ui.customer.CustomerMainActivity`. Nếu cần dữ liệu thì tạm nhét dữ liệu mẫu vào ViewModel. **Luôn revert và xoá trước khi commit** (`git grep '"demo"'` để kiểm tra).
+- **Điều khiển điện thoại qua adb** (Xiaomi, MIUI): máy có mã khoá, cần chủ dự án mở và bật Stay awake. Bàn phím Telex có thể đổi "us" thành "ú" khi `adb shell input text` (gõ "cuss…" để ra "cus…"). Chạm theo chữ bằng `uiautomator dump` thì **lọc `package="com.flux.bank"`**, nếu không sẽ chạm nhầm bong bóng chat Zalo nổi trên màn hình. MIUI bỏ qua phím BACK giả lập khi app bật predictive back; dùng nút back trên header hoặc `input swipe` từ mép trái.
 - Không commit các file `.idea/*` do IDE tự sửa. Dùng `git add app docs ...` thay vì `git add -A`.
 - Quy ước: comment và KDoc viết tiếng Việt, tên trong code bằng tiếng Anh. Commit theo dạng `feat:` / `fix:` / `chore:` / `docs:` / `refactor:` / `test:`. Làm theo TDD (viết test fail trước).
 
