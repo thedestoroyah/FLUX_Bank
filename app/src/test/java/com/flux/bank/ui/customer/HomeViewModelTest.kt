@@ -2,6 +2,7 @@ package com.flux.bank.ui.customer
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.flux.bank.R
+import com.flux.bank.data.model.AccountType
 import com.flux.bank.data.model.BankAccount
 import com.flux.bank.fakes.FakeAccountRepository
 import com.flux.bank.fakes.FakeAuthRepository
@@ -61,5 +62,13 @@ class HomeViewModelTest {
         assertEquals("An", HomeViewModel.shortName("Trần An"))
         assertEquals("Minh Anh", HomeViewModel.shortName("Nguyễn Minh Anh"))
         assertEquals("", HomeViewModel.shortName(" "))
+    }
+
+    @Test
+    fun mortgageCardUsesOutstandingLabel() {
+        accounts.accounts += BankAccount(accountId = "m1", ownerUid = "c1", type = AccountType.MORTGAGE, accountNumber = "886899990000", balance = 1_000)
+        val cards = vm().apply { load() }.state.value!!.accounts
+        assertEquals(R.string.card_available_balance, cards.first { it.accountId == "a1" }.balanceLabel)
+        assertEquals(R.string.card_outstanding, cards.first { it.accountId == "m1" }.balanceLabel)
     }
 }

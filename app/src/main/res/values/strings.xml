@@ -286,4 +286,26 @@
     <string name="open_account_done">Đã mở tài khoản %1$s</string>
     <string name="customer_accounts">Tài khoản</string>
     <string name="card_outstanding">Dư nợ</string>
+    <!-- Feature 3: chi tiết tài khoản (khách) -->
+    <string name="detail_title_checking">Tài khoản thanh toán</string>
+    <string name="detail_title_saving">Tài khoản tiết kiệm</string>
+    <string name="detail_title_mortgage">Khoản vay thế chấp</string>
+    <string name="detail_copy_number">Số tài khoản %1$s · Sao chép</string>
+    <string name="detail_copied">Đã sao chép số tài khoản</string>
+    <string name="detail_load_failed">Không tải được tài khoản. Kiểm tra kết nối rồi thử lại.</string>
+    <string name="saving_rate_row">Lãi suất</string>
+    <string name="saving_monthly_row">Lãi dự kiến mỗi tháng</string>
+    <string name="saving_yearly_row">Lãi dự kiến 12 tháng</string>
+    <string name="mortgage_monthly">Hàng tháng</string>
+    <string name="mortgage_biweekly">2 tuần</string>
+    <string name="mortgage_installment">Số tiền mỗi kỳ</string>
+    <string name="mortgage_next_due">Kỳ tiếp theo: %1$s</string>
+    <string name="mortgage_meta">%1$s · lãi cố định %2$s</string>
+    <string name="mortgage_loan_row">Số tiền vay</string>
+    <string name="mortgage_term_row">Thời hạn</string>
+    <string name="mortgage_term_value">%1$d tháng · %2$d kỳ</string>
+    <string name="mortgage_start_row">Ngày bắt đầu</string>
+    <string name="mortgage_interest_row">Tổng lãi</string>
+    <string name="mortgage_total_row">Tổng phải trả</string>
+    <string name="history_empty">Chưa có giao dịch nào</string>
 </resources>
