@@ -68,7 +68,7 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // Khách chỉ đổi số dư Checking/Saving của chính mình, và chỉ khi cùng lúc tạo một giao dịch mới khớp:
+    // Khách chỉ đổi số dư Checking/Saving của chính mình (nạp, rút, chuyển đi), và chỉ khi cùng lúc tạo một giao dịch mới khớp:
     // lastTxId trỏ tới giao dịch chưa tồn tại trước đó, cùng tài khoản, balanceAfter = số dư mới, đúng phép cộng/trừ.
     function ownerMoneyMoveAllowed(accountId) {
       let newData = request.resource.data;
@@ -84,7 +84,27 @@ service cloud.firestore {
         && tx.ownerUid == request.auth.uid
         && tx.balanceAfter == newData.balance
         && ((tx.type == 'DEPOSIT' && newData.balance == resource.data.balance + tx.amount)
-            || (tx.type == 'WITHDRAW' && newData.balance == resource.data.balance - tx.amount && newData.balance >= 0));
+            || (tx.type in ['WITHDRAW', 'TRANSFER_OUT'] && newData.balance == resource.data.balance - tx.amount && newData.balance >= 0));
+    }
+
+    // Người nhận được cộng tiền chỉ khi cùng lần ghi có một TRANSFER_OUT mới của người ghi, cùng số tiền,
+    // trỏ ngược về giao dịch nhận, và tài khoản nguồn đã bị trừ (lastTxId = OUT). Người ghi không cần là chủ tài khoản.
+    function transferCreditAllowed(accountId) {
+      let newData = request.resource.data;
+      let inPath = /databases/$(database)/documents/transactions/$(newData.lastTxId);
+      let txIn = getAfter(inPath).data;
+      let outPath = /databases/$(database)/documents/transactions/$(txIn.pairTxId);
+      let txOut = getAfter(outPath).data;
+      return signedIn()
+        && resource.data.type in ['CHECKING', 'SAVING']
+        && changedKeys().hasOnly(['balance', 'lastTxId'])
+        && newData.balance is int
+        && !exists(inPath) && !exists(outPath)
+        && txIn.type == 'TRANSFER_IN' && txIn.accountId == accountId && txIn.ownerUid == resource.data.ownerUid
+        && newData.balance == resource.data.balance + txIn.amount
+        && txOut.type == 'TRANSFER_OUT' && txOut.ownerUid == request.auth.uid
+        && txOut.amount == txIn.amount && txOut.pairTxId == newData.lastTxId && txOut.accountId != accountId
+        && getAfter(/databases/$(database)/documents/accounts/$(txOut.accountId)).data.lastTxId == txIn.pairTxId;
     }
 
     function validNewAccount() {
@@ -97,21 +117,49 @@ service cloud.firestore {
     match /accounts/{accountId} {
       allow read: if isOfficer() || (signedIn() && resource.data.ownerUid == request.auth.uid);
       allow create: if isOfficer() && validNewAccount();
-      allow update: if ownerMoneyMoveAllowed(accountId);
+      allow update: if ownerMoneyMoveAllowed(accountId) || transferCreditAllowed(accountId);
       allow delete: if false;
     }
 
     // Giao dịch chỉ được tạo cùng batch với lần đổi số dư (tài khoản sau khi ghi phải trỏ lastTxId về đây).
+    // DEPOSIT/WITHDRAW/TRANSFER_OUT thuộc người ghi; TRANSFER_IN thuộc chủ tài khoản nhận và phải có cặp OUT.
+    function txCreateAllowed(txId) {
+      let d = request.resource.data;
+      let acc = getAfter(/databases/$(database)/documents/accounts/$(d.accountId)).data;
+      return signedIn() && d.amount is int && d.amount >= 10000 && acc.lastTxId == txId
+        && ((d.type in ['DEPOSIT', 'WITHDRAW', 'TRANSFER_OUT'] && d.ownerUid == request.auth.uid
+             && (d.type == 'WITHDRAW' || d.amount <= 100000000))
+            || (d.type == 'TRANSFER_IN' && d.ownerUid == acc.ownerUid && transferInBacked(d)));
+    }
+
+    // TRANSFER_IN phải có cặp OUT của người ghi, cùng số tiền, và tên người gửi đúng hồ sơ (không giả tên được).
+    function transferInBacked(d) {
+      let out = getAfter(/databases/$(database)/documents/transactions/$(d.pairTxId)).data;
+      return out.type == 'TRANSFER_OUT' && out.ownerUid == request.auth.uid && out.amount == d.amount
+        && d.counterpartyName == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.fullName;
+    }
+
     match /transactions/{txId} {
       allow read: if isOfficer() || (signedIn() && resource.data.ownerUid == request.auth.uid);
-      allow create: if signedIn()
-        && request.resource.data.ownerUid == request.auth.uid
-        && request.resource.data.type in ['DEPOSIT', 'WITHDRAW']
-        && request.resource.data.amount is int
-        && request.resource.data.amount >= 10000
-        && (request.resource.data.type != 'DEPOSIT' || request.resource.data.amount <= 100000000)
-        && getAfter(/databases/$(database)/documents/accounts/$(request.resource.data.accountId)).data.lastTxId == txId;
+      allow create: if txCreateAllowed(txId);
       allow update, delete: if false;
+    }
+
+    // Danh bạ tra người nhận: số tài khoản -> {accountId, ownerUid, type, holderName}. Chủ tài khoản tự ghi,
+    // tên phải đúng hồ sơ. Chỉ đọc từng mục, không liệt kê được.
+    function indexEntryValid(accountNumber) {
+      let d = request.resource.data;
+      let acc = get(/databases/$(database)/documents/accounts/$(d.accountId)).data;
+      return d.keys().hasOnly(['accountId', 'ownerUid', 'type', 'holderName'])
+        && d.ownerUid == request.auth.uid && acc.ownerUid == request.auth.uid
+        && acc.accountNumber == accountNumber && d.type in ['CHECKING', 'SAVING'] && acc.type == d.type
+        && d.holderName == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.fullName;
+    }
+
+    match /accountIndex/{accountNumber} {
+      allow get: if signedIn();
+      allow list, delete: if false;
+      allow create, update: if signedIn() && indexEntryValid(accountNumber);
     }
 
     // Lãi suất chung: ai đăng nhập cũng đọc được, chỉ nhân viên sửa, mỗi mức trong (0, 30].
