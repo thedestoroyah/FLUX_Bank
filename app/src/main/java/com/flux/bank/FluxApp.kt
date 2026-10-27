@@ -22,6 +22,8 @@ import com.flux.bank.data.repository.RatesRepository
 import com.flux.bank.data.repository.TransactionRepository
 import com.flux.bank.data.repository.UserRepository
 import com.flux.bank.domain.CustomerOnboardingService
+import com.flux.bank.payment.VnPay
+import com.flux.bank.payment.VnPayConfig
 import com.flux.bank.utils.SessionManager
 
 /**
@@ -40,6 +42,10 @@ class FluxApp : Application() {
     val sessionManager: SessionManager by lazy { SessionManager(this) }
     val onboardingService: CustomerOnboardingService by lazy {
         CustomerOnboardingService(authRepository, userRepository, accountRepository) { authRepository.currentUid().orEmpty() }
+    }
+    /** Cổng VNPay sandbox; null khi `local.properties` chưa có khoá. */
+    val vnPay: VnPay? by lazy {
+        BuildConfig.VNPAY_TMN_CODE.takeIf { it.isNotBlank() }?.let { VnPay(VnPayConfig(it, BuildConfig.VNPAY_HASH_SECRET)) }
     }
     val lockPolicy = LockPolicy()
     val appLockObserver: AppLockObserver by lazy {

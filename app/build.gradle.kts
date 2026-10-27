@@ -1,6 +1,13 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
+}
+
+// Khoá VNPay sandbox đọc từ local.properties (không commit); thiếu thì để rỗng và app báo "Chưa cấu hình VNPay"
+val localProps = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
 }
 
 android {
@@ -17,10 +24,14 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "VNPAY_TMN_CODE", "\"${localProps.getProperty("VNPAY_TMN_CODE", "")}\"")
+        buildConfigField("String", "VNPAY_HASH_SECRET", "\"${localProps.getProperty("VNPAY_HASH_SECRET", "")}\"")
     }
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     buildTypes {
