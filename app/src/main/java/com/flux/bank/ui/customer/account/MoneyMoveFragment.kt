@@ -46,6 +46,7 @@ class MoneyMoveFragment : Fragment() {
         binding.header.btnBack.setOnClickListener { parentFragmentManager.popBackStack() }
         binding.tvAccountLabel.setText(if (deposit) R.string.move_account_to else R.string.move_account_from)
         binding.tilAmount.helperText = getString(if (deposit) R.string.move_amount_helper_deposit else R.string.move_amount_helper_withdraw)
+        if (deposit) binding.tvNote.setText(R.string.move_vnpay_note)
         binding.etAmount.addTextChangedListener(AmountTextWatcher(binding.etAmount) { viewModel.setAmount(it.toString()) })
         QUICK_AMOUNTS.forEach { amount ->
             val chip = ItemFilterChipBinding.inflate(layoutInflater, binding.groupQuick, false).root
@@ -65,6 +66,12 @@ class MoneyMoveFragment : Fragment() {
         childFragmentManager.setFragmentResultListener(AUTH_KEY, viewLifecycleOwner) { _, result ->
             viewModel.onAuthResult(result.getBoolean(TransactionAuthSheet.KEY_VERIFIED))
         }
+        parentFragmentManager.setFragmentResultListener(VnPayFragment.REQUEST_KEY, viewLifecycleOwner) { _, result ->
+            @Suppress("UNCHECKED_CAST", "DEPRECATION")
+            val query = result.getSerializable(VnPayFragment.KEY_QUERY) as? HashMap<String, String>
+            if (query != null) viewModel.onPaymentResult(query) else viewModel.onPaymentClosed()
+        }
+        viewModel.openPayment.observe(viewLifecycleOwner) { e -> e.consume()?.let { screenHost.openScreen(VnPayFragment.newInstance(it)) } }
         viewModel.askAuth.observe(viewLifecycleOwner) { e -> e.consume()?.let(::showAuth) }
         viewModel.done.observe(viewLifecycleOwner) { e ->
             e.consume()?.let { tx ->
@@ -109,7 +116,7 @@ class MoneyMoveFragment : Fragment() {
         binding.rows.setKeyValueRows(
             listOf(
                 getString(if (deposit) R.string.move_source else R.string.move_destination) to
-                    getString(if (deposit) R.string.move_source_value else R.string.move_destination_value),
+                    getString(if (deposit) R.string.move_source_vnpay else R.string.move_destination_value),
                 getString(R.string.move_balance_after) to (s.balanceAfter?.let(MoneyFormatter::formatVnd) ?: DASH)
             )
         )

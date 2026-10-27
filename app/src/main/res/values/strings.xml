@@ -384,6 +384,14 @@
     <string name="err_transfer_no_target">Bạn cần ít nhất hai tài khoản Thanh toán/Tiết kiệm. Liên hệ nhân viên để mở thêm.</string>
     <string name="err_transfer_no_bank">Chọn ngân hàng nhận</string>
     <string name="err_transfer_no_name">Nhập tên người nhận</string>
+    <string name="vnpay_title">Thanh toán VNPay</string>
+    <string name="vnpay_sandbox">sandbox</string>
+    <string name="move_source_vnpay">VNPay · thẻ ATM / QR (sandbox)</string>
+    <string name="move_vnpay_note">Xác nhận OTP xong, app mở trang thanh toán VNPay. Số dư chỉ cộng khi VNPay báo thành công.</string>
+    <string name="err_vnpay_not_configured">Chưa cấu hình VNPay. Thêm VNPAY_TMN_CODE và VNPAY_HASH_SECRET vào local.properties rồi build lại.</string>
+    <string name="err_vnpay_cancelled">Bạn đã huỷ thanh toán VNPay. Số dư không thay đổi.</string>
+    <string name="err_vnpay_failed">VNPay báo thanh toán không thành công. Số dư không thay đổi, vui lòng thử lại.</string>
+    <string name="err_vnpay_bad_result">Kết quả từ VNPay không hợp lệ nên giao dịch không được ghi. Vui lòng thử lại.</string>
     <string name="tx_transfer_out">Chuyển đến %1$s</string>
     <string name="tx_transfer_in">Nhận từ %1$s</string>
     <string name="tx_deposit_vnpay">Nạp tiền qua VNPay</string>
