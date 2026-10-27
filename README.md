@@ -61,6 +61,14 @@ Feature 3 (khách đã đăng nhập, `accounts/{id}` là tài khoản Checking 
 
 Playground chỉ thử từng request đơn lẻ nên luồng hợp lệ (ghi tài khoản + giao dịch trong một batch) kiểm tra bằng app.
 
+### 5. Test rules tự động (Firestore emulator)
+`rules-test/` chạy 20 ca kiểm tra rules của Feature 3 trên emulator, gồm cả batch nạp/rút hợp lệ mà Playground không thử được. Cần Node và Java 21:
+```bash
+cd rules-test && npm install
+ln -sfn ../templates node_modules/firebase-tools/lib/templates   # firebase-tools 13.29.1 tìm sai thư mục templates
+npx firebase emulators:exec --only firestore --project demo-flux "node --test rules.test.mjs"
+```
+
 ## Luồng demo
 Nhân viên đăng nhập → tạo khách hàng (mật khẩu tạm) → khách đăng nhập, bắt buộc đổi mật khẩu → khách nộp eKYC → nhân viên duyệt → khách bật sinh trắc học, khoá/mở khoá app → đổi SĐT qua OTP → kiểm tra xác thực khuôn mặt.
 
