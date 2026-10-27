@@ -2,9 +2,9 @@
 
 - Ngày: 2026-10-27 · Hạn nộp đồ án: 2026-12-01
 - Nền tảng: đợt 1 đã xong ([2026-10-26-ui-foundation-f1-f2-design.md](2026-10-26-ui-foundation-f1-f2-design.md)), design system và `TransactionAuthSheet` dùng lại nguyên.
-- Mockup: [mockups/2026-10-27-f3-accounts.html](mockups/2026-10-27-f3-accounts.html) (**chờ duyệt**)
+- Mockup: [mockups/2026-10-27-f3-accounts.html](mockups/2026-10-27-f3-accounts.html) (**đã duyệt 2026-10-27**)
 
-Ký hiệu: **[Đề]** = yêu cầu của đề bài. **[Chủ dự án]** = chủ dự án đã quyết định. **[Claude]** = Claude đề xuất (chủ dự án nhờ "tự đề xuất thiết kế"), có thể đổi khi duyệt.
+Ký hiệu: **[Đề]** = yêu cầu của đề bài. **[Chủ dự án]** = chủ dự án đã quyết định. **[Claude]** = Claude đề xuất (chủ dự án nhờ "tự đề xuất thiết kế"), chủ dự án đã duyệt toàn bộ ngày 2026-10-27.
 
 ---
 
