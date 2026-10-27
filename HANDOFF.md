@@ -1,4 +1,4 @@
-# FLUX Bank — Handoff (cập nhật 2026-10-26)
+# FLUX Bank — Handoff (cập nhật 2026-10-27)
 
 Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc file này trước, sau đó đọc `PROJECT_CONTEXT.md` (kiến trúc, design system, dữ liệu).
 
@@ -15,7 +15,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 
 ## 2. Trạng thái hiện tại
 
-- Repo git ở `FLUX_Bank/`, nhánh `main` (đã merge F1–F2), chưa có remote.
+- Repo git ở `FLUX_Bank/`, chưa có remote. `main` có F1–F2. Feature 3 nằm trên nhánh **`feat/account-management-f3`** (chưa merge).
 - **Unit test: 118/118 pass.** `assembleDebug` và `lintDebug` pass (lint 0 error).
 - Đã review toàn bộ nhánh bằng một reviewer độc lập. Đã sửa hết lỗi Important; danh sách lỗi Minor còn lại ở mục 7.
 
@@ -27,8 +27,9 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 | Feature 1 | Nhân viên tạo / tìm / sửa khách (FirebaseApp phụ, có rollback, cấp tài khoản Checking 0 ₫, mật khẩu tạm), gửi email đặt lại mật khẩu, chụp eKYC hộ khách. Khách xem hồ sơ, tự sửa SĐT (qua OTP), địa chỉ, avatar. Bắt đổi mật khẩu ở lần đăng nhập đầu |
 | Feature 2 | eKYC (ML Kit + MobileFaceNet embedding), nhân viên duyệt / từ chối có lý do. Khoá app sinh trắc học (cold start, khi app bị khôi phục, sau ≥ 60 s ở nền). OTP 6 số / 120 s / dùng 1 lần / gắn với giao dịch / sai 5 lần thì khoá, gửi qua SMS giả lập kèm banner dự phòng. `TransactionAuthSheet` (bàn phím riêng + bước quét mặt khi giao dịch ≥ 10.000.000 ₫). Security Rules |
 
+| Feature 3 | Chi tiết riêng cho Checking/Saving/Mortgage, lãi suất chung + lãi dự kiến, tiền trả mỗi tháng / 2 tuần, nạp/rút qua OTP (+ mặt khi ≥ 10 tr) bằng Firestore transaction, biên lai, tab Lịch sử, tab Lãi suất và mở tài khoản cho nhân viên. Rules có test trên emulator (`rules-test/`, 20/20) |
+
 ### Chưa làm (các feature tiếp theo)
-- **Feature 3** Account management: Saving (lãi suất, lãi/tháng; nhân viên sửa lãi suất ở tab "Lãi suất"), Mortgage (số tiền trả mỗi tháng / 2 tuần), lịch sử giao dịch, nạp / rút.
 - **Feature 4** Transaction: chuyển tiền cùng ngân hàng (tra người nhận qua `phoneIndex`) và khác ngân hàng, kiểm tra hợp lệ trước khi ghi (Firestore transaction), tích hợp VNPay hoặc Stripe (sandbox).
 - **Feature 5** Utilities: tiền điện, tiền nước, nạp điện thoại, vé máy bay, vé phim, khách sạn, mua sắm.
 - **Feature 6** Navigation: bản đồ, vị trí người dùng, chi nhánh gần nhất, đường đi bộ ngắn nhất.
@@ -37,7 +38,13 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 
 ## 3. Việc chủ dự án cần làm
 
-Đã xong ngày 2026-10-27: publish `firestore.rules`; chạy end-to-end trên máy thật (Xiaomi), mọi luồng F1–F2 đều đạt; hiệu chỉnh `MATCH_THRESHOLD` (giữ 0.6, số đo ở KDoc); nhánh `feat/ui-foundation-f1-f2` đã merge vào `main`.
+Đã xong ngày 2026-10-27: publish rules F1–F2, chạy end-to-end F1–F2 trên máy thật, hiệu chỉnh `MATCH_THRESHOLD` (giữ 0.6), merge F1–F2 vào `main`.
+
+Cho Feature 3 (chưa xác nhận):
+1. **Publish lại `firestore.rules`** (thêm `transactions`, `config/rates`, quyền đổi số dư có đối chiếu).
+2. **Tạo composite index** `transactions` (`ownerUid` ASC, `createdAt` DESC) — README mục 3.
+3. **Chạy demo F3 trên máy thật** theo README "Luồng demo" và ghi kết quả vào đây.
+4. Chọn cách xử lý nhánh `feat/account-management-f3` sau review.
 
 ## 4. Những điều chủ dự án đã quyết định (đừng hỏi lại)
 
@@ -87,18 +94,19 @@ screenHost.openScreen(SomeFragment())
 // Tra người nhận theo SĐT
 FluxApp.instance.userRepository.findUidByPhone("0912345678")
 ```
-- Hiện các tab Chuyển tiền / Lịch sử / Quét QR, 12 ô tiện ích và tab "Lãi suất" của nhân viên đều mở `ComingSoonFragment`. Khi làm Feature 3–7 thì thay vào `CustomerMainActivity.fragmentFor()`, `HomeFragment` (click tiện ích) và `OfficerMainActivity.fragmentFor()`.
-- Rules `accounts`: hiện **cấm mọi update**. Feature 4 phải mở quyền cập nhật số dư có kiểm tra (ví dụ chỉ trừ tiền tài khoản của chính mình và cộng đúng số tiền tương ứng vào tài khoản nhận). Đây là điểm cần thiết kế cẩn thận.
+- Hiện tab Chuyển tiền / Quét QR và 9 ô tiện ích (trừ Nạp tiền, Rút tiền, Tiết kiệm) vẫn mở `ComingSoonFragment`. Khi làm Feature 4–7 thì thay vào `CustomerMainActivity.fragmentFor()`, `HomeFragment` (click tiện ích) và `OfficerMainActivity.fragmentFor()`.
+- Số dư chỉ đổi qua `AccountRepository.deposit/withdraw`: một `runTransaction` ghi `accounts/{id}` (`balance`, `lastTxId`) và `transactions/{txId}` mới. Rules `ownerMoneyMoveAllowed` bắt `lastTxId` trỏ tới giao dịch **chưa tồn tại trước đó**, cùng tài khoản, `balanceAfter` = số dư mới, đúng phép cộng/trừ.
+- Feature 4 (chuyển tiền) cần mở rộng hợp đồng này: thêm `type` (ví dụ `TRANSFER_OUT`/`TRANSFER_IN`), và vì phải **cộng vào tài khoản người khác**, rules cho tài khoản nhận phải kiểm tra giao dịch cặp (cùng batch, cùng số tiền) — người gửi không phải chủ tài khoản nhận. Thêm ca test vào `rules-test/rules.test.mjs` trước khi sửa rules.
+- `TransactionType` có `isIncoming`; `TransactionRowAdapter.labelFor()` cần thêm nhãn cho loại mới. `ReceiptFragment.newInstance(tx, accountLabel, viewOnly)` dùng lại được cho chuyển tiền.
 
 ### Dữ liệu Firestore
 `users/{uid}` · `phoneIndex/{sđt}` → `{uid}` · `kyc/{uid}` (ảnh Base64 + `faceEmbedding`) · `accounts/{id}` (`ownerUid`, `type`, `accountNumber` `8868xxxxxxxx`, `balance` Long VND). Chi tiết ở `PROJECT_CONTEXT.md`.
 
 ## 6. Môi trường & mẹo (quan trọng)
 
-- **Build**: dùng JDK 21. Nếu gặp lỗi `jlink executable ... does not exist`, nghĩa là daemon Gradle do VSCode mở (JRE 25 không có jlink) đang chạy. Chạy `./gradlew --stop` rồi build lại:
-  ```bash
-  cd FLUX_Bank && ./gradlew --stop -q; JAVA_HOME=/usr/lib/jvm/java-21-openjdk ./gradlew testDebugUnitTest assembleDebug
-  ```
+- **Build**: daemon Gradle đã ghim JDK 21 (`gradle/gradle-daemon-jvm.properties`), không cần `JAVA_HOME`: `./gradlew testDebugUnitTest assembleDebug`. Android Studio: Gradle JDK = `/usr/lib/jvm/java-21-openjdk`.
+- **Test rules**: `rules-test/` (Node + Firestore emulator), xem README mục 5.
+- **Firestore Console**: gõ tay tên field khi tạo document (copy từ markdown có thể dính ký tự ẩn U+200B, app sẽ không đọc được field).
 - **Emulator**: AVD `Pixel_7` (Android 37, image production nên không có adb root). Chạy không cửa sổ ở chế độ background:
   ```bash
   ~/Android/Sdk/emulator/emulator -avd Pixel_7 -no-window -no-audio -no-boot-anim -no-snapshot-save -gpu swiftshader_indirect
@@ -126,7 +134,7 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 ## 9. Cách bắt đầu session mới
 
 Gợi ý câu lệnh mở đầu:
-> Đọc `FLUX_Bank/HANDOFF.md` và `FLUX_Bank/PROJECT_CONTEXT.md`. Tôi đã [làm/chưa làm] mục 3. Nhánh `feat/ui-foundation-f1-f2`: [merge / giữ]. Tiếp theo brainstorm Feature 3 (Account management) bằng `/superpowers:brainstorming`.
+> Đọc `FLUX_Bank/HANDOFF.md` và `FLUX_Bank/PROJECT_CONTEXT.md`. Tôi đã [làm/chưa làm] mục 3. Nhánh `feat/account-management-f3`: [merge / giữ]. Tiếp theo brainstorm Feature 4 (Transaction) bằng `/superpowers:brainstorming`.
 
 Quy trình đã dùng và nên giữ: `superpowers:brainstorming` (hỏi từng câu, mockup HTML trên visual companion) → viết spec vào `docs/superpowers/specs/` → `superpowers:writing-plans` → `superpowers:executing-plans` (chủ dự án chọn chế độ **Native**) → review toàn nhánh → `finishing-a-development-branch`.
 
