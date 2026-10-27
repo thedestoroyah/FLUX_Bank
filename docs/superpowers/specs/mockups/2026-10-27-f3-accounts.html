@@ -1,0 +1,293 @@
+<title>FLUX F3 Accounts</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: các khung điện thoại xếp lưới theo luồng demo, mỗi khung có chú thích bên dưới. Chỉ giao diện sáng (app chỉ có light theme). */
+:root{
+  --bg:#F5F5F7; --surface:#FFFFFF; --ink:#0A0D12; --muted:#64748B; --faint:#94A3B8;
+  --line:#E5E7EB; --line2:#F1F3F5; --emerald:#10B981; --emerald-ink:#059669; --mint:#E7F8EF;
+  --page:#ECEEF1; --gold:#D97706;
+  --font:"Inter",-apple-system,Roboto,"Segoe UI",sans-serif;
+}
+body{background:var(--page);color:var(--ink);font-family:var(--font);padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{max-width:1100px;margin:0 auto 8px;display:flex;flex-direction:column;gap:6px}
+header.top h1{font-size:24px;font-weight:700;letter-spacing:-.4px;margin:0;text-wrap:balance}
+header.top p{margin:0;color:var(--muted);font-size:14px;line-height:1.5;max-width:65ch}
+.group{max-width:1100px;margin:28px auto 0}
+.group h2{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:0 0 14px}
+.phones{display:flex;gap:28px;flex-wrap:wrap}
+figure{margin:0;display:flex;flex-direction:column;gap:10px;width:310px;max-width:100%}
+figcaption{font-size:13px;line-height:1.45;color:var(--muted)}
+figcaption b{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}
+.ph{width:310px;max-width:100%;height:640px;background:var(--bg);border-radius:40px;border:8px solid var(--ink);overflow:hidden;position:relative;font-variant-numeric:tabular-nums;box-shadow:0 10px 30px rgba(10,13,18,.14)}
+.sb{height:26px;display:flex;justify-content:space-between;padding:6px 20px 0;font-size:11px;font-weight:600}
+.pad{padding:0 16px;display:flex;flex-direction:column;gap:10px}
+.hdr{display:flex;align-items:center;gap:10px;padding:6px 16px 10px}
+.hdr .t{font-size:17px;font-weight:600;flex:1}
+.backb{width:36px;height:36px;border-radius:12px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+.icon{width:18px;height:18px;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px}
+.cap{font-size:12px;color:var(--muted)}
+.amt{font-size:26px;font-weight:700;letter-spacing:-.8px}
+.amt.sm{font-size:20px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.kv{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--line2)}
+.kv:last-child{border:none}.kv span{color:var(--muted)}.kv b{font-weight:600}
+.acts{display:flex;gap:10px}
+.btnp{flex:1;height:46px;border-radius:14px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;font-size:14px}
+.btnp .icon{stroke:#fff}
+.btn2{flex:1;height:46px;border-radius:14px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;font-size:14px}
+.secl{font-size:11px;font-weight:600;color:var(--faint);text-transform:uppercase;letter-spacing:.6px}
+.tx{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2)}
+.tx:last-child{border:none}
+.txi{width:34px;height:34px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center;flex:none}
+.txi.in{background:#ECFDF5}.txi.in .icon{stroke:var(--emerald-ink)}
+.tx .m{flex:1;min-width:0}.tx .m div:first-child{font-size:13px;font-weight:600}.tx .m div:last-child{font-size:11px;color:var(--muted)}
+.pos{color:var(--emerald-ink);font-weight:600;font-size:13px}.neg{font-weight:600;font-size:13px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:12px;font-weight:600;padding:7px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.seg{display:flex;background:var(--line2);border-radius:12px;padding:3px}
+.seg span{flex:1;text-align:center;font-size:12px;font-weight:600;padding:7px 0;border-radius:10px;color:var(--muted)}
+.seg .on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(10,13,18,.12)}
+.titan{aspect-ratio:1.586;border-radius:22px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,#FFFFFF 0%,#ECEDF0 40%,#FAFAFB 55%,#E1E3E8 100%);border:1px solid #D1D5DB;box-shadow:0 8px 24px rgba(16,185,129,.12)}
+.mint{position:absolute;left:0;right:0;top:0;height:250px;background:linear-gradient(180deg,var(--mint),var(--bg))}
+.rel{position:relative}
+.rate{display:flex;align-items:center;gap:12px}
+.rate .ic{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex:none}
+.fld .l{font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:500}
+.fld .i{height:50px;border-radius:14px;border:1px solid var(--line);background:var(--surface);display:flex;align-items:center;padding:0 12px;font-size:20px;font-weight:700;letter-spacing:-.4px}
+.fld .i.focus{border:1.5px solid var(--emerald)}
+.fld .i.sm{font-size:14px;font-weight:500;height:46px;letter-spacing:0}
+.fld .h{font-size:11px;color:var(--muted);margin-top:4px}
+.note{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--muted);background:var(--surface);border:1px dashed #CBD5E1;border-radius:14px;padding:10px 12px;line-height:1.4}
+.bottom{position:absolute;left:16px;right:16px;bottom:18px}
+.nav{position:absolute;bottom:0;left:0;right:0;height:62px;background:rgba(255,255,255,.97);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;font-size:10px;color:var(--faint)}
+.nav div{display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav .icon{stroke:var(--faint)}
+.nav .on{color:var(--emerald-ink);font-weight:600}.nav .on .icon{stroke:var(--emerald-ink)}
+.qr{width:50px;height:50px;border-radius:16px;background:var(--emerald);margin-top:-26px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(16,185,129,.35)}
+.qr .icon{stroke:#fff}
+.scrim{position:absolute;inset:0;background:rgba(10,13,18,.55)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:24px 24px 0 0;padding:10px 18px 22px;display:flex;flex-direction:column;gap:12px}
+.handle{width:36px;height:5px;border-radius:3px;background:#D1D5DB;margin:0 auto}
+.check{width:64px;height:64px;border-radius:50%;background:#ECFDF5;display:flex;align-items:center;justify-content:center;margin:24px auto 6px}
+.check .icon{stroke:var(--emerald-ink);width:30px;height:30px;stroke-width:2.4}
+.pill{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--line2);color:var(--muted)}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--emerald);margin-right:4px;vertical-align:1px}
+@media (prefers-reduced-motion:no-preference){figure{transition:transform .2s}figure:hover{transform:translateY(-2px)}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+ <symbol id="back" viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></symbol>
+ <symbol id="copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+ <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+ <symbol id="down" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></symbol>
+ <symbol id="in" viewBox="0 0 24 24"><path d="M17 7 7 17M16 17H7V8"/></symbol>
+ <symbol id="out" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+ <symbol id="piggy" viewBox="0 0 24 24"><path d="M19 10c1 0 2 1 2 2v2h-2l-1 3h-3v-2h-4v2H8l-1-3c-2-1-3-3-3-5a6 6 0 0 1 6-5h3c2 0 4 1 5 3z"/></symbol>
+ <symbol id="house" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+ <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></symbol>
+ <symbol id="swap" viewBox="0 0 24 24"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></symbol>
+ <symbol id="hist" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2"/></symbol>
+ <symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol>
+ <symbol id="scan" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/></symbol>
+ <symbol id="pct" viewBox="0 0 24 24"><path d="M19 5 5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/></symbol>
+ <symbol id="grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+ <symbol id="users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5c2.5.5 4 2.5 4 5.5"/></symbol>
+ <symbol id="id" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.5-1.5 1.7-2 3-2s2.5.5 3 2M14 10h4M14 13h3"/></symbol>
+ <symbol id="info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+ <symbol id="pen" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></symbol>
+</defs></svg>
+
+<header class="top">
+  <h1>Feature 3 · Quản lý tài khoản</h1>
+  <p>Mockup chờ duyệt, ngày 27/10/2026. Bảy màn hình theo đúng thứ tự kịch bản demo. Số liệu là ví dụ và đã tính đúng công thức trong spec: tiết kiệm 4,5%/năm, khoản vay 1,5 tỷ ₫ với lãi 8,5%/năm trong 240 tháng.</p>
+</header>
+
+<section class="group">
+  <h2>Khách hàng</h2>
+  <div class="phones">
+
+    <!-- 1. Chi tiết Saving -->
+    <figure>
+      <div class="ph"><div class="mint"></div><div class="rel">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="backb"><svg class="icon"><use href="#back"/></svg></div><div class="t">Tài khoản tiết kiệm</div></div>
+        <div class="pad">
+          <div class="titan">
+            <div class="row"><span class="cap" style="font-weight:600;color:var(--ink)">Tiết kiệm</span><span class="pill"><span class="dot"></span>4,5%/năm</span></div>
+            <div><div class="cap">Số dư</div><div class="amt">120.000.000 ₫</div></div>
+            <div class="row"><span class="cap">8868 4417 2093</span><svg class="icon"><use href="#copy"/></svg></div>
+          </div>
+          <div class="tile" style="padding:6px 14px">
+            <div class="kv"><span>Lãi dự kiến mỗi tháng</span><b style="color:var(--emerald-ink)">+450.000 ₫</b></div>
+            <div class="kv"><span>Lãi dự kiến 12 tháng</span><b>5.400.000 ₫</b></div>
+          </div>
+          <div class="acts"><div class="btnp"><svg class="icon"><use href="#plus"/></svg>Nạp tiền</div><div class="btn2"><svg class="icon"><use href="#down"/></svg>Rút tiền</div></div>
+          <div class="secl">Giao dịch gần đây</div>
+          <div class="tile" style="padding:2px 14px">
+            <div class="tx"><div class="txi in"><svg class="icon"><use href="#in"/></svg></div><div class="m"><div>Nạp tiền</div><div>Hôm nay · 09:12</div></div><span class="pos">+20.000.000 ₫</span></div>
+            <div class="tx"><div class="txi"><svg class="icon"><use href="#out"/></svg></div><div class="m"><div>Rút tiền</div><div>24/10 · 18:40</div></div><span class="neg">−5.000.000 ₫</span></div>
+          </div>
+        </div>
+      </div></div>
+      <figcaption><b>1 · Chi tiết Saving</b>Mở khi chạm thẻ trên trang chủ hoặc ô Tiết kiệm. Lãi suất lấy từ mức chung nên khi nhân viên đổi, số liệu ở đây đổi theo. Màn Checking giống hệt nhưng không có khối lãi.</figcaption>
+    </figure>
+
+    <!-- 2. Chi tiết Mortgage -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="backb"><svg class="icon"><use href="#back"/></svg></div><div class="t">Khoản vay thế chấp</div></div>
+        <div class="pad">
+          <div class="tile">
+            <div class="cap">Dư nợ</div>
+            <div class="amt">1.500.000.000 ₫</div>
+            <div class="cap" style="margin-top:2px">8868 9021 5536 · lãi cố định 8,5%/năm</div>
+          </div>
+          <div class="seg"><span class="on">Hàng tháng</span><span>2 tuần</span></div>
+          <div class="tile">
+            <div class="cap">Số tiền mỗi kỳ</div>
+            <div class="amt">13.017.349 ₫</div>
+            <div class="row" style="margin-top:8px"><span class="cap">Kỳ tiếp theo</span><b style="font-size:13px">05/11/2026</b></div>
+          </div>
+          <div class="tile" style="padding:4px 14px">
+            <div class="kv"><span>Số tiền vay</span><b>1.500.000.000 ₫</b></div>
+            <div class="kv"><span>Thời hạn</span><b>240 tháng · 240 kỳ</b></div>
+            <div class="kv"><span>Ngày bắt đầu</span><b>05/10/2026</b></div>
+            <div class="kv"><span>Tổng lãi</span><b>1.624.163.760 ₫</b></div>
+            <div class="kv"><span>Tổng phải trả</span><b>3.124.163.760 ₫</b></div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>2 · Chi tiết Mortgage</b>Chọn "2 tuần" thì số tiền mỗi kỳ thành 6.003.662 ₫ cho 520 kỳ, tổng lãi 1.621.904.240 ₫, và kỳ tiếp theo là 02/11/2026. Không có nút nạp hay rút.</figcaption>
+    </figure>
+
+    <!-- 3. Nạp tiền -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="backb"><svg class="icon"><use href="#back"/></svg></div><div class="t">Nạp tiền</div></div>
+        <div class="pad">
+          <div class="fld"><div class="l">Vào tài khoản</div>
+            <div class="chips"><span class="chip">Thanh toán · 8.250.000 ₫</span><span class="chip on">Tiết kiệm · 120.000.000 ₫</span></div></div>
+          <div class="fld"><div class="l">Số tiền</div><div class="i focus">2.000.000 ₫</div><div class="h">Tối thiểu 10.000 ₫, tối đa 100.000.000 ₫ mỗi lần</div></div>
+          <div class="chips"><span class="chip">100.000</span><span class="chip">500.000</span><span class="chip">1.000.000</span><span class="chip">5.000.000</span></div>
+          <div class="tile" style="padding:4px 14px">
+            <div class="kv"><span>Nguồn tiền</span><b>Thẻ liên kết (giả lập)</b></div>
+            <div class="kv"><span>Số dư sau giao dịch</span><b>122.000.000 ₫</b></div>
+          </div>
+          <div class="note"><svg class="icon" style="flex:none;width:16px;height:16px;stroke:var(--muted)"><use href="#info"/></svg>Bạn sẽ nhập mã OTP để xác nhận. Từ 10.000.000 ₫ trở lên cần quét khuôn mặt.</div>
+        </div>
+        <div class="bottom"><div class="btnp">Tiếp tục</div></div>
+      </div>
+      <figcaption><b>3 · Nạp / Rút tiền</b>Một màn dùng cho cả hai chế độ. Khi rút, dòng nguồn đổi thành "Nhận tiền mặt (giả lập)", và nếu nhập quá số dư thì báo lỗi ngay dưới ô số tiền. Bấm Tiếp tục mở sheet OTP đã có từ F2.</figcaption>
+    </figure>
+
+    <!-- 4. Biên lai -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="pad">
+          <div class="check"><svg class="icon"><use href="#check"/></svg></div>
+          <div style="text-align:center"><div class="cap">Nạp tiền thành công</div><div class="amt" style="color:var(--emerald-ink)">+2.000.000 ₫</div></div>
+          <div class="tile" style="padding:4px 14px;margin-top:8px">
+            <div class="kv"><span>Tài khoản</span><b>Tiết kiệm · 8868 4417 2093</b></div>
+            <div class="kv"><span>Nguồn tiền</span><b>Thẻ liên kết (giả lập)</b></div>
+            <div class="kv"><span>Thời gian</span><b>09:12 · 27/10/2026</b></div>
+            <div class="kv"><span>Mã giao dịch</span><b>FX7Q2M9KDA</b></div>
+            <div class="kv"><span>Số dư mới</span><b>122.000.000 ₫</b></div>
+          </div>
+        </div>
+        <div class="bottom" style="display:flex;flex-direction:column;gap:10px"><div class="btnp">Về trang chủ</div><div class="btn2">Xem lịch sử</div></div>
+      </div>
+      <figcaption><b>4 · Biên lai</b>Hiện sau khi xác thực xong và giao dịch đã được ghi. Chạm vào một dòng trong Lịch sử cũng mở màn này ở chế độ chỉ xem, khi đó hai nút đổi thành nút back.</figcaption>
+    </figure>
+
+    <!-- 5. Lịch sử -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="t" style="font-size:20px;font-weight:700">Lịch sử</div></div>
+        <div class="pad">
+          <div class="chips"><span class="chip on">Tất cả</span><span class="chip">Thanh toán</span><span class="chip">Tiết kiệm</span></div>
+          <div class="secl">Hôm nay</div>
+          <div class="tile" style="padding:2px 14px">
+            <div class="tx"><div class="txi in"><svg class="icon"><use href="#in"/></svg></div><div class="m"><div>Nạp tiền</div><div>Tiết kiệm · 09:12</div></div><span class="pos">+2.000.000 ₫</span></div>
+            <div class="tx"><div class="txi"><svg class="icon"><use href="#out"/></svg></div><div class="m"><div>Rút tiền</div><div>Thanh toán · 08:05</div></div><span class="neg">−500.000 ₫</span></div>
+          </div>
+          <div class="secl">Hôm qua</div>
+          <div class="tile" style="padding:2px 14px">
+            <div class="tx"><div class="txi in"><svg class="icon"><use href="#in"/></svg></div><div class="m"><div>Nạp tiền</div><div>Thanh toán · 20:31</div></div><span class="pos">+3.000.000 ₫</span></div>
+          </div>
+          <div class="secl">24/10/2026</div>
+          <div class="tile" style="padding:2px 14px">
+            <div class="tx"><div class="txi"><svg class="icon"><use href="#out"/></svg></div><div class="m"><div>Rút tiền</div><div>Tiết kiệm · 18:40</div></div><span class="neg">−5.000.000 ₫</span></div>
+          </div>
+        </div>
+        <div class="nav">
+          <div><svg class="icon"><use href="#house"/></svg>Trang chủ</div>
+          <div><svg class="icon"><use href="#swap"/></svg>Chuyển tiền</div>
+          <div class="qr"><svg class="icon"><use href="#scan"/></svg></div>
+          <div class="on"><svg class="icon"><use href="#hist"/></svg>Lịch sử</div>
+          <div><svg class="icon"><use href="#user"/></svg>Cá nhân</div>
+        </div>
+      </div>
+      <figcaption><b>5 · Tab Lịch sử</b>Thay cho màn "Sắp ra mắt". Có chip lọc theo từng tài khoản và nhóm theo ngày. Mục "Giao dịch gần đây" ở trang chủ dùng chính dòng này, hiện 3 giao dịch mới nhất.</figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<section class="group">
+  <h2>Nhân viên</h2>
+  <div class="phones">
+
+    <!-- 6. Lãi suất + sheet sửa -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="t" style="font-size:20px;font-weight:700">Lãi suất</div></div>
+        <div class="pad">
+          <div class="tile"><div class="rate"><div class="ic" style="background:#ECFDF5"><svg class="icon" style="stroke:var(--emerald-ink)"><use href="#piggy"/></svg></div><div style="flex:1"><div class="cap">Tiết kiệm</div><div class="amt sm">4,5%/năm</div></div><svg class="icon"><use href="#pen"/></svg></div>
+            <div class="cap" style="margin-top:8px">Áp dụng ngay cho mọi tài khoản tiết kiệm · sửa bởi Nguyen Van A, 27/10 08:30</div></div>
+          <div class="tile"><div class="rate"><div class="ic" style="background:#FEF3C7"><svg class="icon" style="stroke:var(--gold)"><use href="#house"/></svg></div><div style="flex:1"><div class="cap">Vay thế chấp</div><div class="amt sm">8,5%/năm</div></div><svg class="icon"><use href="#pen"/></svg></div>
+            <div class="cap" style="margin-top:8px">Chỉ áp dụng cho khoản vay mở sau khi sửa</div></div>
+        </div>
+        <div class="scrim"></div>
+        <div class="sheet">
+          <div class="handle"></div>
+          <div style="font-size:17px;font-weight:600">Sửa lãi suất tiết kiệm</div>
+          <div class="fld"><div class="l">Lãi suất (%/năm)</div><div class="i focus">5,0</div><div class="h">Từ 0,01 đến 30</div></div>
+          <div class="note">100.000.000 ₫ gửi tiết kiệm → lãi 416.666 ₫/tháng</div>
+          <div class="btnp" style="flex:none">Lưu</div>
+        </div>
+      </div>
+      <figcaption><b>6 · Tab Lãi suất</b>Thay cho màn "Sắp ra mắt". Hai thẻ, chạm vào thẻ thì mở sheet sửa. Dòng ví dụ cập nhật theo số đang nhập, để nhân viên thấy ngay mức ảnh hưởng.</figcaption>
+    </figure>
+
+    <!-- 7. Mở khoản vay -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="backb"><svg class="icon"><use href="#back"/></svg></div><div class="t">Mở tài khoản</div></div>
+        <div class="pad">
+          <div class="cap">Khách hàng: <b style="color:var(--ink)">Tran Thi B</b> · 0912 345 678</div>
+          <div class="seg"><span>Tiết kiệm</span><span class="on">Vay thế chấp</span></div>
+          <div class="fld"><div class="l">Số tiền vay</div><div class="i focus">1.500.000.000 ₫</div></div>
+          <div class="fld"><div class="l">Thời hạn</div>
+            <div class="chips"><span class="chip">12 tháng</span><span class="chip">60 tháng</span><span class="chip">120 tháng</span><span class="chip on">240 tháng</span></div></div>
+          <div class="tile" style="padding:4px 14px">
+            <div class="kv"><span>Lãi suất (theo chính sách)</span><b>8,5%/năm</b></div>
+            <div class="kv"><span>Trả hàng tháng</span><b>13.017.349 ₫</b></div>
+            <div class="kv"><span>Hoặc mỗi 2 tuần</span><b>6.003.662 ₫</b></div>
+          </div>
+        </div>
+        <div class="bottom"><div class="btnp">Mở khoản vay</div></div>
+      </div>
+      <figcaption><b>7 · Mở tài khoản</b>Mở từ nút "Mở tài khoản" trong chi tiết khách, nơi cũng có thêm mục liệt kê các tài khoản của khách. Chọn "Tiết kiệm" thì chỉ cần xác nhận, tài khoản mở với 0 ₫.</figcaption>
+    </figure>
+
+  </div>
+</section>
