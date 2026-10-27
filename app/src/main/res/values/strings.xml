@@ -391,6 +391,7 @@
     <string name="err_vnpay_not_configured">Chưa cấu hình VNPay. Thêm VNPAY_TMN_CODE và VNPAY_HASH_SECRET vào local.properties rồi build lại.</string>
     <string name="err_vnpay_cancelled">Bạn đã huỷ thanh toán VNPay. Số dư không thay đổi.</string>
     <string name="err_vnpay_failed">VNPay báo thanh toán không thành công. Số dư không thay đổi, vui lòng thử lại.</string>
+    <string name="err_vnpay_retry">VNPay đã thanh toán nhưng chưa ghi được vào tài khoản (lỗi mạng). Bấm Tiếp tục để thử ghi lại, bạn không bị trừ tiền thêm.</string>
     <string name="err_vnpay_bad_result">Kết quả từ VNPay không hợp lệ nên giao dịch không được ghi. Vui lòng thử lại.</string>
     <string name="qr_scan">Quét mã</string>
     <string name="qr_my_code">Mã của tôi</string>

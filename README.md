@@ -66,7 +66,7 @@ update `accounts/{id}` của người khác chỉ tăng `balance` (không có gi
 Playground chỉ thử từng request đơn lẻ nên luồng hợp lệ (ghi tài khoản + giao dịch trong một batch) kiểm tra bằng app.
 
 ### 5. Test rules tự động (Firestore emulator)
-`rules-test/` chạy 37 ca kiểm tra rules của Feature 3–4 trên emulator, gồm cả batch nạp/rút và chuyển tiền 4 document mà Playground không thử được. Cần Node và Java 21:
+`rules-test/` chạy 40 ca kiểm tra rules của Feature 3–4 trên emulator, gồm cả batch nạp/rút và chuyển tiền 4 document mà Playground không thử được. Cần Node và Java 21:
 ```bash
 cd rules-test && npm install
 ln -sfn ../templates node_modules/firebase-tools/lib/templates   # firebase-tools 13.29.1 tìm sai thư mục templates

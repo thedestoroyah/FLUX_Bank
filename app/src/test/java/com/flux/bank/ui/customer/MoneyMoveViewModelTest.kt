@@ -108,6 +108,19 @@ class MoneyMoveViewModelTest {
     }
 
     @Test
+    fun depositWriteFailureKeepsPaymentForRetry() {
+        val vm = depositUntilPayment()
+        accounts.failNextMove = java.io.IOException("offline")
+        vm.onPaymentResult(signedReturn("vnp0", 1_000_000))
+        assertEquals(R.string.err_vnpay_retry, vm.state.value!!.errorRes)
+        assertNull(vm.done.value)
+        vm.confirm()
+        val tx = vm.done.value!!.peek()
+        assertEquals("vnp0", tx.id)
+        assertEquals("14000001", tx.paymentRef)
+    }
+
+    @Test
     fun notConfiguredShowsError() {
         val vm = vm(deposit = true, payments = null)
         vm.setAmount("1.000.000")

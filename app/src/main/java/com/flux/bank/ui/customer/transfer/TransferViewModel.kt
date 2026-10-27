@@ -81,8 +81,9 @@ class TransferViewModel(
     private var fullName = ""
     private var kycStatus: String? = null
     private var descriptionEdited = false
-    // Đang chờ kết quả sheet xác thực: chặn bấm "Tiếp tục" lần 2 mở thêm sheet
-    private var awaitingAuth = false
+    // Yêu cầu đã kiểm tra lúc bấm "Tiếp tục", đang chờ sheet xác thực. Ghi đúng yêu cầu này
+    // (form có thể đổi trong lúc sheet mở, ví dụ khi màn hình được tạo lại); khác null thì chặn mở sheet thứ hai.
+    private var confirmed: TransferState? = null
     private var lookupJob: Job? = null
 
     /** Tải hồ sơ, tài khoản nguồn và hạn mức còn lại; [prefill] điền sẵn người nhận (gần đây hoặc QR). */
@@ -123,6 +124,7 @@ class TransferViewModel(
     /** Chỉ giữ chữ số. Chế độ trong FLUX: đủ 12 số thì tra tên, huỷ lần tra trước để kết quả cũ không ghi đè. */
     fun setAccountNumber(input: String) {
         val digits = input.filter(Char::isDigit).take(MAX_ACCOUNT_DIGITS)
+        if (digits == _state.value?.accountNumber) return
         lookupJob?.cancel()
         update { it.copy(accountNumber = digits, payee = null, lookingUp = false, recipientError = null, errorRes = null) }
         if (mode != TransferMode.INTERNAL || digits.length != FLUX_ACCOUNT_DIGITS) return
@@ -135,7 +137,7 @@ class TransferViewModel(
             update { s ->
                 s.copy(
                     lookingUp = false,
-                    payee = payee?.takeIf { it.accountId != s.sourceId },
+                    payee = payee,
                     recipientError = when {
                         result.isFailure -> null
                         payee == null -> TransferError.PAYEE_NOT_FOUND
@@ -162,22 +164,21 @@ class TransferViewModel(
 
     fun confirm() {
         val s = _state.value ?: return
-        if (kycStatus != KycStatus.VERIFIED || s.submitting || awaitingAuth || s.lookingUp) return
+        if (kycStatus != KycStatus.VERIFIED || s.submitting || confirmed != null || s.lookingUp) return
         val source = s.source ?: return
         val recipientError = recipientError(s)
         val amountError = TransferPolicy.checkAmount(s.amount, source.balance, s.remainingToday)
         if (recipientError != null || amountError != null) {
             return update { it.copy(recipientError = recipientError, amountError = amountError) }
         }
-        awaitingAuth = true
+        confirmed = s
         _askAuth.value = Event(authRequest(s))
     }
 
     fun onAuthResult(verified: Boolean) {
-        if (!awaitingAuth) return
-        awaitingAuth = false
+        val s = confirmed ?: return
+        confirmed = null
         if (!verified) return
-        val s = _state.value ?: return
         val sourceId = s.sourceId ?: return
         update { it.copy(submitting = true, errorRes = null) }
         viewModelScope.launch {
@@ -219,6 +220,7 @@ class TransferViewModel(
         TransferMode.INTERNAL -> when {
             !TransferPolicy.isFluxAccountNumber(s.accountNumber) -> TransferError.INVALID_ACCOUNT_NUMBER
             s.payee == null -> s.recipientError ?: TransferError.PAYEE_NOT_FOUND
+            s.payee.accountId == s.sourceId -> TransferError.SAME_ACCOUNT
             else -> null
         }
         TransferMode.OWN -> if (s.target == null) TransferError.PAYEE_NOT_FOUND else null

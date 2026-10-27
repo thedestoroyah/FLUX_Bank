@@ -16,7 +16,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 ## 2. Trạng thái hiện tại
 
 - Repo git ở `FLUX_Bank/`, chưa có remote. `main` có F1–F3. **F4 nằm trên nhánh `feature/f4-transfers`** (chưa merge, chờ chạy end-to-end trên máy thật, mục 3).
-- **Unit test: 211/211 pass**, rules test trên emulator 37/37. `assembleDebug` và `lintDebug` pass (lint 0 error).
+- **Unit test: 216/216 pass**, rules test trên emulator 40/40. F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test). `assembleDebug` và `lintDebug` pass (lint 0 error).
 - F1–F2 và F3 đều đã được reviewer độc lập review toàn nhánh, đã sửa hết lỗi Important; lỗi Minor còn lại ở mục 7. F3 đã chạy demo đạt trên máy thật (mục 3).
 
 ### Đã hoàn thành
@@ -26,7 +26,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 | Khung app | `CustomerMainActivity` (5 tab có nút QR nổi ở giữa) · `OfficerMainActivity` (5 tab) · `ScreenHost.openScreen()` |
 | Feature 1 | Nhân viên tạo / tìm / sửa khách (FirebaseApp phụ, có rollback, cấp tài khoản Checking 0 ₫, mật khẩu tạm), gửi email đặt lại mật khẩu, chụp eKYC hộ khách. Khách xem hồ sơ, tự sửa SĐT (qua OTP), địa chỉ, avatar. Bắt đổi mật khẩu ở lần đăng nhập đầu |
 | Feature 2 | eKYC (ML Kit + MobileFaceNet embedding), nhân viên duyệt / từ chối có lý do. Khoá app sinh trắc học (cold start, khi app bị khôi phục, sau ≥ 60 s ở nền). OTP 6 số / 120 s / dùng 1 lần / gắn với giao dịch / sai 5 lần thì khoá, gửi qua SMS giả lập kèm banner dự phòng. `TransactionAuthSheet` (bàn phím riêng + bước quét mặt khi giao dịch ≥ 10.000.000 ₫). Security Rules |
-| Feature 4 (nhánh) | Tab Chuyển tiền: trong FLUX (tra tên theo số TK qua `accountIndex`), giữa tài khoản của tôi, liên ngân hàng giả lập (10 ngân hàng), người nhận gần đây. Kiểm tra trước khi ghi (`TransferPolicy`: 10k–100tr/lần, 200tr/ngày giờ VN). Rules: cộng tiền cho người khác phải có TRANSFER_OUT cặp đã trừ nguồn cùng lần ghi (37 ca test). Nạp tiền qua VNPay sandbox (WebView, kiểm HMAC-SHA512). Nút QR giữa: quét / "Mã của tôi" |
+| Feature 4 (nhánh) | Tab Chuyển tiền: trong FLUX (tra tên theo số TK qua `accountIndex`), giữa tài khoản của tôi, liên ngân hàng giả lập (10 ngân hàng), người nhận gần đây. Kiểm tra trước khi ghi (`TransferPolicy`: 10k–100tr/lần, 200tr/ngày giờ VN). Rules: cộng tiền cho người khác phải có TRANSFER_OUT cặp đã trừ nguồn cùng lần ghi, thông tin người gửi trên TRANSFER_IN không giả được (40 ca test). Nạp tiền qua VNPay sandbox (WebView, kiểm HMAC-SHA512). Nút QR giữa: quét / "Mã của tôi" |
 | Feature 3 | Chi tiết riêng cho Checking/Saving/Mortgage, lãi suất chung + lãi dự kiến, tiền trả mỗi tháng / 2 tuần, nạp/rút qua OTP (+ mặt khi ≥ 10 tr) bằng Firestore transaction, biên lai, tab Lịch sử, tab Lãi suất và mở tài khoản cho nhân viên. Rules có test trên emulator (`rules-test/`, 20/20) |
 
 ### Chưa làm (các feature tiếp theo)
@@ -152,6 +152,11 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 17. Vài kích thước `dp` cứng trong layout mới (96dp, 64dp, 36dp, 56dp).
 
 **Feature 4** đã đổi nạp tiền sang VNPay; rules vẫn không biết VNPay đã thu tiền (giới hạn Spark, ghi ở README).
+
+### Lỗi nhỏ của Feature 4 (review 2026-10-28, để lại sau)
+18. VNPay chuyển về khi app đang ở nền: `VnPayFragment` gọi `popBackStack()` sau `onSaveInstanceState` có thể crash (hiếm, chỉ khi redirect lúc app không ở trước).
+19. Trang chủ chờ `ensureIndexed` xong mới tải giao dịch gần đây (lần đầu mỗi phiên chậm hơn); nên chạy trong `launch` riêng.
+20. Tra người nhận lỗi mạng thì phải gõ lại số tài khoản mới tra lại được.
 
 ## 8. Giới hạn đã biết (ghi vào báo cáo)
 - Gói Spark: OTP và đối chiếu khuôn mặt chỉ được kiểm tra trên thiết bị; rules chỉ giới hạn field nào được sửa. Hướng nâng cấp: Cloud Functions phát và kiểm token xác thực.
