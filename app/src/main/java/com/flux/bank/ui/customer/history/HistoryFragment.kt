@@ -15,7 +15,6 @@ import com.flux.bank.databinding.ItemFilterChipBinding
 import com.flux.bank.ui.common.screenHost
 import com.flux.bank.ui.customer.account.ReceiptFragment
 import com.flux.bank.ui.customer.home.HomeViewModel
-import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -45,8 +44,9 @@ class HistoryFragment : Fragment() {
             adapter.submit(rows)
             binding.tvEmpty.isVisible = rows.isEmpty()
         }
+        // Tải lỗi thì nói rõ là lỗi, đừng để khách tưởng mình chưa có giao dịch nào
         viewModel.failed.observe(viewLifecycleOwner) { failed ->
-            if (failed) Snackbar.make(binding.root, R.string.history_load_failed, Snackbar.LENGTH_LONG).show()
+            binding.tvEmpty.setText(if (failed) R.string.history_load_failed else R.string.history_empty)
         }
     }
 
