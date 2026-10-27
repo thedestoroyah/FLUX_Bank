@@ -19,7 +19,8 @@ class OpenAccountViewModelTest {
     @get:Rule val main = MainDispatcherRule()
 
     private val accounts = FakeAccountRepository()
-    private fun vm() = OpenAccountViewModel(accounts, FakeRatesRepository(Rates(mortgageRate = 8.5))).apply { load() }
+    private val rates = FakeRatesRepository(Rates(mortgageRate = 8.5))
+    private fun vm() = OpenAccountViewModel(accounts, rates).apply { load() }
 
     @Test
     fun openSavingCallsRepository() {
@@ -71,5 +72,26 @@ class OpenAccountViewModelTest {
         vm.submit("c1")
         accounts.openGate!!.complete(Unit)
         assertEquals(1, accounts.opened.size)
+    }
+
+    @Test
+    fun mortgageUsesRateReadAtSubmitTime() {
+        val vm = vm()
+        vm.selectType(AccountType.MORTGAGE)
+        vm.setLoanAmount("100000000")
+        rates.rates = Rates(mortgageRate = 9.0)
+        vm.submit("c1")
+        assertEquals(9.0, accounts.opened.single().annualRate, 0.0)
+    }
+
+    @Test
+    fun mortgageRefusedWhenRatesCannotBeRead() {
+        rates.failGet = true
+        val vm = vm()
+        vm.selectType(AccountType.MORTGAGE)
+        vm.setLoanAmount("100000000")
+        vm.submit("c1")
+        assertTrue(accounts.opened.isEmpty())
+        assertEquals(R.string.err_generic, vm.state.value!!.errorRes)
     }
 }
