@@ -17,6 +17,7 @@ import com.flux.bank.data.model.AccountType
 import com.flux.bank.data.model.Transaction
 import com.flux.bank.databinding.FragmentAccountDetailBinding
 import com.flux.bank.domain.PaymentFrequency
+import com.flux.bank.ui.common.screenHost
 import com.flux.bank.ui.common.setKeyValueRows
 import com.flux.bank.ui.customer.home.HomeViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -56,9 +57,8 @@ class AccountDetailFragment : Fragment() {
             requireContext().getSystemService<ClipboardManager>()?.setPrimaryClip(ClipData.newPlainText(number, number))
             Snackbar.make(binding.root, R.string.detail_copied, Snackbar.LENGTH_SHORT).show()
         }
-        // Nạp/rút được nối ở màn nạp/rút (Feature 3, task 7)
-        binding.btnDeposit.isEnabled = false
-        binding.btnWithdraw.isEnabled = false
+        binding.btnDeposit.setOnClickListener { screenHost.openScreen(MoneyMoveFragment.newInstance(deposit = true, accountId = accountId)) }
+        binding.btnWithdraw.setOnClickListener { screenHost.openScreen(MoneyMoveFragment.newInstance(deposit = false, accountId = accountId)) }
         viewModel.state.observe(viewLifecycleOwner, ::render)
     }
 
@@ -127,7 +127,11 @@ class AccountDetailFragment : Fragment() {
         )
     }
 
-    private fun openReceipt(tx: Transaction) = Unit
+    private fun openReceipt(tx: Transaction) {
+        val account = viewModel.state.value?.account ?: return
+        val label = getString(HomeViewModel.labelFor(account.type)) + " · " + account.accountNumber
+        screenHost.openScreen(ReceiptFragment.newInstance(tx, label, viewOnly = true))
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
