@@ -9,6 +9,8 @@ import com.flux.bank.R
 import com.flux.bank.databinding.ActivityCustomerMainBinding
 import com.flux.bank.ui.common.ComingSoonFragment
 import com.flux.bank.ui.common.ScreenHost
+import com.flux.bank.ui.common.markAsSubScreen
+import com.flux.bank.ui.common.trackSubScreens
 import com.flux.bank.ui.customer.history.HistoryFragment
 import com.flux.bank.ui.customer.home.HomeFragment
 import com.flux.bank.ui.customer.profile.ProfileFragment
@@ -38,7 +40,7 @@ class CustomerMainActivity : AppCompatActivity(), ScreenHost {
         binding.btnQr.setOnClickListener {
             openScreen(ComingSoonFragment.newInstance(R.string.tab_qr, R.drawable.ic_scan, R.color.cat_emerald))
         }
-        supportFragmentManager.addOnBackStackChangedListener { syncChrome() }
+        trackSubScreens(R.id.container, ::syncChrome)
         if (savedInstanceState == null) {
             showTab(CustomerTab.HOME)
             requestNotificationPermission()
@@ -64,7 +66,7 @@ class CustomerMainActivity : AppCompatActivity(), ScreenHost {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out)
-            replace(R.id.container, fragment)
+            replace(R.id.container, fragment.markAsSubScreen())
             addToBackStack(null)
         }
     }
@@ -85,8 +87,7 @@ class CustomerMainActivity : AppCompatActivity(), ScreenHost {
     }
 
     /** Ẩn thanh tab và nút QR khi đang ở màn phụ. */
-    private fun syncChrome() {
-        val inSubScreen = supportFragmentManager.backStackEntryCount > 0
+    private fun syncChrome(inSubScreen: Boolean) {
         binding.bottomNav.isVisible = !inSubScreen
         binding.btnQr.isVisible = !inSubScreen
         binding.navDivider.isVisible = !inSubScreen
