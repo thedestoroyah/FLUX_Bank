@@ -118,6 +118,7 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 - Quy ước: comment và KDoc viết tiếng Việt, tên trong code bằng tiếng Anh. Commit theo dạng `feat:` / `fix:` / `chore:` / `docs:` / `refactor:` / `test:`. Làm theo TDD (viết test fail trước).
 
 ## 7. Lỗi nhỏ để lại sau (từ review)
+### Feature 1–2
 1. OTP của giao dịch khác hoặc mã cũ sau khi gửi lại chỉ báo chung là "mã không đúng" (chưa có thông báo riêng).
 2. Điều kiện quét mặt (đã eKYC chưa, có embedding chưa) chỉ được kiểm tra sau khi người dùng đã nhập OTP.
 3. Màn mở khoá có thể chồng 2 lần nếu xuống nền ≥ 60 s ngay tại màn mở khoá.
@@ -126,6 +127,19 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 6. Ghi `mustChangePassword = false` thất bại thì lần đăng nhập sau lại bị bắt đổi mật khẩu.
 7. Rules chưa chặn khách tự sửa `phoneNumber` mà không chuyển `phoneIndex` (chỉ client tuân thủ).
 8. Bấm "Lưu" 2 lần nhanh có thể mở 2 sheet OTP.
+
+### Lỗi nhỏ của Feature 3 (review 2026-10-27, để lại sau)
+9. Lưu lãi suất thất bại: lỗi chỉ hiện ở `RatesFragment` (bị sheet che), trong sheet không thấy gì.
+10. `MoneyMoveFragment.chipIds` sống lâu hơn view: quay lại từ màn eKYC thì chip tài khoản không được tạo lại (reset trong `onDestroyView`).
+11. Process death ở màn nạp/rút: `load()` bị bỏ qua khi có `savedInstanceState`; kết quả sheet xác thực sau khôi phục bị bỏ qua.
+12. Bấm back khi đang ghi giao dịch thì mất biên lai (số dư vẫn đúng).
+13. Rules chưa kiểm `createdAt`/`accountNumber`/key thừa của `transactions` (khách tự đặt giờ cho giao dịch của mình được).
+14. eKYC VERIFIED chỉ kiểm ở app, chưa kiểm trong rules nạp/rút.
+15. Snackbar "tải lỗi" ở chi tiết tài khoản / lịch sử lặp lại mỗi lần render (dùng state thay vì `Event`).
+16. `installment()` dùng `ceil` trên số thực, có thể cao hơn 1 ₫ khi chia hết.
+17. Vài kích thước `dp` cứng trong layout mới (96dp, 64dp, 36dp, 56dp).
+
+**Lưu ý cho Feature 4**: nạp tiền đang là "giả lập" (khách tự nạp tối đa 100 tr/lần). Khi có chuyển tiền, số tiền này chuyển được cho người khác, nên cần chặn (giới hạn theo ngày trong rules, hoặc chỉ cho nạp qua VNPay/Stripe sandbox).
 
 ## 8. Giới hạn đã biết (ghi vào báo cáo)
 - Gói Spark: OTP và đối chiếu khuôn mặt chỉ được kiểm tra trên thiết bị; rules chỉ giới hạn field nào được sửa. Hướng nâng cấp: Cloud Functions phát và kiểm token xác thực.
