@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chuyển tiền: trong FLUX / giữa tài khoản của tôi / liên ngân hàng (mockup F4 màn 2–3) -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/flux_bg"
+    android:clickable="true"
+    android:fitsSystemWindows="true"
+    android:focusable="true">
+
+    <include
+        android:id="@+id/header"
+        layout="@layout/view_screen_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/btnContinue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/space_16"
+            android:paddingEnd="@dimen/space_16"
+            android:paddingBottom="@dimen/space_16">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardKyc"
+                style="@style/Widget.Flux.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/space_12"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_16">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/transfer_kyc_blocked"
+                        android:textAppearance="@style/TextAppearance.Flux.Body" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnKyc"
+                        style="@style/Widget.Flux.Button.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_12"
+                        android:text="@string/move_kyc_action"
+                        app:icon="@drawable/ic_id_card" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/transfer_from"
+                android:textAppearance="@style/TextAppearance.Flux.Caption" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/groupSources"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:selectionRequired="true"
+                app:singleSelection="true" />
+
+            <!-- Chế độ "Giữa tài khoản của tôi" -->
+            <LinearLayout
+                android:id="@+id/sectionOwn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/transfer_to"
+                    android:textAppearance="@style/TextAppearance.Flux.Caption" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/groupTargets"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleSelection="true" />
+
+                <TextView
+                    android:id="@+id/tvTargetError"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Flux.Caption"
+                    android:textColor="@color/flux_error_dark"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- Liên ngân hàng: chọn ngân hàng -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilBank"
+                style="@style/Widget.Flux.TextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:hint="@string/transfer_bank"
+                android:visibility="gone"
+                app:endIconDrawable="@drawable/ic_caret_right"
+                app:endIconMode="custom">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etBank"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilAccount"
+                style="@style/Widget.Flux.TextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:hint="@string/transfer_account_number">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etAccount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFeatureSettings="tnum"
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:maxLength="19" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Trong FLUX: tên người nhận sau khi tra -->
+            <LinearLayout
+                android:id="@+id/cardPayee"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_8"
+                android:background="@drawable/bg_rounded_tile"
+                android:backgroundTint="@color/cat_emerald_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/space_12"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvPayeeInitials"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_avatar"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.Flux.Caption"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_12"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvPayeeName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Flux.Label" />
+
+                    <TextView
+                        android:id="@+id/tvPayeeDetail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Flux.Caption" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_check"
+                    app:tint="@color/flux_emerald_dark" />
+            </LinearLayout>
+
+            <!-- Liên ngân hàng: tên do người dùng nhập -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilName"
+                style="@style/Widget.Flux.TextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:hint="@string/transfer_name"
+                android:visibility="gone"
+                app:helperText="@string/transfer_name_helper">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="textPersonName|textCapCharacters"
+                    android:maxLength="50" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilAmount"
+                style="@style/Widget.Flux.TextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:hint="@string/move_amount"
+                app:suffixText="₫">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:maxLength="17"
+                    android:textAppearance="@style/TextAppearance.Flux.AmountSmall" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/groupQuick"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_8" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDescription"
+                style="@style/Widget.Flux.TextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:hint="@string/transfer_description"
+                app:counterEnabled="true"
+                app:counterMaxLength="100">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:maxLength="100" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tvExternalNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:background="@drawable/bg_dashed_tile"
+                android:padding="@dimen/space_12"
+                android:text="@string/transfer_external_note"
+                android:textAppearance="@style/TextAppearance.Flux.Caption"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:background="@drawable/bg_dashed_tile"
+                android:padding="@dimen/space_12"
+                android:text="@string/move_auth_note"
+                android:textAppearance="@style/TextAppearance.Flux.Caption" />
+
+            <TextView
+                android:id="@+id/tvError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:textAppearance="@style/TextAppearance.Flux.Caption"
+                android:textColor="@color/flux_error_dark"
+                android:visibility="gone" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnContinue"
+        style="@style/Widget.Flux.Button.Primary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/space_16"
+        android:text="@string/action_continue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

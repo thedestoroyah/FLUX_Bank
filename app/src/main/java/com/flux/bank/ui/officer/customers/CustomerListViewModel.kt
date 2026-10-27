@@ -5,11 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flux.bank.FluxApp
+import com.flux.bank.core.format.TextNormalizer
 import com.flux.bank.data.model.KycStatus
 import com.flux.bank.data.model.User
 import com.flux.bank.data.repository.UserRepository
 import kotlinx.coroutines.launch
-import java.text.Normalizer
 
 enum class KycFilter { ALL, PENDING, VERIFIED }
 
@@ -59,11 +59,7 @@ class CustomerListViewModel(
     }
 
     companion object {
-        private val MARKS = Regex("\\p{Mn}+")
-
         /** Bỏ dấu tiếng Việt và viết thường: "Đặng Thu" -> "dang thu". */
-        fun normalize(text: String): String =
-            MARKS.replace(Normalizer.normalize(text, Normalizer.Form.NFD), "")
-                .replace('đ', 'd').replace('Đ', 'D').lowercase()
+        fun normalize(text: String): String = TextNormalizer.stripDiacritics(text).lowercase()
     }
 }

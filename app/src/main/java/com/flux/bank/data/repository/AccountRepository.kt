@@ -1,9 +1,15 @@
 package com.flux.bank.data.repository
 
+import com.flux.bank.core.format.TextNormalizer
 import com.flux.bank.data.model.AccountType
+import com.flux.bank.data.model.Bank
 import com.flux.bank.data.model.BankAccount
+import com.flux.bank.data.model.Banks
+import com.flux.bank.data.model.Payee
 import com.flux.bank.data.model.Transaction
 import com.flux.bank.data.model.TransactionType
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import java.security.SecureRandom
@@ -24,12 +30,29 @@ interface AccountRepository {
     /** Nhân viên mở khoản vay: dư nợ = [loanAmount], lãi suất [annualRate] cố định từ lúc mở. */
     suspend fun openMortgage(ownerUid: String, loanAmount: Long, termMonths: Int, annualRate: Double): Result<BankAccount>
 
+    /** Id cho một document `transactions` sắp tạo (VNPay dùng làm `vnp_TxnRef`). */
+    fun newTransactionId(): String
+
     /**
      * Nạp/rút: một Firestore transaction ghi cùng lúc số dư mới và bản ghi `transactions`.
      * Rút quá số dư trả về [InsufficientFundsException]; tài khoản MORTGAGE trả về [IllegalStateException].
+     * Nạp qua VNPay truyền [txId] (= `vnp_TxnRef`, rules chặn ghi lại id đã có) và [paymentRef] (= `vnp_TransactionNo`).
      */
-    suspend fun deposit(accountId: String, amount: Long): Result<Transaction>
+    suspend fun deposit(accountId: String, amount: Long, txId: String? = null, paymentRef: String? = null): Result<Transaction>
     suspend fun withdraw(accountId: String, amount: Long): Result<Transaction>
+
+    /**
+     * Chuyển trong FLUX: một Firestore transaction trừ nguồn, tạo TRANSFER_OUT, cộng đích bằng `increment`
+     * (người gửi không đọc được tài khoản đích) và tạo TRANSFER_IN trỏ cặp với nhau.
+     * [senderName] phải đúng `users.fullName` của người gửi (rules đối chiếu). Trả về giao dịch TRANSFER_OUT;
+     * thiếu tiền trả về [InsufficientFundsException].
+     */
+    suspend fun transfer(fromId: String, payee: Payee, amount: Long, description: String, senderName: String): Result<Transaction>
+
+    /** Chuyển liên ngân hàng (giả lập): chỉ trừ nguồn và tạo TRANSFER_OUT, không ai được cộng tiền. */
+    suspend fun transferExternal(
+        fromId: String, bank: Bank, accountNumber: String, holderName: String, amount: Long, description: String
+    ): Result<Transaction>
 }
 
 class FirestoreAccountRepository(
@@ -68,14 +91,19 @@ class FirestoreAccountRepository(
         )
     }
 
-    override suspend fun deposit(accountId: String, amount: Long) = move(accountId, amount, TransactionType.DEPOSIT)
+    override fun newTransactionId(): String = transactions.document().id
+
+    override suspend fun deposit(accountId: String, amount: Long, txId: String?, paymentRef: String?) =
+        move(accountId, amount, TransactionType.DEPOSIT, txId, paymentRef)
 
     override suspend fun withdraw(accountId: String, amount: Long) = move(accountId, amount, TransactionType.WITHDRAW)
 
-    private suspend fun move(accountId: String, amount: Long, type: TransactionType): Result<Transaction> = runCatching {
+    private suspend fun move(
+        accountId: String, amount: Long, type: TransactionType, txId: String? = null, paymentRef: String? = null
+    ): Result<Transaction> = runCatching {
         val accountRef = accounts.document(accountId)
-        val txRef = transactions.document()
-        try {
+        val txRef = txId?.let(transactions::document) ?: transactions.document()
+        unwrapInsufficientFunds {
             db.runTransaction { t ->
                 val account = t.get(accountRef).toObject(BankAccount::class.java) ?: error("Không tìm thấy tài khoản")
                 check(account.type != AccountType.MORTGAGE) { "Không nạp/rút trên khoản vay" }
@@ -83,16 +111,83 @@ class FirestoreAccountRepository(
                 if (newBalance < 0) throw InsufficientFundsException()
                 val tx = Transaction(
                     id = txRef.id, accountId = accountId, ownerUid = account.ownerUid,
-                    accountNumber = account.accountNumber, type = type, amount = amount, balanceAfter = newBalance
+                    accountNumber = account.accountNumber, type = type, amount = amount, balanceAfter = newBalance,
+                    paymentRef = paymentRef
                 )
                 t.update(accountRef, mapOf("balance" to newBalance, "lastTxId" to txRef.id))
                 t.set(txRef, tx)
                 tx
             }.await()
-        } catch (e: Exception) {
-            // Firestore có thể bọc ngoại lệ ném trong transaction: gỡ ra để caller nhận đúng loại
-            throw generateSequence<Throwable>(e) { it.cause }.firstOrNull { it is InsufficientFundsException } ?: e
         }
+    }
+
+    override suspend fun transfer(fromId: String, payee: Payee, amount: Long, description: String, senderName: String) = runCatching {
+        check(payee.accountId != fromId) { "Không chuyển cho chính tài khoản nguồn" }
+        val toRef = accounts.document(payee.accountId)
+        val outRef = transactions.document()
+        val inRef = transactions.document()
+        unwrapInsufficientFunds {
+            db.runTransaction { t ->
+                val (from, out) = debit(t, fromId, outRef, amount) { account, balance ->
+                    Transaction(
+                        id = outRef.id, accountId = fromId, ownerUid = account.ownerUid, accountNumber = account.accountNumber,
+                        type = TransactionType.TRANSFER_OUT, amount = amount, balanceAfter = balance, description = description,
+                        counterpartyName = TextNormalizer.holderName(payee.holderName), counterpartyAccount = payee.accountNumber,
+                        counterpartyBank = Banks.FLUX, pairTxId = inRef.id
+                    )
+                }
+                val incoming = Transaction(
+                    id = inRef.id, accountId = payee.accountId, ownerUid = payee.ownerUid, accountNumber = payee.accountNumber,
+                    type = TransactionType.TRANSFER_IN, amount = amount, balanceAfter = null, description = description,
+                    counterpartyName = senderName, counterpartyAccount = from.accountNumber, counterpartyBank = Banks.FLUX,
+                    pairTxId = outRef.id, createdAt = out.createdAt
+                )
+                t.update(toRef, mapOf("balance" to FieldValue.increment(amount), "lastTxId" to inRef.id))
+                t.set(inRef, incoming)
+                out
+            }.await()
+        }
+    }
+
+    override suspend fun transferExternal(
+        fromId: String, bank: Bank, accountNumber: String, holderName: String, amount: Long, description: String
+    ) = runCatching {
+        val outRef = transactions.document()
+        unwrapInsufficientFunds {
+            db.runTransaction { t ->
+                debit(t, fromId, outRef, amount) { account, balance ->
+                    Transaction(
+                        id = outRef.id, accountId = fromId, ownerUid = account.ownerUid, accountNumber = account.accountNumber,
+                        type = TransactionType.TRANSFER_OUT, amount = amount, balanceAfter = balance, description = description,
+                        counterpartyName = TextNormalizer.holderName(holderName), counterpartyAccount = accountNumber,
+                        counterpartyBank = bank.code
+                    )
+                }.second
+            }.await()
+        }
+    }
+
+    /** Trong transaction [t]: đọc nguồn, trừ [amount], ghi số dư + giao dịch do [build] dựng. Trả về (tài khoản nguồn, giao dịch). */
+    private fun debit(
+        t: com.google.firebase.firestore.Transaction, fromId: String, txRef: DocumentReference, amount: Long,
+        build: (BankAccount, Long) -> Transaction
+    ): Pair<BankAccount, Transaction> {
+        val fromRef = accounts.document(fromId)
+        val account = t.get(fromRef).toObject(BankAccount::class.java) ?: error("Không tìm thấy tài khoản")
+        check(account.type != AccountType.MORTGAGE) { "Không chuyển tiền từ khoản vay" }
+        val newBalance = account.balance - amount
+        if (newBalance < 0) throw InsufficientFundsException()
+        val tx = build(account, newBalance)
+        t.update(fromRef, mapOf("balance" to newBalance, "lastTxId" to txRef.id))
+        t.set(txRef, tx)
+        return account to tx
+    }
+
+    // Firestore có thể bọc ngoại lệ ném trong transaction: gỡ ra để caller nhận đúng loại
+    private inline fun <T> unwrapInsufficientFunds(block: () -> T): T = try {
+        block()
+    } catch (e: Exception) {
+        throw generateSequence<Throwable>(e) { it.cause }.firstOrNull { it is InsufficientFundsException } ?: e
     }
 
     /** Gán id và số tài khoản rồi ghi [template]. */
