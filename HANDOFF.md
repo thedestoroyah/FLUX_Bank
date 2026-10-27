@@ -43,7 +43,10 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 Cho Feature 3 (chưa xác nhận):
 1. **Publish lại `firestore.rules`** (thêm `transactions`, `config/rates`, quyền đổi số dư có đối chiếu).
 2. **Tạo composite index** `transactions` (`ownerUid` ASC, `createdAt` DESC) — README mục 3.
-3. **Chạy demo F3 trên máy thật** theo README "Luồng demo" và ghi kết quả vào đây.
+3. **Chạy demo F3 trên máy thật** — kết quả 2026-10-27 (Xiaomi, rules mới đã publish):
+   - Đạt: nhân viên mở Tiết kiệm + khoản vay 1,5 tỷ/240 tháng (xem trước 13.017.349 / 6.003.662 ₫); tab Lãi suất đổi tiết kiệm 4,5 → 5% (ghi "Sửa bởi …"); khách nạp 2.000.000 ₫ vào Tiết kiệm qua OTP (mã hết hạn báo đúng, gửi lại mã được); rút quá số dư bị chặn trên form; rút 500.000 ₫ thành công; biên lai đúng; chi tiết Tiết kiệm hiện 5%, lãi +6.250 ₫/tháng cho 1,5 tr; chi tiết khoản vay đổi Hàng tháng / 2 tuần đúng số.
+   - Lỗi tìm thấy khi chạy và đã sửa: thanh tab mất sau khi vuốt back (predictive back, có từ F1); bàn phím che sheet sửa lãi suất / lý do từ chối; xem trước số dư âm khi rút quá; lịch sử tải lỗi lại hiện "Chưa có giao dịch nào".
+   - Chưa xong: tab Lịch sử và "Giao dịch gần đây" cần index (Firestore còn báo `FAILED_PRECONDITION`); nạp ≥ 10.000.000 ₫ (OTP + quét mặt) cần chính chủ tài khoản thử.
 4. Chọn cách xử lý nhánh `feat/account-management-f3` sau review.
 
 ## 4. Những điều chủ dự án đã quyết định (đừng hỏi lại)
