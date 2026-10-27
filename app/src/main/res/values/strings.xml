@@ -392,6 +392,11 @@
     <string name="err_vnpay_cancelled">Bạn đã huỷ thanh toán VNPay. Số dư không thay đổi.</string>
     <string name="err_vnpay_failed">VNPay báo thanh toán không thành công. Số dư không thay đổi, vui lòng thử lại.</string>
     <string name="err_vnpay_bad_result">Kết quả từ VNPay không hợp lệ nên giao dịch không được ghi. Vui lòng thử lại.</string>
+    <string name="qr_scan">Quét mã</string>
+    <string name="qr_my_code">Mã của tôi</string>
+    <string name="qr_scan_hint">Đưa mã QR FLUX vào khung</string>
+    <string name="qr_not_flux">Mã QR không phải của FLUX Bank</string>
+    <string name="qr_camera_denied">Cần quyền camera để quét mã. Bạn vẫn có thể dùng "Mã của tôi".</string>
     <string name="tx_transfer_out">Chuyển đến %1$s</string>
     <string name="tx_transfer_in">Nhận từ %1$s</string>
     <string name="tx_deposit_vnpay">Nạp tiền qua VNPay</string>

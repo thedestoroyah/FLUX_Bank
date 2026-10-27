@@ -79,6 +79,8 @@ dependencies {
 
     // --- Nhận diện & đối chiếu khuôn mặt on-device ---
     implementation("com.google.mlkit:face-detection:16.1.7")
+    implementation("com.google.mlkit:barcode-scanning:17.3.0") // Quét QR nhận tiền (F4)
+    implementation("com.google.zxing:core:3.5.3") // Sinh mã QR "Mã của tôi" (Apache-2.0)
     implementation("com.google.ai.edge.litert:litert:1.4.2")
     implementation("androidx.camera:camera-core:1.6.2")
     implementation("androidx.camera:camera-camera2:1.6.2")
