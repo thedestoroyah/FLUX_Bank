@@ -14,10 +14,12 @@ import com.flux.bank.data.repository.AuthRepository
 import com.flux.bank.data.repository.FirebaseAuthRepository
 import com.flux.bank.data.repository.FirestoreAccountRepository
 import com.flux.bank.data.repository.FirestoreKycRepository
+import com.flux.bank.data.repository.FirestorePayeeRepository
 import com.flux.bank.data.repository.FirestoreRatesRepository
 import com.flux.bank.data.repository.FirestoreTransactionRepository
 import com.flux.bank.data.repository.FirestoreUserRepository
 import com.flux.bank.data.repository.KycRepository
+import com.flux.bank.data.repository.PayeeRepository
 import com.flux.bank.data.repository.RatesRepository
 import com.flux.bank.data.repository.TransactionRepository
 import com.flux.bank.data.repository.UserRepository
@@ -39,6 +41,7 @@ class FluxApp : Application() {
     val accountRepository: AccountRepository by lazy { FirestoreAccountRepository() }
     val transactionRepository: TransactionRepository by lazy { FirestoreTransactionRepository() }
     val ratesRepository: RatesRepository by lazy { FirestoreRatesRepository() }
+    val payeeRepository: PayeeRepository by lazy { FirestorePayeeRepository() }
     val sessionManager: SessionManager by lazy { SessionManager(this) }
     val onboardingService: CustomerOnboardingService by lazy {
         CustomerOnboardingService(authRepository, userRepository, accountRepository) { authRepository.currentUid().orEmpty() }
