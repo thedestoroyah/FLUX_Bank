@@ -25,7 +25,8 @@
 | `phoneIndex/{sđt}` | `{uid}` — SĐT duy nhất (rules chặn trùng) + tra người nhận cho chuyển tiền |
 | `kyc/{uid}` | ảnh CCCD/selfie Base64 (≤ 1024px), `faceEmbedding` (MobileFaceNet 192 chiều), `submittedBy`, `reviewedBy` |
 | `accounts/{id}` | `ownerUid`, `type` CHECKING/SAVING/MORTGAGE, `accountNumber` 8868xxxxxxxx, `balance` Long VND (Mortgage: dư nợ), `lastTxId`; Mortgage thêm `loanAmount`, `annualRate` (%/năm, cố định), `termMonths`, `startDate` |
-| `transactions/{id}` | `accountId`, `ownerUid`, `accountNumber`, `type` DEPOSIT/WITHDRAW, `amount` > 0, `balanceAfter`, `createdAt` — chỉ tạo, không sửa/xoá. Index (ownerUid ASC, createdAt DESC) |
+| `transactions/{id}` | `accountId`, `ownerUid`, `accountNumber`, `type` DEPOSIT/WITHDRAW/TRANSFER_OUT/TRANSFER_IN, `amount` > 0, `balanceAfter` (null ở TRANSFER_IN), `description`, `counterpartyName/Account/Bank` (`FLUX` nếu cùng ngân hàng), `pairTxId` (nối OUT↔IN), `paymentRef` (mã VNPay), `createdAt` — chỉ tạo, không sửa/xoá. Index (ownerUid ASC, createdAt DESC) |
+| `accountIndex/{số TK}` | `accountId`, `ownerUid`, `type`, `holderName` (= `users.fullName`) — danh bạ tra người nhận; chủ tài khoản tự ghi khi mở trang chủ, chỉ `get`, không `list` |
 | `config/rates` | `savingRate`, `mortgageRate` (%/năm), `updatedAt`, `updatedBy`, `updatedByName` — nhân viên sửa |
 
 Security Rules: `firestore.rules` (deploy thủ công qua Console — xem README).
@@ -51,9 +52,18 @@ Security Rules: `firestore.rules` (deploy thủ công qua Console — xem README
 - Nhân viên: tab Lãi suất (`ui/officer/rates/`), mở Saving/Mortgage trong chi tiết khách (`OpenAccountFragment`).
 - Test rules trên emulator: `rules-test/` (README mục 5).
 
+### Feature 4 — Chuyển tiền & VNPay
+- Spec/plan: `docs/superpowers/specs/2026-10-27-transfers-f4-design.md`, `docs/superpowers/plans/2026-10-27-transfers-f4.md`, mockup `docs/superpowers/specs/mockups/2026-10-27-f4-transfers.html`.
+- Tab Chuyển tiền (`ui/customer/transfer/`): trong FLUX (tra tên qua `PayeeRepository`/`accountIndex`), giữa tài khoản của tôi, liên ngân hàng (giả lập, `Banks`), người nhận gần đây suy ra từ lịch sử.
+- Kiểm tra trước khi ghi: `domain/TransferPolicy` (10.000 ₫ – 100.000.000 ₫/lần, 200.000.000 ₫/ngày theo giờ Việt Nam, số dư, định dạng số TK). Xác thực qua `TransactionAuthSheet`.
+- `AccountRepository.transfer` ghi 4 document trong một Firestore transaction (đích cộng bằng `increment`); rules `transferCreditAllowed` bắt cộng tiền phải có OUT cặp đã trừ nguồn trong cùng lần ghi.
+- Nạp tiền qua VNPay sandbox (`payment/VnPay`, `VnPayFragment` WebView), khoá trong `local.properties`. `vnp_TxnRef` = id giao dịch nên không cộng hai lần.
+- Nút QR giữa thanh tab (`ui/customer/qr/QrFragment`): quét `fluxbank:<số TK>` (ML Kit) hoặc hiện "Mã của tôi" (ZXing).
+
 ## Giới hạn đã biết
 - Gói Spark: OTP và đối chiếu khuôn mặt được kiểm tra trên thiết bị; rules chỉ giới hạn field được sửa. Hướng nâng cấp: Cloud Functions phát/kiểm token.
 - `FaceMatcher.MATCH_THRESHOLD = 0.6`, đã đo trên máy thật ngày 2026-10-27 (số đo ở KDoc).
+- Feature 4: hạn mức ngày chỉ kiểm ở app; chữ ký VNPay kiểm trên máy (khoá sandbox nằm trong APK) và rules không biết VNPay đã thu tiền; số TK chỉ tra được sau khi chủ đăng nhập lần đầu; chuyển liên ngân hàng là giả lập.
 - Feature 3: lãi chỉ là dự kiến (không cộng vào số dư); nguồn tiền nạp giả lập nên khách tự nạp được, nhưng mỗi lần có bản ghi và tối đa 100 triệu; lịch sử lọc ở client trên 100 giao dịch mới nhất.
 
 ## Kiểm thử
