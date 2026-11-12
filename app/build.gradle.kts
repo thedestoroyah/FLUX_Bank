@@ -58,9 +58,10 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
 
     // --- Firebase BOM (Quản lý version đồng bộ) ---
-    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
-    implementation("com.google.firebase:firebase-auth-ktx") // Dùng cho Login, 2FA OTP
-    implementation("com.google.firebase:firebase-firestore-ktx") // Lưu dữ liệu & ảnh Base64 eKYC
+    implementation(platform("com.google.firebase:firebase-bom:34.19.0"))
+    implementation("com.google.firebase:firebase-auth") // Dùng cho Login, 2FA OTP
+    implementation("com.google.firebase:firebase-firestore") // Lưu dữ liệu & ảnh Base64 eKYC
+    implementation("com.google.firebase:firebase-ai") // Trợ lý AI (F7), Gemini Developer API qua Firebase AI Logic
 
     // --- Sinh trắc học (Vân tay / Khuôn mặt phần cứng) ---
     implementation("androidx.biometric:biometric:1.2.0-alpha05")
