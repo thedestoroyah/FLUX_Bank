@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tin của khách: bên phải, nền obsidian -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/space_4"
+    android:paddingBottom="@dimen/space_4">
+
+    <TextView
+        android:id="@+id/tvText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:background="@drawable/bg_bubble_user"
+        android:maxWidth="@dimen/chat_bubble_max"
+        android:paddingStart="@dimen/space_12"
+        android:paddingTop="@dimen/space_8"
+        android:paddingEnd="@dimen/space_12"
+        android:paddingBottom="@dimen/space_8"
+        android:textAppearance="@style/TextAppearance.Flux.Body"
+        android:textColor="@color/flux_text_on_dark"
+        android:textIsSelectable="true" />
+</FrameLayout>

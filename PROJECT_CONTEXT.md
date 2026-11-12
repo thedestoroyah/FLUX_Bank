@@ -18,7 +18,7 @@
 ## Khung điều hướng
 - Khách hàng: `CustomerMainActivity` — Trang chủ · Chuyển tiền · [Quét QR nổi] · Lịch sử · Cá nhân.
 - Nhân viên: `OfficerMainActivity` — Tổng quan · Khách hàng · eKYC · Lãi suất · Cá nhân.
-- Màn phụ mở bằng `ScreenHost.openScreen(fragment)` (back stack, ẩn thanh tab). Tính năng chưa làm dùng `ComingSoonFragment` (hiện chỉ còn ô Trợ lý AI — Feature 7).
+- Màn phụ mở bằng `ScreenHost.openScreen(fragment)` (back stack, ẩn thanh tab). Mở màn của một ô tiện ích qua `UtilityScreens.screenFor` (trang chủ và Trợ lý F7 dùng chung). Mọi ô tiện ích đã có màn thật.
 
 ## Dữ liệu Firestore
 | Collection | Ghi chú |
@@ -76,13 +76,22 @@ Security Rules: `firestore.rules` (deploy thủ công qua Console — xem README
 - `data/routing/OsrmWalkingRouter` (`routing.openstreetmap.de/routed-foot`, HttpURLConnection + org.json, timeout 8 s), `data/location/FusedLocationSource` (Fused Location, chờ tối đa 15 s). `BranchMapViewModel` lưu đường đã tính theo chi nhánh, bỏ kết quả về muộn (chạm nhanh hai chi nhánh, định vị lại).
 - `BottomSheetBehavior` không hỗ trợ `topMargin` (cộng dồn vào vị trí thu gọn khi layout lại): giới hạn chiều cao bằng `maxHeight`.
 
+### Feature 7 — Trợ lý AI
+- Spec/plan: `docs/superpowers/specs/2026-11-12-assistant-f7-design.md`, `docs/superpowers/plans/2026-11-12-assistant-f7.md`, mockup `docs/superpowers/specs/mockups/2026-11-12-f7-assistant.html`.
+- Gemini qua **Firebase AI Logic** (backend Gemini Developer API, gói Spark, không API key trong APK): `data/assistant/GeminiAssistantClient` (model `gemini-3.5-flash` với thinking tắt — `gemini-3.8-flash` bị quá tải ở free tier, để thinking thì > 60 s; structured output `{reply, actions}`), interface `AssistantClient`. Firebase BoM **34.19.0** (BoM 35 cần Kotlin 2.4, AGP 9.4.1 kèm Kotlin 2.2), artifact không `-ktx`.
+- `domain/assistant/`: `AssistantAction` (13 nút), `AssistantReplyParser` (bỏ action lạ/trùng, tối đa 3, chịu được code fence), `FinanceSnapshot` (ngữ cảnh gửi kèm: số dư theo loại, tổng vào/ra + chi theo nhóm của tháng, hạn mức còn lại; không số TK/tên người nhận), `AssistantPrompt` (system instruction, số chính sách lấy từ hằng số), `AssistantFallback` ("Chế độ cơ bản": từ khoá bỏ dấu, so nguyên từ, nhắc khi gửi OTP).
+- `ui/customer/assistant/`: `AssistantViewModel` (10 tin gần nhất, bắt đầu bằng lượt khách; một hạn 20 s cho cả tải số liệu (tối đa 5 s) lẫn AI; lỗi → chế độ cơ bản, log tag `AssistantViewModel`; tin chứa OTP/mật khẩu trả lời trên máy, không gửi AI), `AssistantFragment` (tự xử lý inset thanh hệ thống + bàn phím), `ChatAdapter`, `AssistantActionUi` (action → `Utility`/màn riêng, nhãn, icon). Nút Chuyển tiền mở `TransferHubFragment` dạng màn phụ (không dùng `showTab`, vì sẽ xoá back stack và mất chat).
+- `domain/MonthSummary` + `HistoryFragment.forMonth(YearMonth)`: màn "Giao dịch tháng N" (header back + ô tổng vào/ra) mở từ nút của bot.
+- Console: AI Logic bật Gemini Developer API; App Check cho AI Logic đang **Unenforce** (bật lại khi lên Play).
+
 ## Giới hạn đã biết
 - Gói Spark: OTP và đối chiếu khuôn mặt được kiểm tra trên thiết bị; rules chỉ giới hạn field được sửa. Hướng nâng cấp: Cloud Functions phát/kiểm token.
 - `FaceMatcher.MATCH_THRESHOLD = 0.6`, đã đo trên máy thật ngày 2026-10-27 (số đo ở KDoc).
 - Feature 4: hạn mức ngày chỉ kiểm ở app; chữ ký VNPay kiểm trên máy (khoá sandbox nằm trong APK) và rules không biết VNPay đã thu tiền; số TK chỉ tra được sau khi chủ đăng nhập lần đầu; chuyển liên ngân hàng là giả lập.
 - Feature 5: dữ liệu tiện ích là giả lập trong app; rules không biết số tiền hoá đơn/giá vé đúng bao nhiêu (chỉ kiểm một lần trừ tiền hợp lệ ≤ 100 tr).
 - Feature 3: lãi chỉ là dự kiến (không cộng vào số dư); nguồn tiền nạp giả lập nên khách tự nạp được, nhưng mỗi lần có bản ghi và tối đa 100 triệu; lịch sử lọc ở client trên 100 giao dịch mới nhất.
+- Feature 7: free tier Gemini có giới hạn lượt (hết thì chế độ cơ bản); chưa bật App Check; câu hỏi + số liệu tóm tắt gửi tới Google (không định danh tài khoản); bot chỉ mở màn, không điền form; chat không lưu.
 - Feature 6: chi nhánh giả lập trong app; OSRM công cộng không cam kết luôn chạy (lỗi thì gợi ý theo đường thẳng); chỉ so 3 chi nhánh gần nhất theo đường thẳng; toạ độ người dùng gửi tới server chỉ đường bên thứ ba (khai báo Data safety khi lên Play).
 
 ## Kiểm thử
-`./gradlew testDebugUnitTest` — 340 unit test cho validator, định dạng tiền, OTP, lock policy, face matcher/blink, onboarding service, hạn mức, VNPay, dữ liệu tiện ích (hoá đơn, nhà mạng, danh mục), chi nhánh (khoảng cách, giờ mở cửa, gợi ý đường đi bộ, parse OSRM) và các ViewModel (repository giả trong `src/test/.../fakes`). Rules: 49 ca trong `rules-test/` (README mục 5).
+`./gradlew testDebugUnitTest` — 391 unit test cho validator, định dạng tiền, OTP, lock policy, face matcher/blink, onboarding service, hạn mức, VNPay, dữ liệu tiện ích (hoá đơn, nhà mạng, danh mục), chi nhánh (khoảng cách, giờ mở cửa, gợi ý đường đi bộ, parse OSRM), trợ lý (parser, ngữ cảnh, chế độ cơ bản, prompt, tổng tháng) và các ViewModel (repository giả trong `src/test/.../fakes`). Rules: 49 ca trong `rules-test/` (README mục 5).

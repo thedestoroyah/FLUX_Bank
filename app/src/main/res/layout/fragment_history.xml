@@ -8,7 +8,14 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
+    <!-- Chế độ "Giao dịch tháng" (mở từ Trợ lý F7): header back thay cho tiêu đề tab -->
+    <include
+        android:id="@+id/header"
+        layout="@layout/view_screen_header"
+        android:visibility="gone" />
+
     <TextView
+        android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/space_16"
@@ -16,6 +23,81 @@
         android:paddingEnd="@dimen/space_16"
         android:text="@string/tab_history"
         android:textAppearance="@style/TextAppearance.Flux.TitleL" />
+
+    <!-- Tổng tiền vào / ra của tháng (mockup F7 khung 4), chỉ hiện ở chế độ tháng -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardMonth"
+        style="@style/Widget.Flux.Card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_16"
+        android:layout_marginTop="@dimen/space_8"
+        android:layout_marginEnd="@dimen/space_16"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:padding="@dimen/space_16">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/history_month_in"
+                    android:textAppearance="@style/TextAppearance.Flux.Caption"
+                    android:textColor="@color/flux_text_secondary" />
+
+                <TextView
+                    android:id="@+id/tvMonthIn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Flux.AmountSmall"
+                    android:textColor="@color/flux_emerald_dark" />
+
+                <TextView
+                    android:id="@+id/tvMonthInCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Flux.Caption"
+                    android:textColor="@color/flux_text_secondary" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/history_month_out"
+                    android:textAppearance="@style/TextAppearance.Flux.Caption"
+                    android:textColor="@color/flux_text_secondary" />
+
+                <TextView
+                    android:id="@+id/tvMonthOut"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Flux.AmountSmall" />
+
+                <TextView
+                    android:id="@+id/tvMonthOutCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Flux.Caption"
+                    android:textColor="@color/flux_text_secondary" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <HorizontalScrollView
         android:layout_width="match_parent"
