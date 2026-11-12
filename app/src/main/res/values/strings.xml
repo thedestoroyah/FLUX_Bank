@@ -343,6 +343,9 @@
     <string name="receipt_transfer_ok">Chuyển tiền thành công</string>
     <string name="receipt_transfer_in_ok">Đã nhận tiền</string>
     <string name="receipt_payment_ok">Thanh toán thành công</string>
+    <string name="receipt_service">Dịch vụ</string>
+    <string name="receipt_paid_from">Trả từ</string>
+    <string name="receipt_booking_code">Mã đặt chỗ</string>
     <string name="err_already_paid">Hoá đơn này đã được thanh toán.</string>
     <string name="receipt_from">Từ</string>
     <string name="receipt_to">Đến</string>

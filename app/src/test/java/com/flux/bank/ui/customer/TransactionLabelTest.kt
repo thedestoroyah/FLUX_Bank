@@ -3,9 +3,12 @@ package com.flux.bank.ui.customer
 import com.flux.bank.R
 import com.flux.bank.data.model.Transaction
 import com.flux.bank.data.model.TransactionType
+import com.flux.bank.domain.utility.CatalogKind
 import com.flux.bank.ui.customer.account.TransactionRowAdapter
 import com.flux.bank.ui.customer.account.TransactionRowAdapter.TxLabel
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class TransactionLabelTest {
@@ -39,4 +42,14 @@ class TransactionLabelTest {
         TxLabel(R.string.tx_payment_title, "Tiền điện kỳ 10/2026"),
         label(Transaction(type = TransactionType.PAYMENT, description = "Tiền điện kỳ 10/2026"))
     )
+
+    @Test
+    fun fromServiceMapsUtilityNames() {
+        assertEquals(Utility.VE_PHIM, Utility.fromService("VE_PHIM"))
+        assertNull(Utility.fromService("XYZ"))
+        assertNull(Utility.fromService(null))
+    }
+
+    @Test
+    fun catalogServicesAreUtilities() = CatalogKind.entries.forEach { assertNotNull(it.name, Utility.fromService(it.service)) }
 }

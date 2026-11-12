@@ -23,5 +23,10 @@ enum class Utility(
     MUA_SAM(R.string.util_shopping, R.drawable.ic_bag, R.color.cat_rose, R.color.cat_rose_bg),
     TIET_KIEM(R.string.util_saving, R.drawable.ic_piggy, R.color.cat_emerald, R.color.cat_emerald_bg),
     CHI_NHANH(R.string.util_branch, R.drawable.ic_map_pin, R.color.cat_blue, R.color.cat_blue_bg),
-    TRO_LY_AI(R.string.util_assistant, R.drawable.ic_sparkle, R.color.cat_violet, R.color.cat_violet_bg)
+    TRO_LY_AI(R.string.util_assistant, R.drawable.ic_sparkle, R.color.cat_violet, R.color.cat_violet_bg);
+
+    companion object {
+        /** Ô tiện ích của giao dịch thanh toán dịch vụ (`Transaction.service` = tên enum); null nếu không khớp. */
+        fun fromService(name: String?): Utility? = entries.firstOrNull { it.name == name }
+    }
 }
