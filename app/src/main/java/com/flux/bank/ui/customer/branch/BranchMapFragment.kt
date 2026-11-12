@@ -1,7 +1,6 @@
 package com.flux.bank.ui.customer.branch
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -28,22 +27,26 @@ import com.flux.bank.domain.branch.GeoPoint
 import com.flux.bank.domain.branch.OpenStatus
 import com.flux.bank.domain.branch.OpeningHours
 import com.flux.bank.domain.branch.RankedBranch
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.Dash
-import com.google.android.gms.maps.model.Gap
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.flux.bank.BuildConfig
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import org.osmdroid.config.Configuration
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.BoundingBox
+import org.osmdroid.views.CustomZoomButtonsController
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.CopyrightOverlay
+import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polyline
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.DashPathEffect
+import android.graphics.Paint
+import java.io.File
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 
 /**
- * Màn Chi nhánh (spec F6 §7, mockup 2026-11-12-f6-navigation): bản đồ Google Maps + bottom sheet.
+ * Màn Chi nhánh (spec F6 §7, mockup 2026-11-12-f6-navigation): bản đồ OpenStreetMap (OSMDroid) + bottom sheet.
  * Mở bằng `screenHost.openScreen(BranchMapFragment())`; ViewModel giữ trạng thái, Fragment chỉ vẽ.
  */
 class BranchMapFragment : Fragment() {
@@ -53,7 +56,6 @@ class BranchMapFragment : Fragment() {
     private val viewModel: BranchMapViewModel by viewModels()
     private val adapter = BranchAdapter { id -> viewModel.select(id); sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED }
     private lateinit var sheetBehavior: BottomSheetBehavior<View>
-    private var map: GoogleMap? = null
     private var markers: BranchMarkers? = null
     private var cameraKey: Any? = null
     private var bottomInset = 0
@@ -61,11 +63,11 @@ class BranchMapFragment : Fragment() {
 
     private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
         val granted = result.values.any { it }
-        if (granted) enableMyLocation()
         viewModel.onPermissionResult(granted, canAskAgain = shouldShowRationale())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        configureOsmdroid()
         _binding = FragmentBranchMapBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -78,7 +80,7 @@ class BranchMapFragment : Fragment() {
         // Đổi peekHeight ngay trong lượt layout thì requestLayout() của BottomSheetBehavior bị bỏ qua, nên dời sang frame sau
         binding.sheetTop.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ -> v.post { updatePeek(v.height) } }
         binding.root.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ -> v.post { updateMaxHeight() } }
-        (childFragmentManager.findFragmentById(R.id.mapContainer) as SupportMapFragment).getMapAsync(::onMapReady)
+        setUpMap()
         viewModel.state.observe(viewLifecycleOwner, ::render)
         // Gọi cả khi có savedInstanceState: ViewModel tự bỏ qua nếu đã chạy (xoay màn không xin vị trí lại)
         val granted = hasPermission()
@@ -88,17 +90,21 @@ class BranchMapFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        binding.mapView.onResume()
         // Quay về từ màn cài đặt: đã cấp quyền / đã bật định vị thì tự tìm lại
         val issue = viewModel.state.value?.issue
         if (!hasPermission()) return
         when (issue) {
-            LocationIssue.NO_PERMISSION, LocationIssue.PERMISSION_BLOCKED -> {
-                enableMyLocation()
+            LocationIssue.NO_PERMISSION, LocationIssue.PERMISSION_BLOCKED ->
                 viewModel.onPermissionResult(granted = true, canAskAgain = true)
-            }
             LocationIssue.DISABLED -> viewModel.locate()
             else -> Unit
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.mapView.onPause()
     }
 
     private fun bindActions() = with(binding) {
@@ -133,12 +139,11 @@ class BranchMapFragment : Fragment() {
         }
     }
 
-    /** Sheet thu gọn = phần trên cùng (card/thông báo); bản đồ chừa đúng phần đó để logo Google và camera không bị che. */
+    /** Sheet thu gọn = phần trên cùng (card/thông báo); camera tính phần bị che này khi khung các điểm (xem [frame]). */
     private fun updatePeek(topHeight: Int) {
         if (_binding == null || topHeight == 0) return
         val peek = topHeight + bottomInset
         if (sheetBehavior.peekHeight != peek) sheetBehavior.peekHeight = peek
-        map?.setPadding(0, binding.btnBack.bottom, 0, peek)
     }
 
     /**
@@ -151,22 +156,29 @@ class BranchMapFragment : Fragment() {
         if (sheetBehavior.maxHeight != max) sheetBehavior.maxHeight = max
     }
 
-    private fun onMapReady(googleMap: GoogleMap) {
-        if (_binding == null) return
-        map = googleMap
-        markers = BranchMarkers(requireContext())
-        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_style))
-        googleMap.uiSettings.isMyLocationButtonEnabled = false
-        googleMap.uiSettings.isMapToolbarEnabled = false
-        googleMap.setOnMarkerClickListener { m -> (m.tag as? String)?.let(viewModel::select); true }
-        enableMyLocation()
-        updatePeek(binding.sheetTop.height)
-        viewModel.state.value?.let { renderMap(it) }
+    /** OSM chặn user-agent mặc định; cache ô bản đồ để trong cacheDir của app nên không cần quyền bộ nhớ. */
+    private fun configureOsmdroid() {
+        val ctx = requireContext().applicationContext
+        Configuration.getInstance().apply {
+            load(ctx, ctx.getSharedPreferences(OSMDROID_PREFS, android.content.Context.MODE_PRIVATE))
+            userAgentValue = BuildConfig.APPLICATION_ID
+            osmdroidBasePath = File(ctx.cacheDir, OSMDROID_DIR)
+            osmdroidTileCache = File(osmdroidBasePath, OSMDROID_TILES)
+        }
     }
 
-    @SuppressLint("MissingPermission") // đã kiểm hasPermission() ngay trước
-    private fun enableMyLocation() {
-        if (hasPermission()) map?.isMyLocationEnabled = true
+    private fun setUpMap() = with(binding.mapView) {
+        markers = BranchMarkers(requireContext())
+        setTileSource(TileSourceFactory.MAPNIK)
+        setMultiTouchControls(true)
+        isTilesScaledToDpi = true
+        zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
+        minZoomLevel = MIN_ZOOM
+        maxZoomLevel = MAX_ZOOM
+        // Nền gần xám (spec §7) để đường emerald nổi lên
+        overlayManager.tilesOverlay.setColorFilter(ColorMatrixColorFilter(ColorMatrix().apply { setSaturation(MAP_SATURATION) }))
+        controller.setZoom(CITY_ZOOM)
+        controller.setCenter(Branches.DEMO_ANCHOR.toOsm())
     }
 
     private fun render(state: BranchMapState) {
@@ -297,47 +309,69 @@ class BranchMapFragment : Fragment() {
         adapter.submitList(rows) { if (firstChanged && _binding != null) binding.rvBranches.scrollToPosition(0) }
     }
 
+    /** Vẽ lại toàn bộ overlay mỗi lần state đổi (12 ghim + 1–2 đường, rẻ). */
     private fun renderMap(s: BranchMapState) {
-        val googleMap = map ?: return
         val icons = markers ?: return
-        googleMap.clear()
-        s.branches.forEach { r ->
-            val isSelected = r.branch.id == s.selectedId
-            googleMap.addMarker(
-                MarkerOptions()
-                    .position(r.branch.location.toLatLng())
-                    .title(r.branch.name)
-                    .icon(if (isSelected) icons.selected else icons.normal)
-                    .anchor(0.5f, 0.5f)
-                    .zIndex(if (isSelected) 1f else 0f)
-            )?.tag = r.branch.id
-        }
+        val mapView = binding.mapView
+        mapView.overlays.clear()
         val user = s.user
         val target = s.branches.firstOrNull { it.branch.id == s.selectedId }
         // Ở quá xa (> 20 km) thì không vẽ đường: một nét đứt xuyên tỉnh/xuyên biển chỉ gây rối
-        if (user != null && target != null && !s.tooFar) drawRoute(googleMap, s.route, user, target)
-        moveCamera(googleMap, user, target, s)
+        if (user != null && target != null && !s.tooFar) drawRoute(mapView, s.route, user, target)
+        s.branches.sortedBy { it.branch.id == s.selectedId }.forEach { r ->
+            val isSelected = r.branch.id == s.selectedId
+            mapView.overlays.add(Marker(mapView).apply {
+                position = r.branch.location.toOsm()
+                icon = if (isSelected) icons.selected else icons.normal
+                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+                title = r.branch.name
+                infoWindow = null
+                setOnMarkerClickListener { _, _ -> viewModel.select(r.branch.id); true }
+            })
+        }
+        if (user != null) mapView.overlays.add(Marker(mapView).apply {
+            position = user.toOsm()
+            icon = icons.user
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+            infoWindow = null
+            setOnMarkerClickListener { _, _ -> true }
+        })
+        mapView.overlays.add(CopyrightOverlay(requireContext()).apply {
+            setAlignBottom(false)
+            setAlignRight(true)
+            setOffset(resources.getDimensionPixelSize(R.dimen.space_16), topInset + resources.getDimensionPixelSize(R.dimen.space_16))
+            setTextSize(resources.getDimensionPixelSize(R.dimen.map_copyright_text))
+        })
+        mapView.invalidate()
+        moveCamera(user, target, s)
     }
 
-    private fun drawRoute(googleMap: GoogleMap, route: RouteUi?, user: GeoPoint, target: RankedBranch) {
+    private fun drawRoute(mapView: MapView, route: RouteUi?, user: GeoPoint, target: RankedBranch) {
         val density = resources.displayMetrics.density
+        fun line(points: List<GeoPoint>, colorRes: Int, widthDp: Float, dashed: Boolean = false) = Polyline(mapView).apply {
+            setPoints(points.map { it.toOsm() })
+            outlinePaint.color = color(colorRes)
+            outlinePaint.strokeWidth = widthDp * density
+            outlinePaint.strokeCap = Paint.Cap.ROUND
+            outlinePaint.strokeJoin = Paint.Join.ROUND
+            if (dashed) outlinePaint.pathEffect = DashPathEffect(floatArrayOf(DASH_DP * density, DASH_DP * density), 0f)
+            infoWindow = null
+            setOnClickListener { _, _, _ -> false }
+        }
         when (route) {
             is RouteUi.Walking -> {
-                val points = route.route.path.map { it.toLatLng() }
-                googleMap.addPolyline(PolylineOptions().addAll(points).width(ROUTE_CASING_DP * density).color(color(R.color.flux_surface)))
-                googleMap.addPolyline(PolylineOptions().addAll(points).width(ROUTE_DP * density).color(color(R.color.flux_emerald)).zIndex(1f))
+                mapView.overlays.add(line(route.route.path, R.color.flux_surface, ROUTE_CASING_DP))
+                mapView.overlays.add(line(route.route.path, R.color.flux_emerald, ROUTE_DP))
             }
-            is RouteUi.Straight -> googleMap.addPolyline(
-                PolylineOptions().add(user.toLatLng(), target.branch.location.toLatLng())
-                    .width(STRAIGHT_DP * density).color(color(R.color.flux_primary))
-                    .pattern(listOf(Dash(DASH_DP * density), Gap(DASH_DP * density)))
+            is RouteUi.Straight -> mapView.overlays.add(
+                line(listOf(user, target.branch.location), R.color.flux_primary, STRAIGHT_DP, dashed = true)
             )
             null -> Unit
         }
     }
 
     /** Chỉ dời camera khi vị trí hoặc chi nhánh đang chọn đổi, không phải mỗi lần state phát lại. */
-    private fun moveCamera(googleMap: GoogleMap, user: GeoPoint?, target: RankedBranch?, s: BranchMapState) {
+    private fun moveCamera(user: GeoPoint?, target: RankedBranch?, s: BranchMapState) {
         val key = listOf(user, target?.branch?.id, s.issue, s.tooFar)
         if (key == cameraKey) return
         cameraKey = key
@@ -347,21 +381,31 @@ class BranchMapFragment : Fragment() {
             user != null -> listOf(user)
             else -> Branches.ALL.map { it.location }
         }
-        val padding = resources.getDimensionPixelSize(R.dimen.space_32) * 2
-        if (points.size == 1) {
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(points[0].toLatLng(), SINGLE_POINT_ZOOM))
+        // Đợi layout xong (lần đầu map chưa có kích thước, sheet chưa có peek)
+        binding.mapView.post { if (_binding != null) frame(points) }
+    }
+
+    /**
+     * Khung các điểm vào phần bản đồ còn thấy: giữa nút back ở trên và sheet thu gọn ở dưới.
+     * OSMDroid không có padding cho camera nên nới hộp lên/xuống theo tỉ lệ phần bị che.
+     */
+    private fun frame(points: List<GeoPoint>) {
+        val mapView = binding.mapView
+        if (points.size == 1 || mapView.height == 0) {
+            mapView.controller.animateTo(points.first().toOsm(), SINGLE_POINT_ZOOM, CAMERA_ANIM_MS)
             return
         }
-        val bounds = LatLngBounds.builder().apply { points.forEach { include(it.toLatLng()) } }.build()
-        binding.root.post {
-            if (_binding == null || map !== googleMap) return@post
-            try {
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
-            } catch (e: IllegalStateException) {
-                // Màn ngang: bản đồ trừ phần đệm (sheet + nút) có thể nhỏ hơn padding, SDK ném lỗi; lùi về căn giữa
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(bounds.center, SINGLE_POINT_ZOOM))
-            }
+        val box = BoundingBox.fromGeoPointsSafe(points.map { it.toOsm() })
+        val top = binding.btnBack.bottom
+        val bottom = sheetBehavior.peekHeight
+        val visible = mapView.height - top - bottom
+        if (visible <= 0) {
+            mapView.controller.animateTo(box.centerWithDateLine)
+            return
         }
+        val degPerPx = (box.latNorth - box.latSouth) / visible
+        val padded = BoundingBox(box.latNorth + degPerPx * top, box.lonEast, box.latSouth - degPerPx * bottom, box.lonWest)
+        mapView.zoomToBoundingBox(padded, true, resources.getDimensionPixelSize(R.dimen.space_32) * 2)
     }
 
     private fun hasPermission(): Boolean = listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -377,11 +421,11 @@ class BranchMapFragment : Fragment() {
 
     private fun color(res: Int) = ContextCompat.getColor(requireContext(), res)
 
-    private fun GeoPoint.toLatLng() = LatLng(lat, lng)
+    private fun GeoPoint.toOsm() = org.osmdroid.util.GeoPoint(lat, lng)
 
     override fun onDestroyView() {
+        binding.mapView.onDetach()
         super.onDestroyView()
-        map = null
         markers = null
         cameraKey = null
         _binding = null
@@ -394,6 +438,14 @@ class BranchMapFragment : Fragment() {
         const val ROUTE_CASING_DP = 9f
         const val STRAIGHT_DP = 2.5f
         const val DASH_DP = 6f
-        const val SINGLE_POINT_ZOOM = 15f
+        const val SINGLE_POINT_ZOOM = 16.0
+        const val CITY_ZOOM = 12.0
+        const val MIN_ZOOM = 4.0
+        const val MAX_ZOOM = 19.0
+        const val MAP_SATURATION = 0.3f
+        const val CAMERA_ANIM_MS = 600L
+        const val OSMDROID_PREFS = "osmdroid"
+        const val OSMDROID_DIR = "osmdroid"
+        const val OSMDROID_TILES = "tiles"
     }
 }

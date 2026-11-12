@@ -1,7 +1,0 @@
-[
-  { "stylers": [ { "saturation": -75 } ] },
-  { "featureType": "poi.business", "stylers": [ { "visibility": "off" } ] },
-  { "featureType": "poi", "elementType": "labels.icon", "stylers": [ { "saturation": -100 }, { "lightness": 20 } ] },
-  { "featureType": "transit", "elementType": "labels.icon", "stylers": [ { "visibility": "off" } ] },
-  { "featureType": "water", "stylers": [ { "saturation": -40 } ] }
-]
