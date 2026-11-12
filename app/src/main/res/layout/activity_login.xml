@@ -174,11 +174,27 @@
                 android:textAppearance="@style/TextAppearance.Flux.Caption"
                 app:drawableStartCompat="@drawable/ic_shield_check"
                 app:drawableTint="@color/flux_emerald"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/tvDemoNote"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/btnBiometricLogin"
-                app:layout_constraintVertical_bias="1" />
+                app:layout_constraintVertical_bias="1"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <!-- Nói rõ đây là đồ án, tiền giả lập (tránh bị hiểu là ngân hàng thật khi lên Google Play) -->
+            <TextView
+                android:id="@+id/tvDemoNote"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_4"
+                android:gravity="center"
+                android:text="@string/login_demo_note"
+                android:textAppearance="@style/TextAppearance.Flux.Caption"
+                android:textColor="@color/flux_text_secondary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvSecureNote" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
