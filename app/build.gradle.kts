@@ -27,6 +27,8 @@ android {
 
         buildConfigField("String", "VNPAY_TMN_CODE", "\"${localProps.getProperty("vnpay.tmn.code", "").trim()}\"")
         buildConfigField("String", "VNPAY_HASH_SECRET", "\"${localProps.getProperty("vnpay.hash.secret", "").trim()}\"")
+        // Key Maps SDK for Android từ project Google Cloud riêng (không phải project Firebase, để Firebase giữ gói Spark); thiếu thì bản đồ xám
+        manifestPlaceholders["MAPS_API_KEY"] = localProps.getProperty("maps.api.key", "").trim()
     }
 
     buildFeatures {
@@ -81,6 +83,9 @@ dependencies {
     implementation("com.google.mlkit:face-detection:16.1.7")
     implementation("com.google.mlkit:barcode-scanning:17.3.0") // Quét QR nhận tiền (F4)
     implementation("com.google.zxing:core:3.5.3") // Sinh mã QR "Mã của tôi" (Apache-2.0)
+    // --- Bản đồ chi nhánh và vị trí (F6) ---
+    implementation("com.google.android.gms:play-services-maps:19.2.0")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation("com.google.ai.edge.litert:litert:1.4.2")
     implementation("androidx.camera:camera-core:1.6.2")
     implementation("androidx.camera:camera-camera2:1.6.2")
