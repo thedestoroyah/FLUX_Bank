@@ -412,6 +412,10 @@
     <string name="history_today">Hôm nay</string>
     <string name="history_yesterday">Hôm qua</string>
     <string name="history_load_failed">Không tải được lịch sử giao dịch. Kiểm tra kết nối rồi thử lại.</string>
+    <string name="history_month_title">Giao dịch tháng %1$d/%2$d</string>
+    <string name="history_month_in">Tiền vào</string>
+    <string name="history_month_out">Tiền ra</string>
+    <string name="history_month_count">%d giao dịch</string>
     <string name="saving_none_title">Chưa có tài khoản tiết kiệm</string>
     <string name="saving_none">Liên hệ nhân viên FLUX để mở tài khoản tiết kiệm.</string>
 

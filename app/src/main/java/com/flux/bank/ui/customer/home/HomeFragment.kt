@@ -23,16 +23,10 @@ import com.flux.bank.data.model.KycStatus
 import com.flux.bank.data.model.Transaction
 import com.flux.bank.databinding.FragmentHomeBinding
 import com.flux.bank.ui.common.ComingSoonFragment
-import com.flux.bank.ui.customer.branch.BranchMapFragment
-import com.flux.bank.ui.customer.utility.BillPayFragment
-import com.flux.bank.ui.customer.utility.CatalogFragment
-import com.flux.bank.ui.customer.utility.TopUpFragment
-import com.flux.bank.domain.utility.BillKind
-import com.flux.bank.domain.utility.CatalogKind
 import com.flux.bank.ui.customer.CustomerMainActivity
 import com.flux.bank.ui.customer.Utility
+import com.flux.bank.ui.customer.UtilityScreens
 import com.flux.bank.ui.customer.account.AccountDetailFragment
-import com.flux.bank.ui.customer.account.MoneyMoveFragment
 import com.flux.bank.ui.customer.account.ReceiptFragment
 import com.flux.bank.ui.customer.account.TransactionRowAdapter
 import com.flux.bank.ui.ekyc.EkycCaptureFragment
@@ -165,24 +159,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun openUtility(utility: Utility) {
-        val screen = when (utility) {
-            Utility.NAP_TIEN -> MoneyMoveFragment.newInstance(deposit = true)
-            Utility.RUT_TIEN -> MoneyMoveFragment.newInstance(deposit = false)
-            Utility.TIEN_DIEN -> BillPayFragment.newInstance(BillKind.ELECTRICITY)
-            Utility.TIEN_NUOC -> BillPayFragment.newInstance(BillKind.WATER)
-            Utility.NAP_DT -> TopUpFragment()
-            Utility.VE_MAY_BAY -> CatalogFragment.newInstance(CatalogKind.FLIGHT)
-            Utility.VE_PHIM -> CatalogFragment.newInstance(CatalogKind.MOVIE)
-            Utility.KHACH_SAN -> CatalogFragment.newInstance(CatalogKind.HOTEL)
-            Utility.MUA_SAM -> CatalogFragment.newInstance(CatalogKind.SHOP)
-            Utility.CHI_NHANH -> BranchMapFragment()
-            Utility.TIET_KIEM -> viewModel.firstAccountId(AccountType.SAVING)?.let(AccountDetailFragment::newInstance)
-                ?: ComingSoonFragment.newInstance(
-                    utility.label, utility.icon, utility.tint, titleRes = R.string.saving_none_title, messageRes = R.string.saving_none
-                )
-            else -> ComingSoonFragment.newInstance(utility.label, utility.icon, utility.tint)
-        }
-        host().openScreen(screen)
+        host().openScreen(UtilityScreens.screenFor(utility, viewModel.firstAccountId(AccountType.SAVING)))
     }
 
     private fun host() = requireActivity() as CustomerMainActivity
