@@ -52,6 +52,7 @@ class BillPayViewModel(
         if (provider.kind != kind || provider == current().provider) return
         lookupJob?.cancel()
         _bill.value = current().copy(provider = provider, bill = null, notFound = false, paidTx = null, paidChecked = false, looking = false)
+        revalidate()
     }
 
     /** Sửa mã thì bỏ hoá đơn đã tra (để không trả nhầm hoá đơn của mã cũ). */
@@ -61,6 +62,7 @@ class BillPayViewModel(
         _bill.value = current().copy(
             code = input, codeError = false, bill = null, notFound = false, paidTx = null, paidChecked = false, looking = false
         )
+        revalidate()
     }
 
     fun lookup() {
@@ -69,6 +71,7 @@ class BillPayViewModel(
         val bill = BillLookup.lookup(s.provider, code, BillLookup.periodFor(now()))
             ?: return run { _bill.value = s.copy(notFound = true, bill = null) }
         _bill.value = s.copy(bill = bill, notFound = false, codeError = false, looking = true)
+        revalidate()
         lookupJob?.cancel()
         lookupJob = viewModelScope.launch { checkPaid(bill) }
     }
@@ -91,7 +94,11 @@ class BillPayViewModel(
         if (current().bill != bill) return
         _bill.value = current().copy(looking = false, paidTx = result.getOrNull(), paidChecked = result.isSuccess)
         if (result.isFailure) setError(R.string.err_generic)
+        revalidate()
     }
+
+    // Hoá đơn đã trả thì không còn số tiền nào để kiểm
+    override fun currentAmount(): Long? = current().takeIf { it.paidTx == null }?.bill?.amount
 
     private fun current() = _bill.value!!
 }

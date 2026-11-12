@@ -86,10 +86,14 @@ abstract class ServicePaymentViewModel(
                 )
             }
             onLoaded(user.getOrNull())
+            revalidate()
         }
     }
 
-    fun selectSource(accountId: String) = updateCheckout { it.copy(sourceId = accountId, amountError = null, errorRes = null) }
+    fun selectSource(accountId: String) {
+        updateCheckout { it.copy(sourceId = accountId, errorRes = null) }
+        revalidate()
+    }
 
     /** Kiểm form, số tiền, số dư và hạn mức; hợp lệ thì mở sheet xác thực (chỉ một lần cho tới khi sheet trả kết quả). */
     fun confirm() {
@@ -124,6 +128,19 @@ abstract class ServicePaymentViewModel(
     /** Form đã đủ để trả tiền chưa; lớp con đặt lỗi form của mình khi trả null. */
     protected abstract fun draft(): Draft?
 
+    /** Số tiền của form hiện tại, null nếu chưa đủ để tính (chưa chọn mục, chưa tra hoá đơn…). */
+    protected open fun currentAmount(): Long? = null
+
+    /**
+     * Kiểm lại số tiền hiện tại với số dư và hạn mức ngay khi form đổi (spec F5 §4: báo lỗi và khoá nút trước khi bấm),
+     * đồng thời xoá lỗi cũ khi số tiền đã hợp lệ.
+     */
+    protected fun revalidate() = updateCheckout { s ->
+        val amount = currentAmount()
+        val source = s.source
+        s.copy(amountError = if (amount == null || source == null) null else TransferPolicy.checkAmount(amount, source.balance, s.remainingToday))
+    }
+
     /** Gọi sau khi tải hồ sơ (ví dụ điền sẵn SĐT). */
     protected open fun onLoaded(user: User?) = Unit
 
@@ -151,6 +168,7 @@ abstract class ServicePaymentViewModel(
                 updateCheckout {
                     it.copy(submitting = false, sources = fresh ?: it.sources, errorRes = R.string.err_insufficient_funds)
                 }
+                revalidate()
             }
             else -> updateCheckout { it.copy(submitting = false, errorRes = R.string.err_generic) }
         }

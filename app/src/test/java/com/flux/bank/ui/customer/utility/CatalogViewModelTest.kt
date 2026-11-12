@@ -140,4 +140,31 @@ class CatalogViewModelTest {
         assertEquals(3_780_000L, tx.amount)
         assertEquals("VN 213", tx.counterpartyAccount)
     }
+
+    @Test
+    fun totalOverLimitShowsErrorBeforeConfirm() {
+        history.items += Transaction(ownerUid = "c1", type = TransactionType.TRANSFER_OUT, amount = 199_500_000, createdAt = now)
+        val vm = vm(CatalogKind.FLIGHT)
+        vm.selectItem("f1")
+        assertEquals(TransferError.DAILY_LIMIT, vm.checkout.value!!.amountError)
+    }
+
+    @Test
+    fun loweringQuantityClearsAmountError() {
+        val vm = vm(CatalogKind.FLIGHT)
+        vm.selectItem("f1")
+        repeat(4) { vm.increment() }
+        assertEquals(TransferError.INSUFFICIENT_FUNDS, vm.checkout.value!!.amountError)
+        vm.decrement()
+        assertNull(vm.checkout.value!!.amountError)
+    }
+
+    @Test
+    fun changingFilterClearsAmountError() {
+        val vm = vm(CatalogKind.FLIGHT)
+        vm.selectItem("f1")
+        repeat(4) { vm.increment() }
+        vm.selectFilter("SGN-DAD")
+        assertNull(vm.checkout.value!!.amountError)
+    }
 }

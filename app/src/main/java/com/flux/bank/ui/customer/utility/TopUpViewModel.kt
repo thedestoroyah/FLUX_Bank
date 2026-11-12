@@ -43,7 +43,10 @@ class TopUpViewModel(
     fun selectAmount(amount: Long) {
         if (amount !in Carriers.DENOMINATIONS) return
         _topUp.value = current().copy(amount = amount)
+        revalidate()
     }
+
+    override fun currentAmount(): Long? = current().amount
 
     override fun onLoaded(user: User?) {
         if (!phoneEdited && user != null) applyPhone(user.phoneNumber)
