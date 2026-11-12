@@ -9,6 +9,7 @@ plugins {
 val localProps = Properties().apply {
     rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
 }
+val RELEASE_SIGNING_KEYS = listOf("release.store.file", "release.store.password", "release.key.alias", "release.key.password")
 
 android {
     namespace = "com.flux.bank"
@@ -34,17 +35,38 @@ android {
         buildConfig = true
     }
 
+    // Khoá upload cho Google Play (Play App Signing giữ khoá ký app). Keystore và mật khẩu chỉ nằm ở local.properties, xem README mục 9
+    val missingSigningKeys = RELEASE_SIGNING_KEYS.filter { localProps.getProperty(it).isNullOrBlank() }
+    if (missingSigningKeys.isEmpty()) {
+        signingConfigs.create("release") {
+            storeFile = file(localProps.getProperty("release.store.file"))
+            storePassword = localProps.getProperty("release.store.password")
+            keyAlias = localProps.getProperty("release.key.alias")
+            keyPassword = localProps.getProperty("release.key.password")
+        }
+    }
+
     buildTypes {
         release {
             optimization {
                 enable = false
             }
+            if (missingSigningKeys.isEmpty()) signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+}
+
+// Thiếu khoá ký thì chỉ báo lỗi lúc đóng gói release (không phải lúc cấu hình), để máy không có keystore vẫn build debug và chạy test
+val signingError = RELEASE_SIGNING_KEYS.filter { localProps.getProperty(it).isNullOrBlank() }
+    .takeIf { it.isNotEmpty() }
+    ?.let { "Thiếu cấu hình ký release trong local.properties: ${it.joinToString()}. Xem README mục 9." }
+if (signingError != null) {
+    tasks.matching { it.name == "bundleRelease" || it.name == "assembleRelease" || it.name.startsWith("packageRelease") }
+        .configureEach { doFirst { throw GradleException(signingError) } }
 }
 
 dependencies {

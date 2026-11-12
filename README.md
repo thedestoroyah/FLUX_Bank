@@ -94,6 +94,24 @@ Firebase Console → **AI Logic** → Get started → chọn **Gemini Developer 
 Luồng bật mới tự **bắt buộc App Check** cho AI Logic: tạm tắt ở Console → App Check → tab APIs → Firebase AI Logic → Unenforce (có thể mất tới 15 phút mới có hiệu lực). Bật lại kèm Play Integrity khi đưa lên Play.
 Chưa bật (hoặc mất mạng, hết lượt miễn phí) thì màn chat vẫn chạy ở "Chế độ cơ bản" (trả lời theo từ khoá trên máy); lý do lỗi ghi ở Logcat, tag `AssistantViewModel`.
 
+### 9. Ký bản phát hành (Google Play)
+Google Play giữ khoá ký app (Play App Signing); mình chỉ cần **khoá upload**. Tạo một lần, lưu **ngoài repo**:
+```bash
+mkdir -p ~/keystores
+keytool -genkeypair -storetype PKCS12 -keystore ~/keystores/flux-upload.jks -alias upload \
+  -keyalg RSA -keysize 2048 -validity 9125 -dname "CN=<Họ tên>, O=TDTU, C=VN"
+```
+`keytool` sẽ hỏi mật khẩu (tự đặt, đừng ghi vào repo). Thêm vào `local.properties` (file này đã gitignore):
+```properties
+release.store.file=/home/<user>/keystores/flux-upload.jks
+release.store.password=<mật khẩu keystore>
+release.key.alias=upload
+release.key.password=<mật khẩu khoá, PKCS12 thì trùng mật khẩu keystore>
+```
+Build: `./gradlew bundleRelease` → `app/build/outputs/bundle/release/app-release.aab`. Thiếu dòng nào thì lệnh báo lỗi nêu tên dòng đó; bản debug và unit test không cần các dòng này.
+- **Sao lưu `flux-upload.jks` và mật khẩu ra nơi khác** (Drive riêng, USB). Mất khoá upload thì phải xin Google đặt lại, mất vài ngày.
+- Mỗi lần tải bản mới lên Play phải tăng `versionCode` trong `app/build.gradle.kts`.
+
 ## Luồng demo
 Nhân viên đăng nhập → tạo khách hàng (mật khẩu tạm) → khách đăng nhập, bắt buộc đổi mật khẩu → khách nộp eKYC → nhân viên duyệt → khách bật sinh trắc học, khoá/mở khoá app → đổi SĐT qua OTP → kiểm tra xác thực khuôn mặt.
 
