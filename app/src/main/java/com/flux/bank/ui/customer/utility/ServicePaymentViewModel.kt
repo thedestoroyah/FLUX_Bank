@@ -114,6 +114,7 @@ abstract class ServicePaymentViewModel(
             accounts.pay(sourceId, draft.payment, draft.txId)
                 .onSuccess { tx ->
                     updateCheckout { it.copy(submitting = false) }
+                    onPaid()
                     _done.value = Event(tx)
                 }
                 .onFailure { e -> onPayFailed(e) }
@@ -128,6 +129,9 @@ abstract class ServicePaymentViewModel(
 
     /** Rules chặn vì hoá đơn đã được trả ở nơi khác: lớp con tra lại trạng thái. */
     protected open suspend fun onAlreadyPaid() = Unit
+
+    /** Ghi thành công (ví dụ bỏ mã đặt chỗ đã dùng để lần mua sau có mã mới). */
+    protected open fun onPaid() = Unit
 
     /** Người dùng đóng sheet hoặc xác thực thất bại (ví dụ huỷ mã đặt chỗ đã sinh). */
     protected open fun onAuthCancelled() = Unit
