@@ -21,8 +21,7 @@ import com.flux.bank.domain.assistant.AssistantAction
 import com.flux.bank.ui.common.screenHost
 import com.flux.bank.ui.customer.UtilityScreens
 import com.flux.bank.ui.customer.history.HistoryFragment
-import com.flux.bank.ui.customer.transfer.TransferFragment
-import com.flux.bank.ui.customer.transfer.TransferMode
+import com.flux.bank.ui.customer.transfer.TransferHubFragment
 
 /** Màn Trợ lý FLUX (mockup F7 khung 1–3): chat với Gemini, nút dưới câu trả lời mở màn thật của app. */
 class AssistantFragment : Fragment() {
@@ -103,7 +102,8 @@ class AssistantFragment : Fragment() {
     private fun open(action: AssistantAction) {
         val screen = AssistantActionUi.utilityFor(action)?.let { UtilityScreens.screenFor(it, viewModel.savingAccountId()) }
             ?: when (action) {
-                AssistantAction.TRANSFER -> TransferFragment.newInstance(TransferMode.INTERNAL)
+                // Mở màn chọn kiểu chuyển (trong FLUX / tài khoản của tôi / liên ngân hàng) dạng màn phụ; showTab() sẽ xoá back stack và mất chat
+                AssistantAction.TRANSFER -> TransferHubFragment()
                 else -> HistoryFragment.forMonth(viewModel.currentMonth)
             }
         screenHost.openScreen(screen)

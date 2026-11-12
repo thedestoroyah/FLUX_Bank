@@ -31,6 +31,7 @@ object AssistantFallback {
     private val SUGGESTIONS = listOf(TOPUP, BILL_ELECTRICITY, MONTH_HISTORY)
     private val SIX_DIGITS = Regex("\\b\\d{6}\\b")
     private val NON_WORD = Regex("[^a-z0-9]+")
+    private val SECRET_WORDS = listOf("otp", "mat khau", "ma xac thuc", "ma pin")
 
     private const val OTP_WARNING = "Bạn đừng gửi mã OTP hay mật khẩu cho ai, kể cả mình. FLUX không bao giờ hỏi những mã này."
     private const val UNKNOWN = "Mình chưa hiểu ý bạn. Bạn có thể thử:"
@@ -42,11 +43,8 @@ object AssistantFallback {
      * Luôn trả `basicMode = true`; tối đa [AssistantReplyParser.MAX_ACTIONS] nút.
      */
     fun reply(question: String, snapshot: FinanceSnapshot?): AssistantReply {
-        val text = " " + NON_WORD.replace(TextNormalizer.stripDiacritics(question).lowercase(), " ").trim() + " "
-        if (SIX_DIGITS.containsMatchIn(question) || " otp " in text || " mat khau " in text) {
-            return AssistantReply(OTP_WARNING, emptyList(), basicMode = true)
-        }
-        val actions = match(text)
+        secretWarning(question)?.let { return it.copy(basicMode = true) }
+        val actions = match(normalize(question))
         val answer = when {
             actions.isEmpty() -> return AssistantReply(UNKNOWN, SUGGESTIONS, basicMode = true)
             MONTH_HISTORY in actions -> monthText(snapshot)
@@ -54,6 +52,19 @@ object AssistantFallback {
         }
         return AssistantReply(answer, actions, basicMode = true)
     }
+
+    /**
+     * Lời nhắc khi câu hỏi có vẻ chứa mã OTP / mật khẩu; null nếu không. ViewModel gọi trước khi gửi lên AI
+     * để bí mật không rời máy. Số 6 chữ số chỉ bị coi là mã khi câu không khớp chức năng nào ("ck 500000" là số tiền).
+     */
+    fun secretWarning(question: String): AssistantReply? {
+        val text = normalize(question)
+        val secret = SECRET_WORDS.any { " $it " in text } || (SIX_DIGITS.containsMatchIn(question) && match(text).isEmpty())
+        return if (secret) AssistantReply(OTP_WARNING, emptyList()) else null
+    }
+
+    private fun normalize(question: String) =
+        " " + NON_WORD.replace(TextNormalizer.stripDiacritics(question).lowercase(), " ").trim() + " "
 
     private fun match(normalized: String): List<AssistantAction> {
         var rest = normalized

@@ -20,17 +20,18 @@ import com.flux.bank.domain.assistant.AssistantPrompt
 import com.flux.bank.domain.assistant.AssistantReply
 import com.flux.bank.domain.assistant.AssistantReplyParser
 import com.flux.bank.domain.assistant.FinanceSnapshot
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import java.time.Instant
 import java.time.YearMonth
 
-/** Một dòng của màn chat. */
+/** Một dòng của màn chat. [sensitive] = tin có mã OTP / mật khẩu và lời nhắc của nó: hiện trên màn nhưng không gửi lên AI. */
 sealed class ChatItem {
-    data class User(val text: String) : ChatItem()
-    data class Bot(val reply: AssistantReply) : ChatItem()
+    data class User(val text: String, val sensitive: Boolean = false) : ChatItem()
+    data class Bot(val reply: AssistantReply, val sensitive: Boolean = false) : ChatItem()
     object Typing : ChatItem()
 }
 
@@ -77,33 +78,40 @@ class AssistantViewModel(
     /** Tài khoản tiết kiệm đầu tiên (biết sau lượt hỏi đầu); null = chưa có hoặc chưa tải. */
     fun savingAccountId(): String? = savingId
 
-    /** Gửi câu hỏi; bỏ qua khi rỗng hoặc đang chờ câu trả lời trước. Câu dài hơn [MAX_INPUT] bị cắt. */
+    /**
+     * Gửi câu hỏi; bỏ qua khi rỗng hoặc đang chờ câu trả lời trước. Câu dài hơn [MAX_INPUT] bị cắt.
+     * Câu có vẻ chứa OTP / mật khẩu được trả lời ngay trên máy, không gửi lên AI.
+     */
     fun send(text: String) {
         val question = text.trim().take(MAX_INPUT)
         if (question.isEmpty() || _busy.value == true) return
+        AssistantFallback.secretWarning(question)?.let { warning ->
+            _items.value = _items.value.orEmpty() + ChatItem.User(question, sensitive = true) + ChatItem.Bot(warning, sensitive = true)
+            return
+        }
         val history = _items.value.orEmpty() + ChatItem.User(question)
         _items.value = history + ChatItem.Typing
         _busy.value = true
         viewModelScope.launch {
-            val snapshot = loadSnapshot()
-            val reply = answer(question, history, snapshot)
-            _items.value = history + ChatItem.Bot(reply)
+            _items.value = history + ChatItem.Bot(answer(question, history))
             _busy.value = false
         }
     }
 
-    private suspend fun answer(question: String, history: List<ChatItem>, snapshot: FinanceSnapshot?): AssistantReply = try {
-        withTimeout(timeoutMs) {
-            AssistantReplyParser.parse(client.ask(AssistantPrompt.system(snapshot), turnsOf(history)))
+    // Một hạn [timeoutMs] cho cả tải số liệu lẫn gọi AI; tải số liệu chậm quá [SNAPSHOT_TIMEOUT_MS] thì hỏi AI không kèm số liệu
+    private suspend fun answer(question: String, history: List<ChatItem>): AssistantReply {
+        var snapshot: FinanceSnapshot? = null
+        return try {
+            withTimeout(timeoutMs) {
+                snapshot = withTimeoutOrNull(SNAPSHOT_TIMEOUT_MS) { loadSnapshot() }
+                AssistantReplyParser.parse(client.ask(AssistantPrompt.system(snapshot), turnsOf(history)))
+            }
+        } catch (e: Exception) {
+            // Gồm cả hết giờ và CancellationException từ thư viện (Task bị huỷ); chỉ ném tiếp khi chính màn này bị huỷ
+            currentCoroutineContext().ensureActive()
+            onError(e)
+            AssistantFallback.reply(question, snapshot)
         }
-    } catch (e: TimeoutCancellationException) {
-        onError(e)
-        AssistantFallback.reply(question, snapshot)
-    } catch (e: CancellationException) {
-        throw e
-    } catch (e: Exception) {
-        onError(e)
-        AssistantFallback.reply(question, snapshot)
     }
 
     private suspend fun loadSnapshot(): FinanceSnapshot? {
@@ -116,6 +124,7 @@ class AssistantViewModel(
 
     // Gemini cần lịch sử bắt đầu bằng lượt của khách, nên bỏ các tin bot ở đầu sau khi cắt
     private fun turnsOf(history: List<ChatItem>): List<ChatTurn> = history
+        .filterNot { (it as? ChatItem.User)?.sensitive == true || (it as? ChatItem.Bot)?.sensitive == true }
         .mapNotNull {
             when (it) {
                 is ChatItem.User -> ChatTurn(true, it.text)
@@ -128,6 +137,7 @@ class AssistantViewModel(
 
     companion object {
         const val TIMEOUT_MS = 20_000L
+        const val SNAPSHOT_TIMEOUT_MS = 5_000L
         const val MAX_INPUT = 500
         const val HISTORY_TURNS = 10
         private const val TAG = "AssistantViewModel"

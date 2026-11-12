@@ -14,6 +14,9 @@ import com.flux.bank.fakes.FakeRatesRepository
 import com.flux.bank.fakes.FakeTransactionRepository
 import com.flux.bank.fakes.FakeUserRepository
 import com.flux.bank.testutil.MainDispatcherRule
+import com.flux.bank.data.model.Transaction
+import com.flux.bank.data.repository.TransactionRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.awaitCancellation
 import org.junit.Assert.assertEquals
@@ -33,12 +36,12 @@ class AssistantViewModelTest {
         this.accounts += BankAccount(accountId = "chk", ownerUid = "c1", type = AccountType.CHECKING, accountNumber = "886810968242", balance = 2_217_800)
     }
 
-    private fun vm(timeoutMs: Long = AssistantViewModel.TIMEOUT_MS) = AssistantViewModel(
+    private fun vm(timeoutMs: Long = AssistantViewModel.TIMEOUT_MS, transactions: TransactionRepository = FakeTransactionRepository()) = AssistantViewModel(
         client = client,
         auth = FakeAuthRepository().apply { uid = "c1" },
         users = FakeUserRepository(listOf(User(uid = "c1", fullName = "Trần Thị Bình"))),
         accounts = accounts,
-        transactions = FakeTransactionRepository(),
+        transactions = transactions,
         rates = FakeRatesRepository(),
         timeoutMs = timeoutMs,
         onError = {}
@@ -133,5 +136,44 @@ class AssistantViewModelTest {
     @Test
     fun firstNameLoaded() {
         assertEquals("Bình", vm().firstName.value)
+    }
+
+    @Test
+    fun hangingDataLoadStillAsksAiWithinDeadline() {
+        val hanging = object : TransactionRepository {
+            override suspend fun listRecent(ownerUid: String, limit: Long): Result<List<Transaction>> = awaitCancellation()
+            override suspend fun findByPaymentRef(ownerUid: String, paymentRef: String): Result<Transaction?> = Result.success(null)
+        }
+        val vm = vm(transactions = hanging)
+        vm.send("tháng này tôi chi bao nhiêu")
+
+        main.dispatcher.scheduler.advanceTimeBy(AssistantViewModel.SNAPSHOT_TIMEOUT_MS + 1)
+        main.dispatcher.scheduler.runCurrent()
+
+        assertFalse(vm.busy.value!!)
+        assertFalse(vm.bots().single().reply.basicMode)
+        assertTrue(client.calls.single().first.contains("chưa tải được số liệu"))
+    }
+
+    @Test
+    fun foreignCancellationFallsBackInsteadOfHanging() {
+        client.answer = { _, _ -> throw CancellationException("task cancelled") }
+        val vm = vm()
+        vm.send("nạp dt")
+        assertTrue(vm.bots().single().reply.basicMode)
+        assertFalse(vm.busy.value!!)
+    }
+
+    @Test
+    fun otpIsAnsweredLocallyAndNeverSent() {
+        val vm = vm()
+        vm.send("mã OTP của tôi là 482915")
+        assertTrue(client.calls.isEmpty())
+        val reply = vm.bots().single().reply
+        assertTrue(reply.text, reply.text.startsWith("Bạn đừng gửi mã OTP"))
+        assertFalse(reply.basicMode)
+
+        vm.send("nạp dt")
+        assertTrue(client.calls.single().second.none { it.text.contains("482915") || it.text.contains("đừng gửi") })
     }
 }

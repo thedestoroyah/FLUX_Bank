@@ -83,4 +83,18 @@ class AssistantFallbackTest {
         assertTrue(AssistantFallback.reply("xyz", null).basicMode)
         assertTrue(AssistantFallback.reply("otp 123456", null).basicMode)
     }
+
+    @Test
+    fun amountsAreNotMistakenForOtp() {
+        assertEquals(listOf(TOPUP), AssistantFallback.reply("nạp dt 100000 cho mẹ", null).actions)
+        assertEquals(listOf(TRANSFER), AssistantFallback.reply("ck 500000", null).actions)
+    }
+
+    @Test
+    fun secretWarningOnlyForSecrets() {
+        assertTrue(AssistantFallback.secretWarning("mã OTP của tôi là 482915") != null)
+        assertTrue(AssistantFallback.secretWarning("482915") != null)
+        assertTrue(AssistantFallback.secretWarning("mật khẩu là abc") != null)
+        assertTrue(AssistantFallback.secretWarning("nạp dt 100000") == null)
+    }
 }
