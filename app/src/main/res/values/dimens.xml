@@ -20,4 +20,10 @@
     <dimen name="map_sheet_top_gap">112dp</dimen>
     <dimen name="map_marker">28dp</dimen>
     <dimen name="map_marker_selected">40dp</dimen>
+    <!-- Màn Trợ lý (F7) -->
+    <dimen name="chat_avatar">28dp</dimen>
+    <dimen name="chat_action_icon">32dp</dimen>
+    <dimen name="chat_bubble_radius">18dp</dimen>
+    <dimen name="chat_bubble_tail">6dp</dimen>
+    <dimen name="chat_bubble_max">280dp</dimen>
 </resources>
