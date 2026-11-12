@@ -24,12 +24,12 @@ Chữ "thông minh" là chỗ ăn điểm: chi nhánh gần nhất **theo đư�
 - Ô "Chi nhánh" trên trang chủ mở màn bản đồ thật (thay `ComingSoonFragment`).
 - Mở màn là tự làm hết: xin quyền vị trí → lấy vị trí → vẽ chấm người dùng và các chi nhánh → tính và vẽ đường đi bộ ngắn nhất tới chi nhánh được gợi ý. Người dùng không phải bấm thêm gì.
 - Chạm một chi nhánh khác (trên bản đồ hoặc trong danh sách) thì vẽ đường đi bộ tới chi nhánh đó.
-- **Chi phí 0 đồng, Firebase vẫn ở gói Spark**: chỉ gọi API miễn phí không giới hạn (Maps SDK for Android) và server chỉ đường miễn phí; key bản đồ thuộc một project Google Cloud riêng, không phải project Firebase **[Chủ dự án]**.
+- **Chi phí 0 đồng, không key, không billing, Firebase vẫn ở gói Spark**: bản đồ OpenStreetMap (OSMDroid) và server chỉ đường miễn phí **[Chủ dự án]**.
 - Demo trọn vẹn trong khoảng 1 phút (§9).
 
 **Không làm** **[Claude]**
 - Không chỉ đường từng bước (rẽ trái/phải), không đọc giọng nói, không bám theo vị trí khi đang đi.
-- Không chỉ đường lái xe hay xe buýt; không nút "Mở trong Google Maps".
+- Không chỉ đường lái xe hay xe buýt; không nút mở ứng dụng bản đồ khác.
 - Không lưu chi nhánh lên Firestore, không có màn nhân viên quản lý chi nhánh.
 - Không ATM, không tìm kiếm chi nhánh theo tên, không lọc theo dịch vụ.
 - Không bản đồ offline.
@@ -39,31 +39,26 @@ Chữ "thông minh" là chỗ ăn điểm: chi nhánh gần nhất **theo đư�
 - Màn trắng hoặc xoay mãi khi từ chối quyền, tắt định vị hay mất mạng: mỗi trường hợp phải có thông báo và cách sửa (§7).
 - Bản đồ màu mè lấn át design system (§7, "nền bản đồ").
 - Phát sinh chi phí, hoặc project Firebase bị chuyển lên Blaze.
-- Key trong APK dùng được cho API tính tiền (key chỉ được mở Maps SDK for Android).
 
 ## 3. Ràng buộc
 Giữ như F1–F5: Kotlin + XML/ViewBinding, MVVM, chỉ giao diện sáng, chữ tiếng Việt trong `strings.xml`, chỉ dùng token của design system. Màn mới phải **duyệt mockup trước khi code giao diện** **[Chủ dự án]**. Làm theo TDD. Không commit `.idea/*`.
 
 ## 4. Công nghệ
 
-Chủ dự án chọn hướng **Google Maps để hiện bản đồ + OSRM để tính đường đi bộ** (2026-11-12) **[Chủ dự án]**.
+Ban đầu chủ dự án chọn Google Maps + OSRM (2026-11-12). Google Cloud từ chối tạo tài khoản thanh toán (`OR_BACR2_59`, hệ thống chống gian lận; gặp nhiều ở Việt Nam với thẻ debit), nên chuyển sang **OpenStreetMap qua OSMDroid** cùng ngày **[Chủ dự án]**. Phần nghiệp vụ, ViewModel và test không đổi; chỉ đổi lớp hiển thị bản đồ.
 
 | Phần | Chọn | Lý do |
 |---|---|---|
-| Bản đồ | **Google Maps SDK for Android** (`com.google.android.gms:play-services-maps`), `SupportMapFragment` hoặc `MapView` trong layout XML | Bản đồ vector mượt, quen mắt, đẹp trong video. Theo bảng giá Google (đọc 2026-11-12), Maps SDK cho mobile **miễn phí không giới hạn lượt**. |
-| Vị trí | `com.google.android.gms:play-services-location` (`FusedLocationProviderClient.getCurrentLocation`, ưu tiên độ chính xác cao) + lớp chấm xanh có sẵn của Maps (`isMyLocationEnabled = true`, tắt nút mặc định `myLocationButtonEnabled = false`) | Trong nhà vẫn lấy được vị trí qua Wi-Fi/mạng. Miễn phí; Play services đã có trong app qua Firebase/ML Kit. |
-| Đường đi bộ | Server OSRM công cộng của FOSSGIS, profile đi bộ: `https://routing.openstreetmap.de/routed-foot/route/v1/foot/{lng1},{lat1};{lng2},{lat2}?overview=full&geometries=geojson` | Miễn phí, không key. Đã thử 2026-11-12: trả đường đi bộ thật (968 m, 777 s). **Không dùng Routes API của Google** (tính tiền sau 10.000 lượt/tháng; key nằm trong APK). `router.project-osrm.org` chỉ có profile ô tô nên không dùng. |
+| Bản đồ | **OSMDroid** `org.osmdroid:osmdroid-android:6.1.20` (Apache-2.0), `org.osmdroid.views.MapView` trong layout XML, nền ô OpenStreetMap chuẩn (`TileSourceFactory.MAPNIK`) | Miễn phí, không key, không billing; là View thường nên hợp XML/ViewBinding. |
+| Vị trí | `com.google.android.gms:play-services-location` (`FusedLocationProviderClient.getCurrentLocation`, ưu tiên độ chính xác cao) | Không cần billing hay key. Trong nhà vẫn lấy được vị trí qua Wi-Fi/mạng. Chấm người dùng do app tự vẽ bằng `Marker`. |
+| Đường đi bộ | Server OSRM công cộng của FOSSGIS, profile đi bộ: `https://routing.openstreetmap.de/routed-foot/route/v1/foot/{lng1},{lat1};{lng2},{lat2}?overview=full&geometries=geojson` | Miễn phí, không key. Đã thử 2026-11-12: trả đường đi bộ thật (968 m, 777 s). `router.project-osrm.org` chỉ có profile ô tô nên không dùng. |
 | HTTP + JSON | `HttpURLConnection` + `org.json` có sẵn trong Android | Không thêm thư viện mạng. Unit test cần `testImplementation("org.json:json:<bản mới>")` vì `org.json` của Android trong unit test chỉ là stub. |
 
-**Key bản đồ (không để Firebase lên Blaze)** **[Chủ dự án]**
-- Project Firebase `banking-app-final-b5407` là một project Google Cloud; gắn billing vào nó thì Firebase tự lên Blaze. Vì vậy key Maps lấy từ **một project Google Cloud riêng** (ví dụ `flux-bank-maps`) có gắn billing.
-- Key chỉ mở **Maps SDK for Android**, giới hạn theo ứng dụng Android: package `com.flux.bank` + SHA-1 của key debug, key release và key ký của Play (App signing).
-- Key đọc từ `local.properties` (`maps.api.key`, không commit) đưa vào manifest qua `manifestPlaceholders`, như cách làm khoá VNPay. Thiếu key thì bản đồ hiện xám; màn vẫn có danh sách chi nhánh và khoảng cách.
-- Không dùng key tự sinh trong `google-services.json`.
-
 Điều kiện dùng dịch vụ miễn phí (ghi vào báo cáo):
-- Đường đi lấy từ dữ liệu OpenStreetMap (ODbL): hiện chữ nhỏ "© OpenStreetMap" trong sheet khi có đường (cạnh nút chữ, xem mockup), chạm vào mở trang bản quyền OSM. Logo Google trên bản đồ do SDK tự vẽ, không được che (đặt `setPadding` cho map bằng chiều cao sheet thu gọn).
-- Server OSRM công cộng không cam kết SLA, nên luôn có phương án dự phòng (§5). Đường đi từ OSM có thể lệch vài mét so với nét đường của Google.
+- OSMDroid phải đặt `Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID` trước khi tạo map (chính sách tile của OSM chặn user-agent mặc định); cache ô bản đồ đặt trong `cacheDir` của app (không cần quyền bộ nhớ).
+- Ghi công "© OpenStreetMap" luôn hiện trong sheet (ngay dưới bản đồ), chạm mở trang bản quyền OSM (giấy phép ODbL; dùng cho cả nền bản đồ lẫn đường đi).
+- Thêm giấy phép OSMDroid vào `docs/licenses/`.
+- Server tile và OSRM công cộng không cam kết SLA, chỉ dùng mức nhẹ; luôn có phương án dự phòng (§5).
 
 ## 5. Nghiệp vụ **[Claude]**
 
@@ -107,8 +102,8 @@ Một màn duy nhất `BranchMapFragment`, mở bằng `ScreenHost.openScreen()`
 | — | Đang tính | Sheet hiện khung giữ chỗ (skeleton) của card gợi ý; không xoay giữa màn. |
 
 **Ký hiệu trên bản đồ** (đây là ngoại lệ có chủ đích với các quy tắc màu của DESIGN.md, chỉ trong màn bản đồ):
-- **Nền bản đồ**: style JSON cục bộ (`MapStyleOptions` từ `res/raw/`, không cần Map ID trên cloud) giảm độ bão hoà, ẩn POI thương mại, để nền gần xám, hợp "Titanium Ledger" và làm đường đi nổi lên.
-- Chấm người dùng: chấm **xanh dương** có sẵn của Google Maps (kèm quầng độ chính xác), theo quy ước của mọi app bản đồ.
+- **Nền bản đồ**: ô OSM được giảm độ bão hoà (`ColorMatrix` trên `tilesOverlay`, còn khoảng 30% màu) để nền gần xám, hợp "Titanium Ledger" và làm đường đi nổi lên.
+- Chấm người dùng: tròn **xanh dương** viền trắng kèm quầng mờ, app tự vẽ, theo quy ước của mọi app bản đồ.
 - Ghim chi nhánh: tròn obsidian với icon ngân hàng trắng.
 - Chi nhánh đang chọn/gợi ý: ghim lớn hơn, vòng **emerald** (đang tương tác).
 - Đường đi bộ: nét **emerald** dày, viền trắng. Đường thẳng dự phòng: nét obsidian đứt.
@@ -121,7 +116,7 @@ Mở màn thì bản đồ khung vừa người dùng + chi nhánh được gợ
 - `data/routing/`: interface `WalkingRouter { suspend fun route(from, to): WalkingRoute }` (`distanceMeters`, `durationSeconds`, danh sách điểm), implementation `OsrmWalkingRouter` (HTTP + parse GeoJSON, ném lỗi khi `code != "Ok"`). Hàm parse tách riêng để test bằng chuỗi JSON mẫu.
 - `data/location/`: interface `LocationSource` + implementation fused, để ViewModel test được bằng fake.
 - `FluxApp`: thêm `walkingRouter`, `locationSource` theo kiểu service locator đang có.
-- `ui/customer/branch/`: `BranchMapFragment` + `BranchMapViewModel` (trạng thái của §7), adapter danh sách. Bản đồ là `SupportMapFragment` lồng trong layout (tự lo vòng đời); ghim là `Marker` với icon vẽ từ drawable, đường là `Polyline`.
+- `ui/customer/branch/`: `BranchMapFragment` + `BranchMapViewModel` (trạng thái của §7), adapter danh sách. Bản đồ là `MapView` của OSMDroid (Fragment gọi `onResume`/`onPause`/`onDetach`); ghim và chấm người dùng là `Marker` với icon vẽ bằng Canvas, đường là `Polyline`.
 - `HomeFragment.openUtility`: thêm nhánh `Utility.CHI_NHANH -> BranchMapFragment()`.
 - Manifest: thêm hai quyền vị trí. F7 (chatbot) có thể mở thẳng `BranchMapFragment()`.
 
@@ -133,13 +128,8 @@ Mở màn thì bản đồ khung vừa người dùng + chi nhánh được gợ
 
 ## 10. Việc chủ dự án cần làm
 1. Duyệt mockup + spec này.
-2. **Tạo key Maps** (trước khi chạy trên máy, khoảng 20 phút; README sẽ có hướng dẫn từng bước):
-   - Tạo project Google Cloud **mới** (không dùng project Firebase), gắn tài khoản thanh toán vào project mới này.
-   - Bật "Maps SDK for Android", tạo API key, giới hạn: chỉ API đó + ứng dụng Android `com.flux.bank` với SHA-1 (debug và release; thêm SHA-1 App signing khi lên Play).
-   - Thêm `maps.api.key=…` vào `local.properties`.
-   - Kiểm lại Firebase Console vẫn ghi gói **Spark**.
-3. Cho biết **nơi sẽ quay demo** nếu không phải TDTU, để đặt cụm chi nhánh demo quanh đó.
-4. Chạy kịch bản §9 trên máy thật, ngoài trời hoặc gần cửa sổ nếu vị trí trong nhà lệch nhiều.
+2. Cho biết **nơi sẽ quay demo** nếu không phải TDTU, để đặt cụm chi nhánh demo quanh đó.
+3. Chạy kịch bản §9 trên máy thật, ngoài trời hoặc gần cửa sổ nếu vị trí trong nhà lệch nhiều.
 
 ## 11. Kiểm thử
 - Unit: `GeoMath` (khoảng cách đã biết, cùng điểm = 0), `OpeningHours` (trong giờ, sau giờ, T7 chiều, CN, theo giờ VN dù máy khác múi), `BranchRecommender` (chọn theo đường đi bộ chứ không theo đường thẳng; bỏ ứng viên lỗi; cả 3 lỗi thì dự phòng đường thẳng; > 20 km không gọi router; dòng giải thích chỉ có khi hai chi nhánh khác nhau), `OsrmWalkingRouter` parse (JSON thật đã thử, `code` lỗi, thiếu `routes`), `Branches` (id không trùng, toạ độ trong TP.HCM), `BranchMapViewModel` (từ chối quyền, định vị tắt, hết giờ chờ vị trí, gợi ý thành công, chọn chi nhánh khác, dùng lại đường đã lưu).
@@ -147,7 +137,6 @@ Mở màn thì bản đồ khung vừa người dùng + chi nhánh được gợ
 
 ## 12. Để builder tự quyết
 - Tên, địa chỉ, toạ độ, số điện thoại cụ thể của 12 chi nhánh (giữ ràng buộc ở §5).
-- Cách đổi drawable vector thành `BitmapDescriptor` cho ghim; icon ngân hàng lấy từ Phosphor (`bank`).
-- Nội dung style JSON của bản đồ (giữ ý ở §7).
+- Cách vẽ icon ghim (Canvas); icon ngân hàng lấy từ Phosphor (`bank`).
 - Chiều cao nấc thu gọn của sheet và mức zoom.
 - Bản cụ thể của `play-services-location` và `org.json` cho test.

@@ -3,7 +3,7 @@
 - Language: Kotlin (XML layouts + ViewBinding, không dùng Compose)
 - Architecture: MVVM — Activity/Fragment → ViewModel → Repository (interface + Firestore impl). Service locator đơn giản trong `FluxApp`, không dùng DI library.
 - Backend: Firebase Authentication + Cloud Firestore, gói **Spark (miễn phí)** — không Storage, không Cloud Functions.
-- Bản đồ (F6): Google Maps SDK for Android với key từ một project Google Cloud **riêng** (không phải project Firebase, để Firebase giữ gói Spark); đường đi bộ từ server OSRM công cộng (miễn phí, không key).
+- Bản đồ (F6): OpenStreetMap qua OSMDroid và đường đi bộ từ server OSRM công cộng, đều miễn phí, không key (Google Maps bị bỏ vì Google Cloud từ chối tạo tài khoản thanh toán, lỗi `OR_BACR2_59`).
 - Thiết kế & kế hoạch: spec từng feature trong `docs/superpowers/specs/` (F1–F2, F3, F4, F5, F6), plan tương ứng trong `docs/superpowers/plans/`, mockup đã duyệt trong `docs/superpowers/specs/mockups/`.
 - Design system dạng tài liệu cho AI: `DESIGN.md` (+ `.impeccable/design.json`), rút từ `res/values/` ngày 2026-11-12. Code trong `res/values/` vẫn là nguồn gốc.
 
@@ -71,10 +71,9 @@ Security Rules: `firestore.rules` (deploy thủ công qua Console — xem README
 
 ### Feature 6 — Chi nhánh và đường đi bộ
 - Spec/plan: `docs/superpowers/specs/2026-11-12-navigation-f6-design.md`, `docs/superpowers/plans/2026-11-12-navigation-f6.md`, mockup `docs/superpowers/specs/mockups/2026-11-12-f6-navigation.html`.
-- Ô "Chi nhánh" mở `ui/customer/branch/BranchMapFragment`: Google Maps (`SupportMapFragment`, style giảm màu `res/raw/map_style.json`) + bottom sheet cố định (gợi ý / thông báo thiếu vị trí / danh sách). Không đụng Firestore, không đổi rules.
+- Ô "Chi nhánh" mở `ui/customer/branch/BranchMapFragment`: OSMDroid `MapView` (nền OSM giảm bão hoà bằng `ColorMatrix`, ghim/chấm người dùng/đường là overlay, cache tile trong `cacheDir`) + bottom sheet cố định (gợi ý / thông báo thiếu vị trí / danh sách). Không đụng Firestore, không đổi rules.
 - `domain/branch/`: `Branches` (12 chi nhánh giả lập, cụm demo quanh cổng TDTU, bảng đo trong KDoc), `GeoMath` (haversine), `OpeningHours` (T2–T6 8–17h, T7 8–12h, theo giờ VN), `BranchRecommender` (3 chi nhánh gần nhất theo đường thẳng → gọi OSRM song song → chọn quãng đi bộ ngắn nhất; lỗi hết thì dự phòng đường thẳng; > 20 km không gọi).
 - `data/routing/OsrmWalkingRouter` (`routing.openstreetmap.de/routed-foot`, HttpURLConnection + org.json, timeout 8 s), `data/location/FusedLocationSource` (Fused Location, chờ tối đa 15 s). `BranchMapViewModel` lưu đường đã tính theo chi nhánh, bỏ kết quả về muộn (chạm nhanh hai chi nhánh, định vị lại).
-- Key Maps: `local.properties` → `maps.api.key` → `manifestPlaceholders`; thiếu key thì nền bản đồ trống nhưng màn vẫn chạy. Hướng dẫn tạo key ở README mục 7.
 - `BottomSheetBehavior` không hỗ trợ `topMargin` (cộng dồn vào vị trí thu gọn khi layout lại): giới hạn chiều cao bằng `maxHeight`.
 
 ## Giới hạn đã biết

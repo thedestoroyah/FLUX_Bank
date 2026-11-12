@@ -85,15 +85,9 @@ npx firebase emulators:exec --only firestore --project demo-flux "node --test ru
    ngân hàng **NCB**, số thẻ `9704198526191432198`, chủ thẻ `NGUYEN VAN A`, ngày phát hành `07/15`, OTP `123456`.
    Danh sách đầy đủ (gồm thẻ cố ý lỗi: không đủ số dư, bị khoá…) ở https://sandbox.vnpayment.vn/apis/vnpay-demo/.
 
-### 7. Key Google Maps (Feature 6, bản đồ chi nhánh)
-Bản đồ dùng Maps SDK for Android (miễn phí không giới hạn lượt, nhưng Google bắt project phải gắn tài khoản thanh toán). Đường đi bộ lấy từ server OSRM công cộng, không cần key.
-1. **Không dùng project Firebase** (`banking-app-final-b5407`): gắn thanh toán vào đó thì Firebase tự lên gói Blaze. Vào https://console.cloud.google.com → tạo project mới, ví dụ `flux-bank-maps` → Billing → gắn tài khoản thanh toán cho project mới này.
-2. APIs & Services → Library → bật **Maps SDK for Android** (chỉ API này, không bật Routes/Directions).
-3. APIs & Services → Credentials → Create credentials → API key → Edit:
-   - Application restrictions: **Android apps** → Add: package `com.flux.bank` + SHA-1. Lấy SHA-1 bằng `./gradlew signingReport` (thêm cả bản debug và bản release; khi lên Play thêm SHA-1 "App signing key" trong Play Console).
-   - API restrictions: **Restrict key** → chỉ chọn Maps SDK for Android.
-4. Thêm vào `local.properties` (không commit): `maps.api.key=AIza...`. Thiếu key thì bản đồ hiện nền trống nhưng màn vẫn có gợi ý, danh sách và khoảng cách.
-5. Mở Firebase Console kiểm lại gói vẫn là **Spark**.
+### 7. Bản đồ chi nhánh (Feature 6)
+Không cần cấu hình gì: bản đồ là OpenStreetMap qua OSMDroid, đường đi bộ từ server OSRM công cộng, cả hai miễn phí, không key, không billing.
+(Đã thử Google Maps nhưng Google Cloud từ chối tạo tài khoản thanh toán, lỗi `OR_BACR2_59`.) Cần mạng để tải nền bản đồ và đường đi.
 
 ## Luồng demo
 Nhân viên đăng nhập → tạo khách hàng (mật khẩu tạm) → khách đăng nhập, bắt buộc đổi mật khẩu → khách nộp eKYC → nhân viên duyệt → khách bật sinh trắc học, khoá/mở khoá app → đổi SĐT qua OTP → kiểm tra xác thực khuôn mặt.
@@ -136,6 +130,6 @@ Feature 5:
 
 Feature 6:
 - Chi nhánh là dữ liệu giả lập nằm trong app (tên tự đặt, đường thật ở TP.HCM), không lưu Firestore.
-- Đường đi bộ lấy từ server OSRM công cộng của FOSSGIS (dữ liệu OpenStreetMap): miễn phí, không cam kết luôn chạy. Lỗi hoặc mất mạng thì app gợi ý theo đường thẳng và ghi rõ. Đường OSM có thể lệch vài mét so với nét đường của Google.
+- Nền bản đồ (tile.openstreetmap.org) và đường đi bộ (OSRM công cộng của FOSSGIS) là dịch vụ miễn phí, không cam kết luôn chạy, chỉ dùng mức nhẹ theo chính sách của OSM. Lỗi hoặc mất mạng thì app gợi ý theo đường thẳng và ghi rõ.
 - Gợi ý chỉ so 3 chi nhánh gần nhất theo đường thẳng; xa hơn 20 km thì không tính đường đi bộ.
 - Toạ độ người dùng được gửi tới server chỉ đường bên thứ ba (không lưu ở FLUX); khai báo ở mục Data safety khi lên Play Store.
