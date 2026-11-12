@@ -16,7 +16,7 @@ Trong Android Studio chọn Gradle JDK = `/usr/lib/jvm/java-21-openjdk`.
 
 ### 1. Deploy Security Rules
 Firebase Console → **Firestore Database → Rules** → dán toàn bộ nội dung `firestore.rules` → **Publish**.
-Publish lại mỗi khi file này đổi (Feature 4 thêm luật chuyển tiền và collection `accountIndex`).
+Publish lại mỗi khi file này đổi (Feature 4 thêm luật chuyển tiền và collection `accountIndex`; Feature 5 thêm loại giao dịch `PAYMENT`).
 
 ### 2. Tạo nhân viên (officer) đầu tiên
 App không có chức năng tự đăng ký nhân viên; mọi khách hàng đều do nhân viên tạo trong app.
@@ -66,7 +66,7 @@ update `accounts/{id}` của người khác chỉ tăng `balance` (không có gi
 Playground chỉ thử từng request đơn lẻ nên luồng hợp lệ (ghi tài khoản + giao dịch trong một batch) kiểm tra bằng app.
 
 ### 5. Test rules tự động (Firestore emulator)
-`rules-test/` chạy 40 ca kiểm tra rules của Feature 3–4 trên emulator, gồm cả batch nạp/rút và chuyển tiền 4 document mà Playground không thử được. Cần Node và Java 21:
+`rules-test/` chạy 47 ca kiểm tra rules của Feature 3–5 trên emulator, gồm cả batch nạp/rút và chuyển tiền 4 document mà Playground không thử được. Cần Node và Java 21:
 ```bash
 cd rules-test && npm install
 ln -sfn ../templates node_modules/firebase-tools/lib/templates   # firebase-tools 13.29.1 tìm sai thư mục templates
@@ -98,6 +98,11 @@ A nạp 1.000.000 ₫ qua VNPay sandbox (thẻ NCB ở mục 6) → A chuyển 5
 → B mở app: số dư tăng, Lịch sử có "Nhận từ …" → A chuyển 2.000.000 ₫ sang Vietcombank (giả lập) → A chuyển 15.000.000 ₫ (thêm bước quét mặt)
 → A thử vượt hạn mức 200.000.000 ₫/ngày (bị chặn trên form) → A mở "Mã của tôi", máy B quét bằng nút QR giữa thanh tab → form chuyển điền sẵn.
 
+Feature 5 (tiện ích, dữ liệu giả lập trong app):
+Tiền điện → EVN TP.HCM, mã `PE01000123456` → Tra cứu → Thanh toán → OTP → biên lai → tra lại cùng mã: "đã thanh toán", xem biên lai
+→ thử mã đuôi `0000` ("Không tìm thấy hoá đơn") → Tiền nước (SAWACO, mã 8–12 số) → Nạp ĐT 100.000 ₫ cho SĐT của mình
+→ Vé máy bay TP.HCM → Hà Nội, 2 khách → biên lai có mã đặt chỗ → Vé phim, Khách sạn, Mua sắm → tab Lịch sử có icon theo dịch vụ.
+
 ## Giới hạn đã biết
 Gói Spark không có Cloud Functions nên OTP và đối chiếu khuôn mặt được kiểm tra trên thiết bị; Security Rules chỉ giới hạn ai được sửa field nào. Hướng nâng cấp: Cloud Functions phát/kiểm token xác thực trước khi ghi giao dịch.
 
@@ -107,3 +112,9 @@ Feature 4:
 - Số tài khoản chỉ tra được sau khi chủ tài khoản đăng nhập ít nhất một lần (app tự ghi `accountIndex`).
 - Giao dịch "Nhận tiền" không có số dư sau giao dịch (người gửi không được đọc số dư người nhận).
 - Chuyển liên ngân hàng là giả lập: tiền bị trừ, không ngân hàng nào nhận.
+
+Feature 5:
+- Nhà cung cấp, hoá đơn, chuyến bay, phim, khách sạn, sản phẩm đều là dữ liệu giả lập nằm trong app; không kết nối dịch vụ thật.
+- Rules chỉ biết đây là một lần trừ tiền `PAYMENT` hợp lệ (đúng chủ, đúng số dư, ≤ 100.000.000 ₫), không biết số tiền hoá đơn hay giá vé đúng bao nhiêu. Khách sửa app có thể trả số khác, nhưng chỉ trừ tiền của chính mình và vẫn có bản ghi.
+- Mỗi hoá đơn (nhà cung cấp + mã + kỳ) chỉ trả được một lần cho mỗi khách: id giao dịch suy ra từ hoá đơn nên rules chặn lần ghi thứ hai. Hai khách khác nhau vẫn trả được cùng một mã.
+- Hạn mức 200.000.000 ₫/ngày tính chung chuyển tiền và thanh toán, chỉ kiểm ở app.
