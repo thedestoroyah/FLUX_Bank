@@ -7,6 +7,7 @@ import com.google.firebase.ai.type.GenerativeBackend
 import com.google.firebase.ai.type.Schema
 import com.google.firebase.ai.type.content
 import com.google.firebase.ai.type.generationConfig
+import com.google.firebase.ai.type.thinkingConfig
 
 /**
  * Gemini qua Firebase AI Logic, backend Gemini Developer API (free tier, chạy trên gói Spark, không có API key trong APK).
@@ -21,6 +22,8 @@ class GeminiAssistantClient : AssistantClient {
             generationConfig = generationConfig {
                 responseMimeType = "application/json"
                 responseSchema = SCHEMA
+                // Tắt "thinking": để mặc định thì một lượt mất hơn 60 s (đo 2026-11-13), tắt thì ~6 s, đủ cho câu trả lời ngắn
+                thinkingConfig = thinkingConfig { thinkingBudget = 0 }
             },
             systemInstruction = content { text(systemPrompt) }
         )
@@ -30,8 +33,11 @@ class GeminiAssistantClient : AssistantClient {
     }
 
     companion object {
-        /** Tên model lấy từ trang get-started của Firebase AI Logic ngày 2026-11-12. */
-        const val MODEL = "gemini-3.8-flash"
+        /**
+         * Model dùng cho Trợ lý. Ngày 2026-11-13 `gemini-3.8-flash` (gợi ý của trang get-started) liên tục báo
+         * "high demand" (HTTP 500) ở free tier, còn bản này trả lời trong ~4 s, nên chọn bản này cho ổn định khi demo.
+         */
+        const val MODEL = "gemini-3.5-flash"
 
         private val SCHEMA = Schema.obj(
             mapOf(
