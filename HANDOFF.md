@@ -15,7 +15,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 
 ## 2. Trạng thái hiện tại
 
-- Repo git ở `FLUX_Bank/`, remote `origin` = GitHub private `thedestoroyah/FLUX_Bank` (HTTPS, tạo 2026-11-12; SSH key chưa gắn với GitHub nên dùng HTTPS qua `gh`). **`main` có F1–F5; F6 nằm trên nhánh `feature/f6-navigation` (chưa merge, chờ chạy thử phần bản đồ OSM trên máy, mục 3)** (F4 merge 2026-10-28, commit `9f6e5c3`; F5 merge 2026-11-12, commit `9c3a311`, đã review toàn nhánh và chạy trên máy thật với rules đã publish, mục 3).
+- Repo git ở `FLUX_Bank/`, remote `origin` = GitHub private `thedestoroyah/FLUX_Bank` (HTTPS, tạo 2026-11-12; SSH key chưa gắn với GitHub nên dùng HTTPS qua `gh`). **`main` có F1–F5; F6 nằm trên nhánh `feature/f6-navigation` (chưa merge; đã chạy thử đạt trên máy, mục 3)** (F4 merge 2026-10-28, commit `9f6e5c3`; F5 merge 2026-11-12, commit `9c3a311`, đã review toàn nhánh và chạy trên máy thật với rules đã publish, mục 3).
 - **Unit test 340/340 pass** (trên nhánh F6), rules test 49/49, `assembleDebug` + `lintDebug` pass (0 error). F6 review toàn nhánh (2026-11-12): 0 Critical, 6 Important đã sửa có test (chạm chi nhánh lúc đang định vị lại vẽ đường từ vị trí cũ, test cache yếu, ở xa > 20 km bị báo lỗi mạng, lỗi API vị trí làm crash, định vị lại không có khung chờ, "Thử lại" bật GPS lại; thêm chặn lỗi camera khi xoay ngang). F5 review toàn nhánh: 0 Critical, 3 Important đã sửa có test (chiếm id hoá đơn của người khác, mã biên lai hoá đơn trùng, lỗi hạn mức hiện muộn). F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test).
 - F1–F2 và F3 đều đã được reviewer độc lập review toàn nhánh, đã sửa hết lỗi Important; lỗi Minor còn lại ở mục 7. F3 đã chạy demo đạt trên máy thật (mục 3).
 
@@ -66,8 +66,8 @@ Cho Feature 5 (đã merge vào `main` 2026-11-12):
 
 Cho Feature 6 (nhánh `feature/f6-navigation`, chưa merge):
 1. Không cần key hay billing (đã chuyển Google Maps → OpenStreetMap ngày 2026-11-12).
-2. Đã chạy trên Xiaomi 2026-11-12 (bản Google Maps chưa có key, nền bản đồ trống; logic giống hệt bản OSM) — đạt: hộp thoại quyền, từ chối → khối "Chưa biết bạn đang ở đâu", cấp quyền sau → tự gợi ý; gợi ý thật từ vị trí nhà chủ dự án (FLUX Lê Văn Lương 3,8 km, có dòng "FLUX Phú Mỹ Hưng gần hơn theo đường thẳng (2,8 km) nhưng phải đi vòng, đi bộ 4,1 km"); danh sách xếp theo quãng đi bộ; chọn chi nhánh khác + "Quay lại gợi ý"; tắt mạng → đường thẳng + "Thử lại", bật mạng → đường đi bộ. **Chưa thử** với bản OSM: nền bản đồ, ghim, chấm vị trí, đường emerald, camera, chạm ghim; "Gọi chi nhánh"; xoay ngang.
-3. Chạy kịch bản README "Luồng demo" Feature 6 trên máy rồi merge nhánh.
+2. Đã chạy trên Xiaomi 2026-11-12 (bản Google Maps chưa có key, nền bản đồ trống; logic giống hệt bản OSM) — đạt: hộp thoại quyền, từ chối → khối "Chưa biết bạn đang ở đâu", cấp quyền sau → tự gợi ý; gợi ý thật từ vị trí nhà chủ dự án (FLUX Lê Văn Lương 3,8 km, có dòng "FLUX Phú Mỹ Hưng gần hơn theo đường thẳng (2,8 km) nhưng phải đi vòng, đi bộ 4,1 km"); danh sách xếp theo quãng đi bộ; chọn chi nhánh khác + "Quay lại gợi ý"; tắt mạng → đường thẳng + "Thử lại", bật mạng → đường đi bộ. Bản OSM chạy trên Xiaomi 2026-11-12 — đạt: nền OSM giảm màu + ghi công, ghim, chấm vị trí, đường emerald theo phố thật, camera khung đủ người dùng và chi nhánh (trên sheet và nút vị trí), chạm ghim → chọn chi nhánh + vẽ lại đường, "Gọi chi nhánh" mở trình quay số với số đúng, ép xoay ngang → màn giữ chiều dọc (khoá khi màn đang hiện), không crash.
+3. Merge nhánh khi chủ dự án đồng ý.
 - Mẹo adb cho F6: đừng `input swipe` từ mép dưới (trúng cử chỉ về màn hình chính của MIUI); kéo sheet từ giữa sheet. Đặt lại quyền vị trí: `pm revoke` + `pm clear-permission-flags … user-set user-fixed`.
 
 ## 4. Những điều chủ dự án đã quyết định (đừng hỏi lại)
@@ -219,8 +219,8 @@ Mở Claude Code từ thư mục `Final_Exam/` (để có skill impeccable), c�
 
 Quy trình đã dùng và nên giữ: `superpowers:brainstorming` (hỏi từng câu, mockup HTML trên visual companion) → viết spec vào `docs/superpowers/specs/` → `superpowers:writing-plans` → `superpowers:executing-plans` (chủ dự án chọn chế độ **Native**) → review toàn nhánh → `finishing-a-development-branch`.
 
-Còn **19 ngày** (tính từ 2026-11-12; F1–F5 trên `main`, F6 xong code trên nhánh, chờ chạy thử bản đồ OSM trên máy rồi merge). Lịch đề xuất:
-1. **Feature 6**: chạy thử phần bản đồ trên máy, merge.
+Còn **19 ngày** (tính từ 2026-11-12; F1–F5 trên `main`, F6 xong và đã chạy thử trên máy, chờ merge). Lịch đề xuất:
+1. **Feature 6**: merge nhánh `feature/f6-navigation`.
 2. **Feature 7 Chatbot** (khoảng 3 ngày, tới ~19/11). Quyết định: LLM API (ví dụ gói miễn phí của Gemini; không để key trong APK nếu được) hay luật cố định theo ý định. Đề yêu cầu trả lời **kèm link mở chức năng**: nạp ĐT, trả hoá đơn, xem giao dịch trong tháng… — mở thẳng `TopUpFragment()`, `BillPayFragment.newInstance(kind)`, tab Lịch sử.
 3. **Play Store** — làm **sớm, song song**: tài khoản developer tốn 25 USD; tài khoản cá nhân mới thường phải chạy kiểm thử kín (closed testing) với nhiều người thử trong nhiều ngày trước khi được lên production, nên kiểm tra chính sách hiện hành ngay và tạo bản internal/closed testing sớm.
 4. **Báo cáo + video** (từ ~20/11): class diagram, ERD, use case, kiến trúc; trước khi quay chạy `/impeccable critique` hoặc `audit` trên các màn chính và sửa lỗi nhìn thấy (giới hạn 1 ngày). Chừa 5–7 ngày cuối.
