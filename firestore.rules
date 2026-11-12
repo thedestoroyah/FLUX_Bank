@@ -84,7 +84,7 @@ service cloud.firestore {
         && tx.ownerUid == request.auth.uid
         && tx.balanceAfter == newData.balance
         && ((tx.type == 'DEPOSIT' && newData.balance == resource.data.balance + tx.amount)
-            || (tx.type in ['WITHDRAW', 'TRANSFER_OUT'] && newData.balance == resource.data.balance - tx.amount && newData.balance >= 0));
+            || (tx.type in ['WITHDRAW', 'TRANSFER_OUT', 'PAYMENT'] && newData.balance == resource.data.balance - tx.amount && newData.balance >= 0));
     }
 
     // Người nhận được cộng tiền chỉ khi cùng lần ghi có một TRANSFER_OUT mới của người ghi, cùng số tiền,
@@ -122,12 +122,12 @@ service cloud.firestore {
     }
 
     // Giao dịch chỉ được tạo cùng batch với lần đổi số dư (tài khoản sau khi ghi phải trỏ lastTxId về đây).
-    // DEPOSIT/WITHDRAW/TRANSFER_OUT thuộc người ghi; TRANSFER_IN thuộc chủ tài khoản nhận và phải có cặp OUT.
+    // DEPOSIT/WITHDRAW/TRANSFER_OUT/PAYMENT thuộc người ghi (PAYMENT = thanh toán dịch vụ F5, tối đa 100 tr như nạp/chuyển); TRANSFER_IN thuộc chủ tài khoản nhận và phải có cặp OUT.
     function txCreateAllowed(txId) {
       let d = request.resource.data;
       let acc = getAfter(/databases/$(database)/documents/accounts/$(d.accountId)).data;
       return signedIn() && d.amount is int && d.amount >= 10000 && acc.lastTxId == txId
-        && ((d.type in ['DEPOSIT', 'WITHDRAW', 'TRANSFER_OUT'] && d.ownerUid == request.auth.uid
+        && ((d.type in ['DEPOSIT', 'WITHDRAW', 'TRANSFER_OUT', 'PAYMENT'] && d.ownerUid == request.auth.uid
              && (d.type == 'WITHDRAW' || d.amount <= 100000000))
             || (d.type == 'TRANSFER_IN' && d.ownerUid == acc.ownerUid && transferInBacked(d)));
     }
