@@ -119,6 +119,7 @@ class ReceiptFragment : Fragment() {
     }
 
     companion object {
+        private const val BILL_PREFIX = "bill_"
         private const val ARG_ID = "id"
         private const val ARG_TYPE = "type"
         private const val ARG_AMOUNT = "amount"
@@ -137,8 +138,12 @@ class ReceiptFragment : Fragment() {
         private const val ID_LENGTH = 10
         private val TIME_FORMAT = SimpleDateFormat("HH:mm · dd/MM/yyyy", Locale("vi"))
 
-        /** Mã giao dịch hiển thị: 10 ký tự đầu của document id, viết hoa. */
-        fun displayId(id: String) = id.take(ID_LENGTH).uppercase()
+        /**
+         * Mã giao dịch hiển thị: 10 ký tự đầu của document id, viết hoa. Id hoá đơn (`bill_<uid>_…`) có phần đầu giống nhau
+         * và chứa uid, nên hiện mã băm 8 ký tự của cả id thay vào.
+         */
+        fun displayId(id: String) =
+            if (id.startsWith(BILL_PREFIX)) "%08X".format(id.hashCode()) else id.take(ID_LENGTH).uppercase()
 
         fun newInstance(tx: Transaction, accountLabel: String, viewOnly: Boolean) = ReceiptFragment().apply {
             arguments = bundleOf(
