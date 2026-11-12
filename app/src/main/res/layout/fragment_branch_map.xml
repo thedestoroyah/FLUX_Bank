@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Màn Chi nhánh (mockup F6): bản đồ toàn màn, nút nổi, bottom sheet cố định (gợi ý / thông báo / danh sách) -->
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/flux_bg">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/mapContainer"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/touch_min"
+        android:layout_marginStart="@dimen/space_16"
+        android:layout_marginTop="@dimen/space_16"
+        android:background="@drawable/bg_back_button"
+        android:clickable="true"
+        android:contentDescription="@string/cd_back"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/space_8"
+        android:paddingEnd="@dimen/space_12">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_caret_left"
+            app:tint="@color/flux_text_primary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_4"
+            android:text="@string/util_branch"
+            android:textAppearance="@style/TextAppearance.Flux.TitleM" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btnLocate"
+        android:layout_width="@dimen/touch_min"
+        android:layout_height="@dimen/touch_min"
+        android:layout_margin="@dimen/space_16"
+        android:background="@drawable/bg_back_button"
+        android:contentDescription="@string/cd_my_location"
+        android:src="@drawable/ic_crosshair"
+        android:layout_gravity="top|end"
+        app:layout_anchor="@id/sheet"
+        app:layout_anchorGravity="top|end"
+        app:tint="@color/flux_text_primary" />
+
+    <LinearLayout
+        android:id="@+id/sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_sheet"
+        android:orientation="vertical"
+        app:behavior_hideable="false"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <!-- Phần luôn thấy khi sheet thu gọn; chiều cao của nó = peekHeight -->
+        <LinearLayout
+            android:id="@+id/sheetTop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/space_16"
+            android:paddingEnd="@dimen/space_16"
+            android:paddingBottom="@dimen/space_12">
+
+            <View
+                android:layout_width="36dp"
+                android:layout_height="5dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/space_8"
+                android:background="@drawable/bg_sheet_handle" />
+
+            <TextView
+                android:id="@+id/tvSection"
+                style="@style/Widget.Flux.SectionLabel"
+                android:layout_marginTop="@dimen/space_12" />
+
+            <!-- Card chi nhánh (gợi ý / đã chọn / dự phòng đường thẳng) -->
+            <LinearLayout
+                android:id="@+id/card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Flux.TitleM" />
+
+                <TextView
+                    android:id="@+id/tvAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_4"
+                    android:textAppearance="@style/TextAppearance.Flux.Caption" />
+
+                <!-- Pill giờ mở cửa ở dòng riêng: "Đã đóng · mở 8:00 ngày mai" quá dài để đứng cạnh tên -->
+                <TextView
+                    android:id="@+id/tvOpen"
+                    style="@style/Widget.Flux.StatusPill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_8"
+                    android:drawablePadding="@dimen/space_4" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_12"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/ivWalk"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="@dimen/space_8"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_walk"
+                        app:tint="@color/flux_text_primary" />
+
+                    <TextView
+                        android:id="@+id/tvDistance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Flux.Amount" />
+
+                    <TextView
+                        android:id="@+id/tvWalkTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_8"
+                        android:textAppearance="@style/TextAppearance.Flux.Body"
+                        android:textColor="@color/flux_text_secondary" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvNote"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_12"
+                    android:background="@drawable/bg_note"
+                    android:drawablePadding="@dimen/space_8"
+                    android:padding="@dimen/space_12"
+                    android:textAppearance="@style/TextAppearance.Flux.Caption"
+                    app:drawableTint="@color/flux_text_secondary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCall"
+                    style="@style/Widget.Flux.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_12"
+                    android:text="@string/branch_call"
+                    app:icon="@drawable/ic_phone_call"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRetry"
+                    style="@style/Widget.Flux.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_12"
+                    android:text="@string/branch_retry" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnTextAction"
+                        style="@style/Widget.Flux.Button.Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="0dp"
+                        app:iconTint="@color/flux_emerald_dark" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/tvOsm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/touch_min"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:text="@string/branch_osm_credit"
+                        android:textAppearance="@style/TextAppearance.Flux.Caption" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Khung giữ chỗ khi đang lấy vị trí / tính gợi ý -->
+            <LinearLayout
+                android:id="@+id/skeleton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View android:layout_width="200dp" android:layout_height="18dp" android:background="@drawable/bg_skeleton" />
+                <View android:layout_width="260dp" android:layout_height="12dp" android:layout_marginTop="@dimen/space_8" android:background="@drawable/bg_skeleton" />
+                <View android:layout_width="150dp" android:layout_height="30dp" android:layout_marginTop="@dimen/space_12" android:background="@drawable/bg_skeleton" />
+                <View android:layout_width="match_parent" android:layout_height="44dp" android:layout_marginTop="@dimen/space_12" android:background="@drawable/bg_skeleton" />
+            </LinearLayout>
+
+            <!-- Chưa có vị trí: lý do + nút sửa -->
+            <LinearLayout
+                android:id="@+id/prompt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        style="@style/Widget.Flux.IconTile"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_map_pin"
+                        app:tint="@color/flux_text_primary" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_12"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvPromptTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.Flux.TitleM" />
+
+                        <TextView
+                            android:id="@+id/tvPromptBody"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_4"
+                            android:textAppearance="@style/TextAppearance.Flux.Caption" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPrompt"
+                    style="@style/Widget.Flux.Button.Primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_12" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvListHeader"
+            style="@style/Widget.Flux.SectionLabel"
+            android:layout_marginTop="@dimen/space_4"
+            android:paddingStart="@dimen/space_16"
+            android:paddingEnd="@dimen/space_16" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvBranches"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -23,6 +23,7 @@ import com.flux.bank.data.model.KycStatus
 import com.flux.bank.data.model.Transaction
 import com.flux.bank.databinding.FragmentHomeBinding
 import com.flux.bank.ui.common.ComingSoonFragment
+import com.flux.bank.ui.customer.branch.BranchMapFragment
 import com.flux.bank.ui.customer.utility.BillPayFragment
 import com.flux.bank.ui.customer.utility.CatalogFragment
 import com.flux.bank.ui.customer.utility.TopUpFragment
@@ -174,6 +175,7 @@ class HomeFragment : Fragment() {
             Utility.VE_PHIM -> CatalogFragment.newInstance(CatalogKind.MOVIE)
             Utility.KHACH_SAN -> CatalogFragment.newInstance(CatalogKind.HOTEL)
             Utility.MUA_SAM -> CatalogFragment.newInstance(CatalogKind.SHOP)
+            Utility.CHI_NHANH -> BranchMapFragment()
             Utility.TIET_KIEM -> viewModel.firstAccountId(AccountType.SAVING)?.let(AccountDetailFragment::newInstance)
                 ?: ComingSoonFragment.newInstance(
                     utility.label, utility.icon, utility.tint, titleRes = R.string.saving_none_title, messageRes = R.string.saving_none
