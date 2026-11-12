@@ -20,6 +20,4 @@
     <dimen name="map_sheet_top_gap">112dp</dimen>
     <dimen name="map_marker">28dp</dimen>
     <dimen name="map_marker_selected">40dp</dimen>
-    <!-- Chữ ghi công OSM trên bản đồ (px của CopyrightOverlay), tương đương 12sp -->
-    <dimen name="map_copyright_text">12sp</dimen>
 </resources>

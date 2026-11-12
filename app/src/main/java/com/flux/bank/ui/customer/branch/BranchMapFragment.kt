@@ -2,6 +2,7 @@ package com.flux.bank.ui.customer.branch
 
 import android.Manifest
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -58,6 +59,7 @@ class BranchMapFragment : Fragment() {
     private lateinit var sheetBehavior: BottomSheetBehavior<View>
     private var markers: BranchMarkers? = null
     private var cameraKey: Any? = null
+    private var lastFrame: List<GeoPoint> = emptyList()
     private var bottomInset = 0
     private var topInset = 0
 
@@ -90,6 +92,8 @@ class BranchMapFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        // Màn ngang chỉ còn một dải bản đồ mỏng phía trên sheet, nên giữ màn này ở chiều dọc
+        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         binding.mapView.onResume()
         // Quay về từ màn cài đặt: đã cấp quyền / đã bật định vị thì tự tìm lại
         val issue = viewModel.state.value?.issue
@@ -104,6 +108,7 @@ class BranchMapFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         binding.mapView.onPause()
     }
 
@@ -143,7 +148,10 @@ class BranchMapFragment : Fragment() {
     private fun updatePeek(topHeight: Int) {
         if (_binding == null || topHeight == 0) return
         val peek = topHeight + bottomInset
-        if (sheetBehavior.peekHeight != peek) sheetBehavior.peekHeight = peek
+        if (sheetBehavior.peekHeight == peek) return
+        sheetBehavior.peekHeight = peek
+        // Sheet đổi chiều cao (khung chờ → card) thì khung lại để điểm không nằm dưới sheet
+        if (lastFrame.isNotEmpty()) frame(lastFrame)
     }
 
     /**
@@ -171,7 +179,9 @@ class BranchMapFragment : Fragment() {
         markers = BranchMarkers(requireContext())
         setTileSource(TileSourceFactory.MAPNIK)
         setMultiTouchControls(true)
-        isTilesScaledToDpi = true
+        // Phóng ô bản đồ theo mật độ thật (2,75x trên Xiaomi) làm chữ to và mờ; 2x vừa đọc được vừa nét
+        isTilesScaledToDpi = false
+        tilesScaleFactor = TILE_SCALE
         zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
         minZoomLevel = MIN_ZOOM
         maxZoomLevel = MAX_ZOOM
@@ -340,7 +350,7 @@ class BranchMapFragment : Fragment() {
             setAlignBottom(false)
             setAlignRight(true)
             setOffset(resources.getDimensionPixelSize(R.dimen.space_16), topInset + resources.getDimensionPixelSize(R.dimen.space_16))
-            setTextSize(resources.getDimensionPixelSize(R.dimen.map_copyright_text))
+            setTextSize(COPYRIGHT_TEXT_DP) // overlay tự nhân với mật độ màn hình
         })
         mapView.invalidate()
         moveCamera(user, target, s)
@@ -390,6 +400,7 @@ class BranchMapFragment : Fragment() {
      * OSMDroid không có padding cho camera nên nới hộp lên/xuống theo tỉ lệ phần bị che.
      */
     private fun frame(points: List<GeoPoint>) {
+        lastFrame = points
         val mapView = binding.mapView
         if (points.size == 1 || mapView.height == 0) {
             mapView.controller.animateTo(points.first().toOsm(), SINGLE_POINT_ZOOM, CAMERA_ANIM_MS)
@@ -397,7 +408,8 @@ class BranchMapFragment : Fragment() {
         }
         val box = BoundingBox.fromGeoPointsSafe(points.map { it.toOsm() })
         val top = binding.btnBack.bottom
-        val bottom = sheetBehavior.peekHeight
+        // Nút "Vị trí của tôi" ghim ngay trên sheet cũng che bản đồ
+        val bottom = sheetBehavior.peekHeight + binding.btnLocate.height + resources.getDimensionPixelSize(R.dimen.space_16)
         val visible = mapView.height - top - bottom
         if (visible <= 0) {
             mapView.controller.animateTo(box.centerWithDateLine)
@@ -428,6 +440,7 @@ class BranchMapFragment : Fragment() {
         super.onDestroyView()
         markers = null
         cameraKey = null
+        lastFrame = emptyList()
         _binding = null
     }
 
@@ -443,6 +456,8 @@ class BranchMapFragment : Fragment() {
         const val MIN_ZOOM = 4.0
         const val MAX_ZOOM = 19.0
         const val MAP_SATURATION = 0.3f
+        const val TILE_SCALE = 2f
+        const val COPYRIGHT_TEXT_DP = 12
         const val CAMERA_ANIM_MS = 600L
         const val OSMDROID_PREFS = "osmdroid"
         const val OSMDROID_DIR = "osmdroid"
