@@ -1,6 +1,8 @@
 package com.flux.bank.fakes
 
 import com.flux.bank.core.format.TextNormalizer
+import com.flux.bank.data.assistant.AssistantClient
+import com.flux.bank.data.assistant.ChatTurn
 import com.flux.bank.data.model.AccountType
 import com.flux.bank.data.model.Bank
 import com.flux.bank.data.model.BankAccount
@@ -260,5 +262,14 @@ class FakeWalkingRouter : WalkingRouter {
         if (fail) throw RoutingException("down")
         val meters = GeoMath.distanceMeters(from, to) * 1.3
         return WalkingRoute(meters, meters / 1.25, listOf(from, to))
+    }
+}
+
+/** Client AI giả: [answer] quyết định câu trả lời (hoặc ném lỗi / treo); [calls] ghi lại prompt và lịch sử đã gửi. */
+class FakeAssistantClient(var answer: suspend (String, List<ChatTurn>) -> String = { _, _ -> """{"reply":"Ok","actions":[]}""" }) : AssistantClient {
+    val calls = mutableListOf<Pair<String, List<ChatTurn>>>()
+    override suspend fun ask(systemPrompt: String, turns: List<ChatTurn>): String {
+        calls += systemPrompt to turns
+        return answer(systemPrompt, turns)
     }
 }
