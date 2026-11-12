@@ -9,6 +9,7 @@ import com.flux.bank.data.model.Payee
 import com.flux.bank.data.model.KycRecord
 import com.flux.bank.data.model.KycStatus
 import com.flux.bank.data.model.Rates
+import com.flux.bank.data.model.ServicePayment
 import com.flux.bank.data.model.Transaction
 import com.flux.bank.data.model.TransactionType
 import com.flux.bank.data.model.User
@@ -150,6 +151,16 @@ class FakeAccountRepository : AccountRepository {
                 counterpartyAccount = accountNumber, counterpartyBank = bank.code).also { transfers += it }
         }
 
+    /** Các giao dịch PAYMENT đã ghi. */
+    val payments = mutableListOf<Transaction>()
+
+    override suspend fun pay(fromId: String, payment: ServicePayment, txId: String?): Result<Transaction> =
+        move(fromId, payment.amount, TransactionType.PAYMENT).map { tx ->
+            tx.copy(id = txId ?: "pay${payments.size}", description = payment.description, counterpartyName = payment.merchant,
+                counterpartyAccount = payment.reference, paymentRef = payment.paymentRef, service = payment.service,
+                details = payment.details).also { payments += it }
+        }
+
     private suspend fun move(accountId: String, amount: Long, type: TransactionType): Result<Transaction> {
         moveGate?.await()
         failNextMove?.let { failNextMove = null; return Result.failure(it) }
@@ -184,6 +195,11 @@ class FakePayeeRepository(val index: MutableMap<String, Payee> = mutableMapOf())
 class FakeTransactionRepository(val items: MutableList<Transaction> = mutableListOf()) : TransactionRepository {
     override suspend fun listRecent(ownerUid: String, limit: Long) =
         Result.success(items.filter { it.ownerUid == ownerUid }.sortedByDescending { it.createdAt }.take(limit.toInt()))
+
+    var failFind = false
+    override suspend fun findByPaymentRef(ownerUid: String, paymentRef: String): Result<Transaction?> =
+        if (failFind) Result.failure(IllegalStateException("offline"))
+        else Result.success(items.firstOrNull { it.ownerUid == ownerUid && it.paymentRef == paymentRef })
 }
 
 class FakeRatesRepository(var rates: Rates = Rates()) : RatesRepository {

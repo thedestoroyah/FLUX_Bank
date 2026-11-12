@@ -46,6 +46,7 @@ class ReceiptFragment : Fragment() {
                 TransactionType.WITHDRAW -> R.string.receipt_withdraw_ok
                 TransactionType.TRANSFER_OUT -> R.string.receipt_transfer_ok
                 TransactionType.TRANSFER_IN -> R.string.receipt_transfer_in_ok
+                TransactionType.PAYMENT -> R.string.receipt_payment_ok
             }
         )
         binding.tvAmount.text = TransactionRowAdapter.signedAmount(tx)
@@ -85,6 +86,7 @@ class ReceiptFragment : Fragment() {
                 getString(R.string.receipt_account) to accountLabel,
                 getString(R.string.move_destination) to getString(R.string.move_destination_value)
             )
+            TransactionType.PAYMENT -> listOf(getString(R.string.receipt_account) to accountLabel)
         }
         return head + listOfNotNull(
             getString(R.string.receipt_time) to TIME_FORMAT.format(Date(tx.createdAt)),
