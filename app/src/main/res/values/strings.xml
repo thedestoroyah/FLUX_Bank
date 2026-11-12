@@ -342,6 +342,7 @@
     <string name="receipt_history">Xem lịch sử</string>
     <string name="receipt_transfer_ok">Chuyển tiền thành công</string>
     <string name="receipt_transfer_in_ok">Đã nhận tiền</string>
+    <string name="receipt_payment_ok">Thanh toán thành công</string>
     <string name="receipt_from">Từ</string>
     <string name="receipt_to">Đến</string>
     <string name="receipt_to_account">Đến tài khoản</string>
@@ -401,6 +402,7 @@
     <string name="tx_transfer_out">Chuyển đến %1$s</string>
     <string name="tx_transfer_in">Nhận từ %1$s</string>
     <string name="tx_deposit_vnpay">Nạp tiền qua VNPay</string>
+    <string name="tx_payment_title">%1$s</string>
     <!-- Feature 3: lịch sử -->
     <string name="history_all">Tất cả</string>
     <string name="history_today">Hôm nay</string>

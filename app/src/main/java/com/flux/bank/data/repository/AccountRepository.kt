@@ -6,6 +6,7 @@ import com.flux.bank.data.model.Bank
 import com.flux.bank.data.model.BankAccount
 import com.flux.bank.data.model.Banks
 import com.flux.bank.data.model.Payee
+import com.flux.bank.data.model.ServicePayment
 import com.flux.bank.data.model.Transaction
 import com.flux.bank.data.model.TransactionType
 import com.google.firebase.firestore.DocumentReference
@@ -16,6 +17,9 @@ import java.security.SecureRandom
 
 /** Rút quá số dư (số dư có thể đã đổi từ máy khác sau khi người dùng xem trước). */
 class InsufficientFundsException : Exception("Số dư không đủ")
+
+/** Hoá đơn đã được thanh toán: giao dịch có id cố định của hoá đơn đã tồn tại. */
+class AlreadyPaidException : Exception("Hoá đơn đã được thanh toán")
 
 /** Tài khoản ngân hàng (collection `accounts`). */
 interface AccountRepository {
@@ -53,6 +57,13 @@ interface AccountRepository {
     suspend fun transferExternal(
         fromId: String, bank: Bank, accountNumber: String, holderName: String, amount: Long, description: String
     ): Result<Transaction>
+
+    /**
+     * Thanh toán dịch vụ (Feature 5): một Firestore transaction trừ [fromId] và tạo giao dịch PAYMENT từ [payment].
+     * [txId] cố định (hoá đơn) khiến lần trả thứ hai bị rules chặn và trả về [AlreadyPaidException];
+     * null thì dùng id tự sinh. Thiếu tiền trả về [InsufficientFundsException].
+     */
+    suspend fun pay(fromId: String, payment: ServicePayment, txId: String? = null): Result<Transaction>
 }
 
 class FirestoreAccountRepository(
@@ -165,6 +176,29 @@ class FirestoreAccountRepository(
                 }.second
             }.await()
         }
+    }
+
+    override suspend fun pay(fromId: String, payment: ServicePayment, txId: String?): Result<Transaction> {
+        val txRef = txId?.let(transactions::document) ?: transactions.document()
+        val result = runCatching {
+            unwrapInsufficientFunds {
+                db.runTransaction { t ->
+                    debit(t, fromId, txRef, payment.amount) { account, balance ->
+                        Transaction(
+                            id = txRef.id, accountId = fromId, ownerUid = account.ownerUid, accountNumber = account.accountNumber,
+                            type = TransactionType.PAYMENT, amount = payment.amount, balanceAfter = balance,
+                            description = payment.description, counterpartyName = payment.merchant,
+                            counterpartyAccount = payment.reference, paymentRef = payment.paymentRef,
+                            service = payment.service, details = payment.details
+                        )
+                    }.second
+                }.await()
+            }
+        }
+        if (result.isSuccess || txId == null || result.exceptionOrNull() is InsufficientFundsException) return result
+        // Ghi trùng id hoá đơn bị rules chặn như một lần update; không đọc trong transaction vì rules từ chối get document chưa tồn tại
+        val paidBefore = runCatching { txRef.get().await().exists() }.getOrDefault(false)
+        return if (paidBefore) Result.failure(AlreadyPaidException()) else result
     }
 
     /** Trong transaction [t]: đọc nguồn, trừ [amount], ghi số dư + giao dịch do [build] dựng. Trả về (tài khoản nguồn, giao dịch). */

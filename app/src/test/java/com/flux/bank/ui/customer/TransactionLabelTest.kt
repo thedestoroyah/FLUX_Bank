@@ -33,4 +33,10 @@ class TransactionLabelTest {
         assertEquals(TxLabel(R.string.util_deposit), label(Transaction(type = TransactionType.DEPOSIT)))
         assertEquals(TxLabel(R.string.util_withdraw), label(Transaction(type = TransactionType.WITHDRAW)))
     }
+
+    @Test
+    fun paymentShowsDescription() = assertEquals(
+        TxLabel(R.string.tx_payment_title, "Tiền điện kỳ 10/2026"),
+        label(Transaction(type = TransactionType.PAYMENT, description = "Tiền điện kỳ 10/2026"))
+    )
 }

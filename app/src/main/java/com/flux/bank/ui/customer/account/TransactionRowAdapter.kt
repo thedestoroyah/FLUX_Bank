@@ -53,6 +53,7 @@ class TransactionRowAdapter(
             TransactionType.WITHDRAW -> TxLabel(R.string.util_withdraw)
             TransactionType.TRANSFER_OUT -> TxLabel(R.string.tx_transfer_out, TextNormalizer.holderName(tx.counterpartyName))
             TransactionType.TRANSFER_IN -> TxLabel(R.string.tx_transfer_in, TextNormalizer.holderName(tx.counterpartyName))
+            TransactionType.PAYMENT -> TxLabel(R.string.tx_payment_title, tx.description)
         }
 
         fun title(context: Context, tx: Transaction): String =
