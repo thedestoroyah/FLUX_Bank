@@ -143,3 +143,13 @@ Dựng lại mỗi lần gửi (khách có thể vừa trả hoá đơn qua nút
 
 ## 10. Việc để builder tự quyết
 Tên lớp/file, chữ chính xác của system instruction và bảng từ khoá, cách tách hàm mở tiện ích dùng chung, cách giới hạn 20 s, layout chi tiết theo mockup đã duyệt.
+
+## 11. Ghi chú khi làm (2026-11-13)
+Các chỗ đã đổi so với bản duyệt, lý do ghi trong ledger thực thi và commit:
+- Firebase BoM **34.19.0** thay vì 35.x: thư viện của BoM 35 biên dịch bằng Kotlin 2.4, AGP 9.4.1 của project kèm Kotlin 2.2.
+- Model **`gemini-3.5-flash`, thinking tắt** (`thinkingBudget = 0`): `gemini-3.8-flash` liên tục báo quá tải (HTTP 500) ở free tier; để thinking mặc định thì một lượt > 60 s, tắt thì ~6 s.
+- Luồng bật AI Logic mới tự **bắt buộc App Check**; chủ dự án đã chọn **Unenforce** tạm (đúng §4: App Check làm khi lên Play).
+- Nút `TRANSFER` mở **màn chọn kiểu chuyển** (`TransferHubFragment`) dạng màn phụ, không chuyển tab (chuyển tab xoá back stack và mất cuộc trò chuyện).
+- Câu có mã OTP / mật khẩu được trả lời **ngay trên máy**, không gửi lên Gemini và không nằm trong lịch sử gửi đi (siết thêm phản mục tiêu ở §2).
+- Hạn 20 s tính cho cả tải số liệu (tối đa 5 s) lẫn gọi AI.
+

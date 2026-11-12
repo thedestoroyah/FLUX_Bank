@@ -89,6 +89,11 @@ npx firebase emulators:exec --only firestore --project demo-flux "node --test ru
 Không cần cấu hình gì: bản đồ là OpenStreetMap qua OSMDroid, đường đi bộ từ server OSRM công cộng, cả hai miễn phí, không key, không billing.
 (Đã thử Google Maps nhưng Google Cloud từ chối tạo tài khoản thanh toán, lỗi `OR_BACR2_59`.) Cần mạng để tải nền bản đồ và đường đi.
 
+### 8. Trợ lý AI (Feature 7)
+Firebase Console → **AI Logic** → Get started → chọn **Gemini Developer API** (miễn phí, không cần thẻ, vẫn ở gói Spark; không có API key Gemini trong APK).
+Luồng bật mới tự **bắt buộc App Check** cho AI Logic: tạm tắt ở Console → App Check → tab APIs → Firebase AI Logic → Unenforce (có thể mất tới 15 phút mới có hiệu lực). Bật lại kèm Play Integrity khi đưa lên Play.
+Chưa bật (hoặc mất mạng, hết lượt miễn phí) thì màn chat vẫn chạy ở "Chế độ cơ bản" (trả lời theo từ khoá trên máy); lý do lỗi ghi ở Logcat, tag `AssistantViewModel`.
+
 ## Luồng demo
 Nhân viên đăng nhập → tạo khách hàng (mật khẩu tạm) → khách đăng nhập, bắt buộc đổi mật khẩu → khách nộp eKYC → nhân viên duyệt → khách bật sinh trắc học, khoá/mở khoá app → đổi SĐT qua OTP → kiểm tra xác thực khuôn mặt.
 
@@ -112,6 +117,11 @@ Feature 6 (chi nhánh, cần mạng): Trang chủ → Chi nhánh → cho phép v
 → chạm chi nhánh khác (đường vẽ lại) → "Quay lại gợi ý" → tắt mạng, bấm nút vị trí: đường thẳng nét đứt + "Thử lại".
 Cụm chi nhánh demo đặt quanh cổng TDTU (19 Nguyễn Hữu Thọ, Q.7): đứng ở đó sẽ thấy FLUX Tân Phong gần hơn theo đường thẳng (393 m) nhưng phải đi bộ 1,3 km, app gợi ý FLUX Nguyễn Hữu Thọ (612 m).
 
+Feature 7 (Trợ lý AI): Trang chủ → Trợ lý AI → chạm chip "Nạp tiền điện thoại" → câu trả lời kèm nút → mở màn Nạp ĐT → back, cuộc trò chuyện vẫn còn
+→ gõ "tháng này mình tiêu hết bao nhiêu rồi" → số liệu thật + nút "Xem giao dịch tháng N" → màn tháng có tổng vào/ra
+→ gõ "hoá đơn điện" → nút Thanh toán tiền điện → gõ "mã OTP của tôi là 123456" → bot nhắc không chia sẻ
+→ bật chế độ máy bay, gõ "chuyển tiền" → nhãn "Chế độ cơ bản" + nút mở form chuyển tiền.
+
 ## Giới hạn đã biết
 Gói Spark không có Cloud Functions nên OTP và đối chiếu khuôn mặt được kiểm tra trên thiết bị; Security Rules chỉ giới hạn ai được sửa field nào. Hướng nâng cấp: Cloud Functions phát/kiểm token xác thực trước khi ghi giao dịch.
 
@@ -133,3 +143,10 @@ Feature 6:
 - Nền bản đồ (tile.openstreetmap.org) và đường đi bộ (OSRM công cộng của FOSSGIS) là dịch vụ miễn phí, không cam kết luôn chạy, chỉ dùng mức nhẹ theo chính sách của OSM. Lỗi hoặc mất mạng thì app gợi ý theo đường thẳng và ghi rõ.
 - Gợi ý chỉ so 3 chi nhánh gần nhất theo đường thẳng; xa hơn 20 km thì không tính đường đi bộ.
 - Toạ độ người dùng được gửi tới server chỉ đường bên thứ ba (không lưu ở FLUX); khai báo ở mục Data safety khi lên Play Store.
+
+Feature 7:
+- Gemini Developer API ở free tier có giới hạn lượt/phút và lượt/ngày; hết lượt, mất mạng hay quá 20 giây thì app trả lời bằng từ khoá ("Chế độ cơ bản").
+- Chưa bật App Check cho AI Logic: ai có file cấu hình Firebase của app cũng dùng được quota Gemini miễn phí của project (không mất tiền, chỉ hết lượt). Bật cùng Play Integrity khi lên Play.
+- Câu hỏi và số liệu tóm tắt (số dư theo loại tài khoản, tổng chi theo nhóm trong tháng) được gửi tới Google; free tier có thể dùng nội dung này để cải thiện sản phẩm. App không gửi số tài khoản, SĐT, CCCD hay tên người nhận. Khai báo ở Data safety khi lên Play.
+- Bot chỉ mở màn chức năng, không tự giao dịch và không điền sẵn form; câu trả lời của AI có thể chưa chính xác (ghi ngay dưới tiêu đề màn chat).
+- Cuộc trò chuyện không lưu: rời màn chat về trang chủ là mất.
