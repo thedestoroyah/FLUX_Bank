@@ -192,7 +192,7 @@ class BranchMapFragment : Fragment() {
         val isPick = selected.branch.id == rec.pick.branch.id
         tvSection.setText(
             when {
-                isPick && s.routeFailed -> R.string.branch_straight_nearest
+                isPick && (s.routeFailed || s.tooFar) -> R.string.branch_straight_nearest
                 isPick -> R.string.branch_recommended
                 else -> R.string.branch_selected
             }
@@ -314,7 +314,8 @@ class BranchMapFragment : Fragment() {
         }
         val user = s.user
         val target = s.branches.firstOrNull { it.branch.id == s.selectedId }
-        if (user != null && target != null) drawRoute(googleMap, s.route, user, target)
+        // Ở quá xa (> 20 km) thì không vẽ đường: một nét đứt xuyên tỉnh/xuyên biển chỉ gây rối
+        if (user != null && target != null && !s.tooFar) drawRoute(googleMap, s.route, user, target)
         moveCamera(googleMap, user, target, s)
     }
 
@@ -337,10 +338,11 @@ class BranchMapFragment : Fragment() {
 
     /** Chỉ dời camera khi vị trí hoặc chi nhánh đang chọn đổi, không phải mỗi lần state phát lại. */
     private fun moveCamera(googleMap: GoogleMap, user: GeoPoint?, target: RankedBranch?, s: BranchMapState) {
-        val key = Triple(user, target?.branch?.id, s.issue)
+        val key = listOf(user, target?.branch?.id, s.issue, s.tooFar)
         if (key == cameraKey) return
         cameraKey = key
         val points = when {
+            s.tooFar -> Branches.ALL.map { it.location }
             user != null && target != null -> listOf(user, target.branch.location)
             user != null -> listOf(user)
             else -> Branches.ALL.map { it.location }
@@ -351,7 +353,15 @@ class BranchMapFragment : Fragment() {
             return
         }
         val bounds = LatLngBounds.builder().apply { points.forEach { include(it.toLatLng()) } }.build()
-        binding.root.post { if (_binding != null) googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding)) }
+        binding.root.post {
+            if (_binding == null || map !== googleMap) return@post
+            try {
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
+            } catch (e: IllegalStateException) {
+                // Màn ngang: bản đồ trừ phần đệm (sheet + nút) có thể nhỏ hơn padding, SDK ném lỗi; lùi về căn giữa
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(bounds.center, SINGLE_POINT_ZOOM))
+            }
+        }
     }
 
     private fun hasPermission(): Boolean = listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)

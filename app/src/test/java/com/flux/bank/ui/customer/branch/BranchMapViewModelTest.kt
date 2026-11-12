@@ -122,13 +122,70 @@ class BranchMapViewModelTest {
         assertFalse(s().loading)
     }
 
+    // Điểm mới cách TDTU vài chục mét: 3 ứng viên vẫn là cụm Q7, Bến Thành không phải ứng viên
+    private val moved = GeoPoint(10.7330, 106.7000)
+
     @Test
     fun relocateClearsRouteCache() {
         vm.start(hasPermission = true)
-        location.result = LocationResult.Found(GeoPoint(10.7725, 106.6980))
+        vm.select("q1-ben-thanh")
+        location.result = LocationResult.Found(moved)
         vm.locate()
-        assertEquals(6, router.calls.size)
-        assertEquals(GeoPoint(10.7725, 106.6980), s().user)
+        val before = router.calls.size
+        vm.select("q1-ben-thanh")
+        assertEquals(before + 1, router.calls.size)
+        assertEquals(moved, (s().route as RouteUi.Walking).route.path.first())
+    }
+
+    @Test
+    fun selectDuringRelocateDrawsNoStaleRoute() {
+        vm.start(hasPermission = true)
+        location.result = LocationResult.Found(moved)
+        val gate = CompletableDeferred<Unit>()
+        location.gate = gate
+        vm.locate()
+        vm.select("q1-ben-thanh")
+        gate.complete(Unit)
+        assertEquals(s().recommendation!!.pick.branch.id, s().selectedId)
+        assertEquals(moved, (s().route as RouteUi.Walking).route.path.first())
+        vm.select("q1-ben-thanh")
+        assertEquals(moved, (s().route as RouteUi.Walking).route.path.first())
+    }
+
+    @Test
+    fun relocateShowsLoading() {
+        vm.start(hasPermission = true)
+        location.gate = CompletableDeferred()
+        vm.locate()
+        assertTrue(s().loading)
+        assertNull(s().recommendation)
+    }
+
+    @Test
+    fun farAwayIsNotAFailure() {
+        location.result = LocationResult.Found(GeoPoint(21.0285, 105.8542))
+        vm.start(hasPermission = true)
+        assertTrue(s().tooFar)
+        assertFalse(s().routeFailed)
+        assertEquals(0, router.calls.size)
+    }
+
+    @Test
+    fun retryRouteDoesNotRelocate() {
+        router.fail = true
+        vm.start(hasPermission = true)
+        router.fail = false
+        vm.retryRoute()
+        assertEquals(1, location.calls)
+        assertTrue(s().route is RouteUi.Walking)
+    }
+
+    @Test
+    fun locationErrorShowsTimeout() {
+        location.error = IllegalStateException("no play services")
+        vm.start(hasPermission = true)
+        assertEquals(LocationIssue.TIMEOUT, s().issue)
+        assertFalse(s().loading)
     }
 
     @Test
