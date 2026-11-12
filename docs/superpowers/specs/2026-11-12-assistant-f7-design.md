@@ -152,4 +152,4 @@ Các chỗ đã đổi so với bản duyệt, lý do ghi trong ledger thực th
 - Nút `TRANSFER` mở **màn chọn kiểu chuyển** (`TransferHubFragment`) dạng màn phụ, không chuyển tab (chuyển tab xoá back stack và mất cuộc trò chuyện).
 - Câu có mã OTP / mật khẩu được trả lời **ngay trên máy**, không gửi lên Gemini và không nằm trong lịch sử gửi đi (siết thêm phản mục tiêu ở §2).
 - Hạn 20 s tính cho cả tải số liệu (tối đa 5 s) lẫn gọi AI.
-
+- Cập nhật 2026-11-13 (nhánh `chore/play-release`): đổi sang **`gemini-3.5-flash-lite`** (không `thinkingConfig`, model này không nhận): `gemini-3.5-flash` ở free tier chỉ **20 lượt/ngày cho cả project**, không đủ cho 12 người thử.

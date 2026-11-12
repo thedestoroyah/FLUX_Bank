@@ -1,4 +1,4 @@
-# FLUX Bank — Handoff (cập nhật 2026-11-13, sau F7)
+# FLUX Bank — Handoff (cập nhật 2026-11-13, đang chuẩn bị lên Google Play)
 
 Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc file này trước, sau đó đọc `PROJECT_CONTEXT.md` (kiến trúc, design system, dữ liệu).
 
@@ -15,7 +15,8 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 
 ## 2. Trạng thái hiện tại
 
-- Repo git ở `FLUX_Bank/`, remote `origin` = GitHub private `thedestoroyah/FLUX_Bank` (HTTPS, tạo 2026-11-12; SSH key chưa gắn với GitHub nên dùng HTTPS qua `gh`). **`main` có F1–F7**: F4 merge 2026-10-28 (`9f6e5c3`), F5 merge 2026-11-12 (`9c3a311`), F6 merge 2026-11-12 (`ac3de12`), F7 merge 2026-11-13 (`d3ad2a5`); tất cả đã review toàn nhánh và chạy trên máy thật (mục 3). **`main` ở máy đang đi trước `origin/main` (F6, F7 chưa push)**: chạy `git push origin main` khi chủ dự án đồng ý.
+- Repo git ở `FLUX_Bank/`, remote `origin` = GitHub private `thedestoroyah/FLUX_Bank` (HTTPS, tạo 2026-11-12; SSH key chưa gắn với GitHub nên dùng HTTPS qua `gh`). **`main` có F1–F7**: F4 merge 2026-10-28 (`9f6e5c3`), F5 merge 2026-11-12 (`9c3a311`), F6 merge 2026-11-12 (`ac3de12`), F7 merge 2026-11-13 (`d3ad2a5`); tất cả đã review toàn nhánh và chạy trên máy thật (mục 3). `main` đã khớp `origin/main` (kiểm 2026-11-13).
+- **Đang làm: chuẩn bị phát hành Google Play trên nhánh `chore/play-release`** (chưa merge, chưa push). Spec `docs/superpowers/specs/2026-11-13-play-release-design.md`, plan `docs/superpowers/plans/2026-11-13-play-release.md`, ledger thực thi `.superpowers/sdd/2026-11-13-play-release/progress.md` (gitignored, còn trên máy — `superpowers:executing-plans` đọc ledger để làm tiếp). Trạng thái chi tiết ở mục 3, "Cho bản phát hành Google Play".
 - **F7 (Trợ lý AI) đã merge vào `main`** (2026-11-13): review toàn nhánh bởi reviewer độc lập (0 Critical, 4 Important + 2 Minor nâng lên Important, đã sửa hết có test), chạy trên Xiaomi với Gemini thật. Xem mục 3 và 7.
 - **Unit test 391/391 pass** (sau F7), rules test 49/49 (F7 không đổi rules), `assembleDebug` + `lintDebug` pass (0 error). F6 review toàn nhánh (2026-11-12): 0 Critical, 6 Important đã sửa có test (chạm chi nhánh lúc đang định vị lại vẽ đường từ vị trí cũ, test cache yếu, ở xa > 20 km bị báo lỗi mạng, lỗi API vị trí làm crash, định vị lại không có khung chờ, "Thử lại" bật GPS lại; thêm chặn lỗi camera khi xoay ngang). F5 review toàn nhánh: 0 Critical, 3 Important đã sửa có test (chiếm id hoá đơn của người khác, mã biên lai hoá đơn trùng, lỗi hạn mức hiện muộn). F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test).
 - F1–F2 và F3 đều đã được reviewer độc lập review toàn nhánh, đã sửa hết lỗi Important; lỗi Minor còn lại ở mục 7. F3 đã chạy demo đạt trên máy thật (mục 3).
@@ -31,11 +32,10 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 | Feature 4 | Tab Chuyển tiền: trong FLUX (tra tên theo số TK qua `accountIndex`), giữa tài khoản của tôi, liên ngân hàng giả lập (10 ngân hàng), người nhận gần đây. Kiểm tra trước khi ghi (`TransferPolicy`: 10k–100tr/lần, 200tr/ngày giờ VN). Rules: cộng tiền cho người khác phải có TRANSFER_OUT cặp đã trừ nguồn cùng lần ghi, thông tin người gửi trên TRANSFER_IN không giả được (40 ca test). Nạp tiền qua VNPay sandbox (WebView, kiểm HMAC-SHA512). Nút QR giữa: quét / "Mã của tôi" |
 | Feature 5 | 7 ô tiện ích qua 3 kiểu màn: Hoá đơn (điện, nước; tra cứu giả lập, mỗi hoá đơn trả một lần, rules chặn trùng), Nạp ĐT (nhà mạng theo đầu số, 6 mệnh giá), Danh mục (vé máy bay, vé phim, khách sạn, mua sắm; mã đặt chỗ trên biên lai). Giao dịch loại `PAYMENT`, hạn mức ngày gộp với chuyển tiền. `DESIGN.md` rút từ code bằng skill impeccable |
 | Feature 6 | Ô Chi nhánh: bản đồ OpenStreetMap (OSMDroid) + bottom sheet, vị trí qua Fused Location, gợi ý chi nhánh có **quãng đi bộ ngắn nhất** (OSRM công cộng, so 3 chi nhánh gần nhất theo đường thẳng, có dòng giải thích khi chi nhánh gần nhất phải đi vòng), danh sách, chọn chi nhánh khác, dự phòng đường thẳng khi mất mạng, xử lý từ chối quyền / tắt định vị / hết giờ chờ. 12 chi nhánh giả lập, cụm demo quanh TDTU |
-
-| Feature 7 | Ô Trợ lý AI: màn chat, Gemini qua Firebase AI Logic (gói Spark, model `gemini-3.5-flash` tắt thinking), câu trả lời kèm 0–3 nút mở đúng màn F3–F6, số liệu chi tiêu thật của tháng, "Chế độ cơ bản" theo từ khoá khi mất mạng / hết lượt / quá 20 s, tin chứa OTP trả lời ngay trên máy (không gửi Google). Màn "Giao dịch tháng N" (Lịch sử lọc theo tháng, giờ VN) |
+| Feature 7 | Ô Trợ lý AI: màn chat, Gemini qua Firebase AI Logic (gói Spark; model `gemini-3.5-flash-lite` trên nhánh `chore/play-release`, `main` còn `gemini-3.5-flash` tắt thinking), câu trả lời kèm 0–3 nút mở đúng màn F3–F6, số liệu chi tiêu thật của tháng, "Chế độ cơ bản" theo từ khoá khi mất mạng / hết lượt / quá 20 s, tin chứa OTP trả lời ngay trên máy (không gửi Google). Màn "Giao dịch tháng N" (Lịch sử lọc theo tháng, giờ VN) |
 
 ### Chưa làm
-- Đưa lên Play Store (bật lại App Check cho AI Logic kèm Play Integrity), viết báo cáo, quay video demo.
+- Hoàn tất lên Play Store (đang làm, mục 3), viết báo cáo, quay video demo.
 
 ## 3. Việc chủ dự án cần làm
 
@@ -78,11 +78,29 @@ Cho Feature 6 (đã merge vào `main` 2026-11-12):
 - Mẹo adb cho F6: đừng `input swipe` từ mép dưới (trúng cử chỉ về màn hình chính của MIUI); kéo sheet từ giữa sheet. Đặt lại quyền vị trí: `pm revoke` + `pm clear-permission-flags … user-set user-fixed`. Ép xoay: `settings put system accelerometer_rotation 0` + `user_rotation 1` (nhớ trả lại).
 
 Cho Feature 7 (đã merge vào `main` 2026-11-13):
-1. Đã xong: Console → AI Logic → Gemini Developer API (không thẻ). Luồng bật mới tự bắt buộc App Check → chủ dự án đã **Unenforce** App Check cho AI Logic (Console → App Check → APIs). **Khi lên Play phải bật lại** kèm Play Integrity (debug provider cho bản debug).
+1. Đã xong: Console → AI Logic → Gemini Developer API (không thẻ). Luồng bật mới tự bắt buộc App Check → chủ dự án đã **Unenforce** App Check cho AI Logic (Console → App Check → APIs). Code App Check đã có trên nhánh `chore/play-release`; thứ tự bật lại ở mục "Cho bản phát hành Google Play".
 2. Chạy trên Xiaomi — đạt: chip "Nạp tiền điện thoại" → nút → màn Nạp ĐT → back còn chat; hỏi chi tiêu tháng (AI thật, ~6 s) → "4.282.200 ₫ qua 3 giao dịch" + nút → màn "Giao dịch tháng 11/2026" có tổng vào/ra khớp; "mã OTP của tôi là 482915" → nhắc không chia sẻ, không gửi lên AI; "chuyển tiền sang Vietcombank" → AI + nút → màn chọn kiểu chuyển → vuốt back còn chat; chế độ cơ bản khi AI lỗi (nhãn vàng); header/bàn phím không che nội dung.
-3. Mẹo: lý do AI lỗi ghi ở Logcat tag `AssistantViewModel`. Gọi thử API không cần điện thoại: `curl -X POST "https://firebasevertexai.googleapis.com/v1beta/projects/banking-app-final-b5407/models/${M}:generateContent" -H "x-goog-api-key: <api_key trong google-services.json>" -d '{"contents":[...]}'` — trong zsh viết `${M}:generateContent` (viết `$M:g…` bị zsh hiểu thành modifier, ra lỗi 400 HTML). Free tier: `gemini-2.5-*` không còn cho người dùng mới; `gemini-3.8-flash` hay báo "high demand".
+3. Mẹo: lý do AI lỗi ghi ở Logcat tag `AssistantViewModel`. Gọi thử API không cần điện thoại: `curl -X POST "https://firebasevertexai.googleapis.com/v1beta/projects/banking-app-final-b5407/models/${M}:generateContent" -H "x-goog-api-key: <api_key trong google-services.json>" -d '{"contents":[...]}'` — trong zsh viết `${M}:generateContent` (viết `$M:g…` bị zsh hiểu thành modifier, ra lỗi 400 HTML). Free tier (đo 2026-11-13): `gemini-2.5-*` không còn cho người dùng mới; `gemini-3.8-flash` hay báo "high demand"; **`gemini-3.5-flash` chỉ 20 lượt/ngày cho cả project** (HTTP 429, hết thì chờ ~12 h) nên đã chuyển sang `gemini-3.5-flash-lite` (không nhận `thinkingConfig` → HTTP 400; trả lời 2–20 s). Đừng gọi thử API bừa bãi: mỗi lần gọi trừ quota của người thử.
 4. **Chưa thử**: chế độ máy bay thật (đã thấy chế độ cơ bản khi API lỗi), hết quota ngày.
-- Mẹo adb: helper chạm theo `resource-id` cần chạy bằng bash (zsh không tách từ khi `set -- $b`).
+- Mẹo adb: helper chạm theo `resource-id` cần chạy bằng bash (zsh không tách từ khi `set -- $b`). Bản ở session 2026-11-13: `bash` script nhận resource-id, `uiautomator dump /dev/tty` → lọc `resource-id="com.flux.bank:id/<id>"` → chạm giữa `bounds`. Ví dụ id: `chipMonth`, `etMessage`, `btnBack`, `btnSend`.
+
+Cho bản phát hành Google Play (nhánh `chore/play-release`, 2026-11-13):
+- Bối cảnh: tài khoản cá nhân mới phải **thử kín ≥ 12 người, liên tục 14 ngày** rồi mới xin được production; hạn 01/12 nên rất sát. Chủ dự án **đã gửi email hỏi thầy** có chấp nhận link thử kín (thêm Gmail thầy làm người thử) hoặc ảnh Play Console + APK thay cho production không — **chưa có phản hồi**. Bản nháp email ở trong lịch sử chat, không lưu file.
+- Đã xong:
+  1. Ký app: `signingConfigs.release` đọc 4 dòng `release.*` trong `local.properties`; thiếu thì chỉ `bundleRelease`/`assembleRelease` báo lỗi (README mục 9). **Keystore thật đã tạo** ở `~/keystores/flux-upload.jks` (alias `upload`, CN=PHAM HUYNH QUOC DAT), mật khẩu chỉ chủ dự án biết. `./gradlew bundleRelease` → `app/build/outputs/bundle/release/app-release.aab` (~55 MB, `jarsigner -verify` đạt). Đã nhắc chủ dự án sao lưu keystore + mật khẩu.
+  2. App Check: `app/src/{debug,release}/java/com/flux/bank/AppCheckSetup.kt` (debug provider / Play Integrity), gọi ở `FluxApp.onCreate`; `releaseRuntimeClasspath` không có `appcheck-debug`. Trên Xiaomi bản debug in **debug token `ef229bcd-a901-41f5-bad0-ad5c06d4ba9f`** (Logcat tag `DebugAppCheckProvider`); chưa đăng ký nên Firebase trả 403 nhưng AI vẫn chạy vì AI Logic đang Unenforce.
+  3. Màn đăng nhập thêm dòng "Ứng dụng demo cho đồ án môn học · tiền và giao dịch đều là giả lập" (chưa xem trên máy).
+  4. `docs/play/`: `privacy-policy.md` (đã đăng **Gist công khai** https://gist.github.com/thedestoroyah/a48a98939a1fc13b32d8913c0d8711df, email liên hệ datpham1365@gmail.com, chủ dự án đồng ý), `play-console-answers.md` (điền theo thứ tự trong Console: App access, Ads, Content rating, Target audience, Financial features, Data safety, Store listing, Closed testing), `tester-invite.md` (tin mời người thử).
+  5. `docs/play/graphics/`: `icon-512.png`, `feature-1024x500.png` (chủ dự án đã duyệt), `make_graphics.py` (dựng lại icon/ảnh nổi bật; `screenshots <thư mục>` cắt ảnh 1268×2756 về 1268×2536).
+  6. Trợ lý đổi sang `gemini-3.5-flash-lite` (xem mục F7 ở trên), đã thử trên máy: AI trả lời + nút đúng.
+- Tài khoản thử: **dùng lại khách thử và nhân viên thử sẵn có** (hồ sơ giả; ảnh eKYC không phải CCCD thật — chủ dự án xác nhận). Khách thử cho 12 người thử + mục App access của Play; nhân viên thử **chỉ gửi thầy**. Chủ dự án cần **đổi mật khẩu cả hai** trước khi gửi ai.
+- **Còn lại, theo thứ tự:**
+  1. Chủ dự án đăng ký debug token trên Firebase Console → App Check → app Android → Manage debug tokens.
+  2. Chủ dự án tắt 2 bong bóng nổi (TT Zone, Messenger) trên Xiaomi → Claude chụp 6 màn bằng khách thử: trang chủ, chuyển tiền, Nạp ĐT, lịch sử, bản đồ chi nhánh, Trợ lý (có câu trả lời) → `make_graphics.py screenshots <thư mục>` → soát không lộ dữ liệu thật/bong bóng → commit (plan Task 5 bước 3–5).
+  3. Kiểm trên máy (làm cuối vì mất phiên đăng nhập, chủ dự án đăng nhập lại): đăng xuất xem dòng chú thích demo; gỡ bản debug, cài `assembleRelease` (ký khoá thật) → mở app không crash, Trợ lý AI hoặc chế độ cơ bản; cài lại bản debug (plan Task 2 bước 5, Task 3 bước 2).
+  4. (AAB hiện có đã build lại 2026-11-13 sau khi đổi model lite. Sửa code thêm thì chạy lại `./gradlew bundleRelease`; tải bản mới lên Play thì tăng `versionCode`.) Chủ dự án: Play Console → tạo app → điền theo `docs/play/play-console-answers.md` → tải `app-release.aab` lên **Closed testing** → thêm ≥ 12 Gmail người thử → gửi duyệt → gửi `tester-invite.md`. Ghi ngày người thứ 12 opt-in (bắt đầu đếm 14 ngày).
+  5. App Check (plan Task 6 bước 5): SHA-256 khoá ký app (Play Console → App integrity) + SHA-256 khoá upload (`keytool -list -v -keystore ~/keystores/flux-upload.jks`) → Firebase App Check → Play Integrity → thử Trợ lý bản debug vẫn ra AI → **mới Enforce** cho Firebase AI Logic (không Enforce Firestore/Auth).
+  6. Review toàn nhánh (reviewer độc lập) → merge `chore/play-release` vào `main` → cập nhật HANDOFF.
 
 ## 4. Những điều chủ dự án đã quyết định (đừng hỏi lại)
 
@@ -99,6 +117,7 @@ Cho Feature 7 (đã merge vào `main` 2026-11-13):
 - F5 (chủ dự án bỏ qua hỏi đáp, duyệt toàn bộ spec + mockup + plan 2026-11-12): 3 kiểu màn cho 7 tiện ích, dữ liệu giả lập nằm trong app (không lưu Firestore), giao dịch loại `PAYMENT`, hạn mức ngày **gộp chung** với chuyển tiền, không chọn ghế / khứ hồi / giỏ hàng / hoàn tiền.
 - **Không làm lại giao diện** (2026-11-12): giữ design system hiện có, chỉ dùng skill impeccable để làm mockup màn mới và soát (`critique`/`audit`) trước khi quay video. `DESIGN.md` là bản mô tả design system cho AI đọc.
 - F7 (chủ dự án bỏ qua hỏi đáp, duyệt spec + mockup + plan 2026-11-12, chọn thực thi native): Gemini qua Firebase AI Logic (gói Spark), bot chỉ mở màn (không tự giao dịch, không điền form), không lưu chat, chế độ cơ bản trên máy; App Check tạm Unenforce, bật lại khi lên Play.
+- Phát hành Play (chủ dự án bỏ qua hỏi đáp, duyệt spec + plan 2026-11-13, chọn native): tên trên Play **"FLUX Bank (Demo)"**, dòng chú thích demo ở màn đăng nhập, Play App Signing + khoá upload ngoài repo, App Check chỉ cho AI Logic, chính sách bảo mật song ngữ trên Gist công khai, Financial features khai *Money transfer* + *Mobile payments* (giả lập), đối tượng 18+, không quảng cáo, dùng lại tài khoản thử sẵn có.
 - **Chạy thử trên điện thoại thật của chủ dự án** (Xiaomi cắm adb), không dùng emulator. Nếu máy đang khoá (`isKeyguardShowing=true`) thì nhờ chủ dự án mở khoá.
 
 ## 5. Tài liệu & file quan trọng
@@ -116,11 +135,13 @@ Cho Feature 7 (đã merge vào `main` 2026-11-13):
 | `docs/superpowers/specs/2026-11-12-utilities-f5-design.md`, `docs/superpowers/plans/2026-11-12-utilities-f5.md` | Spec + plan F5 (đã merge) |
 | `docs/superpowers/specs/2026-11-12-navigation-f6-design.md`, `docs/superpowers/plans/2026-11-12-navigation-f6.md` | Spec + plan F6 (đã merge) |
 | `docs/superpowers/specs/2026-11-12-assistant-f7-design.md`, `docs/superpowers/plans/2026-11-12-assistant-f7.md` | Spec (có §11 ghi chú khi làm) + plan F7 |
+| `docs/superpowers/specs/2026-11-13-play-release-design.md`, `docs/superpowers/plans/2026-11-13-play-release.md` | Spec + plan chuẩn bị phát hành Play (đang làm, nhánh `chore/play-release`) |
+| `docs/play/` | Chính sách bảo mật, câu trả lời Play Console, tin mời người thử, hình ảnh trang Play + script dựng |
 | `DESIGN.md`, `.impeccable/design.json` | Design system "The Titanium Ledger" rút từ code (token, quy tắc, component) — đọc trước khi làm mockup/màn mới |
 | `docs/licenses/` | Giấy phép Inter (OFL), Phosphor (MIT), MobileFaceNet (MIT), ZXing (Apache-2.0), OSMDroid (Apache-2.0) + dữ liệu OpenStreetMap (ODbL) |
 
 ### Bản đồ code (`app/src/main/java/com/flux/bank/`)
-- `FluxApp.kt`: service locator, giữ `assistantClient` (F7), `authRepository`, `userRepository`, `kycRepository`, `accountRepository`, `transactionRepository`, `ratesRepository`, `payeeRepository`, `vnPay`, `otpManager`, `otpNotifier`, `sessionManager`, `lockPolicy`, `appLockObserver`, `onboardingService`, `walkingRouter`, `branchRecommender`, `locationSource` (F6).
+- `FluxApp.kt`: service locator, gọi `installAppCheck(this)` (bản riêng ở `src/debug` và `src/release`), giữ `assistantClient` (F7), `authRepository`, `userRepository`, `kycRepository`, `accountRepository`, `transactionRepository`, `ratesRepository`, `payeeRepository`, `vnPay`, `otpManager`, `otpNotifier`, `sessionManager`, `lockPolicy`, `appLockObserver`, `onboardingService`, `walkingRouter`, `branchRecommender`, `locationSource` (F6).
 - `core/format/MoneyFormatter`, `DistanceFormatter` (F6), `core/validation/Validators`.
 - `core/security/`: `OtpManager`, `OtpNotifier` (+ `OtpAutofillActivity`), `LockPolicy`, `AppLockObserver`.
 - `data/model/`: `User`, `KycRecord`, `BankAccount` (+ `AccountType`), `Transaction` (+ `TransactionType`), `ServicePayment` (+ `DetailRow`), `Rates`, `Bank`, `Payee`.
@@ -160,6 +181,8 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 - **Test rules**: `rules-test/` (Node + Firestore emulator), xem README mục 5.
 - **Firestore Console**: gõ tay tên field khi tạo document (copy từ markdown có thể dính ký tự ẩn U+200B, app sẽ không đọc được field).
 - **Git/GitHub**: `git push origin main` (HTTPS qua `gh`, đã cấu hình; cần chạy ngoài sandbox). Không `--force`.
+- **Điện thoại nối qua bộ chia USB EPZ TP35 Pro** (cắm thẳng vào laptop bằng cáp khác từng báo `unable to enumerate USB device` trong `journalctl -k`, tức cáp chỉ sạc / tiếp xúc kém). Không thấy máy thì xem `lsusb` và `journalctl -k --since "-10 min" | grep -i usb` trước khi đổ lỗi cho adb.
+- **Keystore / mật khẩu**: không bao giờ đọc, in hay commit mật khẩu trong `local.properties`; kiểm chữ ký bằng `jarsigner -verify -verbose:summary -certs app/build/outputs/bundle/release/app-release.aab`.
 - **adb phải chạy ngoài sandbox của Claude Code**: server adb khởi động trong sandbox không mở được USB nên `adb devices` trống dù máy đã cắm (`lsusb` vẫn thấy Xiaomi). Sửa: `adb kill-server && adb start-server` ngoài sandbox.
 - **Skill thiết kế**: `impeccable` cài ở `Final_Exam/.claude/skills/` nên phải mở Claude Code từ thư mục `Final_Exam` (không phải `FLUX_Bank`) thì mới có. Bộ `taste` chỉ dành cho video, không dùng cho app.
 - **Emulator** (chỉ khi không có điện thoại): AVD `Pixel_7` (Android 37, image production nên không có adb root). Chạy không cửa sổ ở chế độ background:
@@ -242,11 +265,12 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 
 ## 9. Cách bắt đầu session mới
 
-Mở Claude Code từ thư mục `Final_Exam/` (để có skill impeccable), cắm điện thoại Xiaomi và mở khoá, rồi dùng câu lệnh mở đầu:
-> Đọc `FLUX_Bank/HANDOFF.md` và `FLUX_Bank/PROJECT_CONTEXT.md`. Đủ 7 feature rồi; tiếp theo chuẩn bị đưa lên Google Play (bật App Check + Play Integrity cho AI Logic, Data safety) rồi viết báo cáo.
+Mở Claude Code từ thư mục `Final_Exam/` (để có skill impeccable), cắm điện thoại Xiaomi (qua bộ chia EPZ) và mở khoá, rồi dùng câu lệnh mở đầu:
+> Đọc `FLUX_Bank/HANDOFF.md` và `FLUX_Bank/PROJECT_CONTEXT.md`. Tiếp tục chuẩn bị phát hành Google Play trên nhánh `chore/play-release` bằng `/superpowers:executing-plans docs/superpowers/plans/2026-11-13-play-release.md` (ledger ở `.superpowers/sdd/2026-11-13-play-release/progress.md`), bắt đầu từ mục "Còn lại" trong HANDOFF mục 3.
 
 Quy trình đã dùng và nên giữ: `superpowers:brainstorming` (hỏi từng câu, mockup HTML trên visual companion) → viết spec vào `docs/superpowers/specs/` → `superpowers:writing-plans` → `superpowers:executing-plans` (chủ dự án chọn chế độ **Native**) → review toàn nhánh → `finishing-a-development-branch`.
 
 Còn **18 ngày** (tính từ 2026-11-13; F1–F7 đã xong). Lịch đề xuất:
-1. **Play Store** — làm ngay: tài khoản developer 25 USD (thanh toán Google Play khác Google Cloud, nhưng có thể gặp lỗi thẻ tương tự — thử sớm); tài khoản cá nhân mới thường phải chạy kiểm thử kín (closed testing) với nhiều người thử trong nhiều ngày trước khi lên production, nên tạo bản internal/closed testing sớm. Data safety khai báo: vị trí (gửi server chỉ đường bên thứ ba), ảnh eKYC, tài chính, **nội dung chat + số liệu tóm tắt gửi tới Google Gemini**. Bật lại App Check cho AI Logic (Play Integrity cho bản Play, debug provider cho bản debug) — bản release cài bằng adb có thể bị Play Integrity từ chối.
-2. **Báo cáo + video** (từ ~20/11): class diagram, ERD, use case, kiến trúc; trước khi quay chạy `/impeccable critique` hoặc `audit` trên các màn chính và sửa lỗi nhìn thấy (giới hạn 1 ngày). Chừa 5–7 ngày cuối.
+1. **Play Store — ngay ngày đầu session mới**: xong mục "Còn lại" ở mục 3 và tải bản thử kín lên. Mỗi ngày trễ là một ngày mất khỏi 14 ngày thử kín. Theo dõi phản hồi của thầy về production.
+2. **Báo cáo + video** (song song trong lúc chờ 14 ngày): class diagram, ERD, use case, kiến trúc; trước khi quay chạy `/impeccable critique` hoặc `audit` trên các màn chính và sửa lỗi nhìn thấy (giới hạn 1 ngày). Chừa 5–7 ngày cuối.
+3. Quota Gemini miễn phí có hạn: trước ngày quay video hạn chế gọi thử Trợ lý; nếu hết lượt, Trợ lý vẫn chạy chế độ cơ bản.

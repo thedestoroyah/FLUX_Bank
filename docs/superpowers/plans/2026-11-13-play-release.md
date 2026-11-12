@@ -10,6 +10,8 @@
 
 **Spec:** [docs/superpowers/specs/2026-11-13-play-release-design.md](../specs/2026-11-13-play-release-design.md)
 
+**Trạng thái (2026-11-13):** Task 1, 4 xong; Task 2, 3 xong phần code, còn kiểm trên máy (bước 5 / bước 2); Task 5 xong icon + ảnh nổi bật, còn ảnh chụp; Task 6 xong bước 1 (keystore) và 3 (Gist), dùng lại tài khoản thử sẵn có thay cho bước 2. Chi tiết và thứ tự việc còn lại: `HANDOFF.md` mục 3, ledger `.superpowers/sdd/2026-11-13-play-release/progress.md`.
+
 ## Global Constraints
 
 - Không commit: keystore (`*.jks`, `*.keystore`), mật khẩu, mật khẩu tài khoản demo, khoá VNPay. Trước mỗi commit chạy `git diff --cached | grep -iE "password|storePassword|\.jks" ` và chỉ chấp nhận khớp ở tên khoá property / tài liệu hướng dẫn, không có giá trị thật.
