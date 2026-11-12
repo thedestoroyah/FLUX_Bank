@@ -1,5 +1,6 @@
 package com.flux.bank.data
 
+import com.flux.bank.data.model.DetailRow
 import com.flux.bank.data.model.AccountType
 import com.flux.bank.data.model.BankAccount
 import com.flux.bank.data.model.Banks
@@ -78,5 +79,15 @@ class ModelDefaultsTest {
         assertEquals("Vietcombank", Banks.byCode("VCB")!!.shortName)
         assertEquals(10, Banks.ALL.size)
         assertNull(Banks.byCode(Banks.FLUX))
+    }
+
+    @Test
+    fun servicePaymentFieldsDefaultEmpty() {
+        val tx = Transaction()
+        assertNull(tx.service)
+        assertTrue(tx.details.isEmpty())
+        assertEquals("", DetailRow().label)
+        assertEquals("", DetailRow().value)
+        assertFalse(TransactionType.PAYMENT.isIncoming)
     }
 }

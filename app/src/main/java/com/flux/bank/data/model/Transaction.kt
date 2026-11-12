@@ -1,11 +1,12 @@
 package com.flux.bank.data.model
 
-/** Loại giao dịch. Feature 5 sẽ thêm thanh toán hoá đơn... */
+/** Loại giao dịch. PAYMENT = thanh toán dịch vụ của Feature 5 (tiền ra, như WITHDRAW). */
 enum class TransactionType(val isIncoming: Boolean) {
     DEPOSIT(true),
     WITHDRAW(false),
     TRANSFER_OUT(false),
-    TRANSFER_IN(true)
+    TRANSFER_IN(true),
+    PAYMENT(false)
 }
 
 /**
@@ -15,7 +16,8 @@ enum class TransactionType(val isIncoming: Boolean) {
  *
  * Chuyển tiền: `counterparty*` là bên kia (tên, số tài khoản, mã ngân hàng — `Banks.FLUX` nếu cùng ngân hàng);
  * [pairTxId] nối OUT với IN của cùng một lần chuyển trong FLUX (null nếu liên ngân hàng).
- * [paymentRef] là mã giao dịch VNPay của lần nạp.
+ * [paymentRef] là mã giao dịch VNPay của lần nạp; với PAYMENT là khoá hoá đơn hoặc mã đặt chỗ.
+ * Thanh toán dịch vụ: [service] = tên enum `Utility`, [details] = các dòng biên lai theo thứ tự.
  */
 data class Transaction(
     val id: String = "",
@@ -31,5 +33,7 @@ data class Transaction(
     val counterpartyBank: String = "",
     val pairTxId: String? = null,
     val paymentRef: String? = null,
+    val service: String? = null,
+    val details: List<DetailRow> = emptyList(),
     val createdAt: Long = System.currentTimeMillis()
 )

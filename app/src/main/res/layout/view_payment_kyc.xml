@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Thẻ chặn thanh toán khi khách chưa eKYC (dùng chung cho các màn tiện ích F5) -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardKyc"
+    style="@style/Widget.Flux.Card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/space_12"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/space_16">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pay_kyc_blocked"
+            android:textAppearance="@style/TextAppearance.Flux.Body" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnKyc"
+            style="@style/Widget.Flux.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_12"
+            android:text="@string/move_kyc_action"
+            app:icon="@drawable/ic_id_card" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

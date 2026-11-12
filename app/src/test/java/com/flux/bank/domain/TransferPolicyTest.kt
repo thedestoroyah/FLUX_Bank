@@ -69,4 +69,15 @@ class TransferPolicyTest {
         assertFalse(TransferPolicy.isExternalAccountNumber("12345"))
         assertFalse(TransferPolicy.isExternalAccountNumber("12345678901234567890"))
     }
+
+    @Test
+    fun paymentsCountTowardDailyLimit() {
+        val now = at("2026-11-12T10:00+07:00")
+        val history = listOf(
+            tx(TransactionType.TRANSFER_OUT, 50_000_000, now),
+            tx(TransactionType.PAYMENT, 30_000_000, now),
+            tx(TransactionType.WITHDRAW, 9_000_000, now)
+        )
+        assertEquals(80_000_000, TransferPolicy.sentToday(history, now))
+    }
 }

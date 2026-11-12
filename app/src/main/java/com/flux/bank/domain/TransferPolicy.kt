@@ -23,12 +23,12 @@ object TransferPolicy {
     private val EXTERNAL_NUMBER = Regex("^\\d{6,19}$")
 
     /**
-     * Tổng tiền chuyển đi (TRANSFER_OUT) trong cùng ngày Việt Nam với [now].
+     * Tổng tiền chuyển đi và thanh toán dịch vụ (TRANSFER_OUT + PAYMENT, chung một hạn mức) trong cùng ngày Việt Nam với [now].
      * shortcut: chỉ cộng trong 100 giao dịch mới nhất (listRecent), nâng cấp: query theo ngày nếu khách giao dịch nhiều hơn.
      */
     fun sentToday(history: List<Transaction>, now: Long): Long {
         val today = dayOf(now)
-        return history.filter { it.type == TransactionType.TRANSFER_OUT && dayOf(it.createdAt) == today }.sumOf { it.amount }
+        return history.filter { (it.type == TransactionType.TRANSFER_OUT || it.type == TransactionType.PAYMENT) && dayOf(it.createdAt) == today }.sumOf { it.amount }
     }
 
     fun remainingToday(history: List<Transaction>, now: Long): Long = maxOf(0L, DAILY_LIMIT - sentToday(history, now))

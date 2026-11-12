@@ -1,4 +1,4 @@
-# FLUX Bank — Handoff (cập nhật 2026-10-28)
+# FLUX Bank — Handoff (cập nhật 2026-11-12)
 
 Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc file này trước, sau đó đọc `PROJECT_CONTEXT.md` (kiến trúc, design system, dữ liệu).
 
@@ -15,8 +15,8 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 
 ## 2. Trạng thái hiện tại
 
-- Repo git ở `FLUX_Bank/`, chưa có remote. **`main` có F1–F4** (F4 merge 2026-10-28, commit `9f6e5c3`, đã chạy end-to-end đạt trên máy thật, mục 3). Nhánh `feature/f4-transfers` đã xoá.
-- **Unit test: 216/216 pass**, rules test trên emulator 40/40. F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test). `assembleDebug` và `lintDebug` pass (lint 0 error).
+- Repo git ở `FLUX_Bank/`, remote `origin` = GitHub private `thedestoroyah/FLUX_Bank` (HTTPS, tạo 2026-11-12; SSH key chưa gắn với GitHub nên dùng HTTPS qua `gh`). **`main` có F1–F4** (F4 merge 2026-10-28, commit `9f6e5c3`, đã chạy end-to-end đạt trên máy thật, mục 3). **F5 nằm trên nhánh `feature/f5-utilities`** (chưa merge, chờ review toàn nhánh và chủ dự án publish rules).
+- F5: **unit test 292/292 pass**, rules test 49/49, `assembleDebug` + `lintDebug` pass (0 error). (Trên `main`: unit 216/216, rules 40/40.) F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test).
 - F1–F2 và F3 đều đã được reviewer độc lập review toàn nhánh, đã sửa hết lỗi Important; lỗi Minor còn lại ở mục 7. F3 đã chạy demo đạt trên máy thật (mục 3).
 
 ### Đã hoàn thành
@@ -29,8 +29,9 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 | Feature 3 | Chi tiết riêng cho Checking/Saving/Mortgage, lãi suất chung + lãi dự kiến, tiền trả mỗi tháng / 2 tuần, nạp/rút qua OTP (+ mặt khi ≥ 10 tr) bằng Firestore transaction, biên lai, tab Lịch sử, tab Lãi suất và mở tài khoản cho nhân viên. Rules có test trên emulator (`rules-test/`, 20/20) |
 | Feature 4 | Tab Chuyển tiền: trong FLUX (tra tên theo số TK qua `accountIndex`), giữa tài khoản của tôi, liên ngân hàng giả lập (10 ngân hàng), người nhận gần đây. Kiểm tra trước khi ghi (`TransferPolicy`: 10k–100tr/lần, 200tr/ngày giờ VN). Rules: cộng tiền cho người khác phải có TRANSFER_OUT cặp đã trừ nguồn cùng lần ghi, thông tin người gửi trên TRANSFER_IN không giả được (40 ca test). Nạp tiền qua VNPay sandbox (WebView, kiểm HMAC-SHA512). Nút QR giữa: quét / "Mã của tôi" |
 
+| Feature 5 (nhánh `feature/f5-utilities`) | 7 ô tiện ích qua 3 kiểu màn: Hoá đơn (điện, nước; tra cứu giả lập, mỗi hoá đơn trả một lần, rules chặn trùng), Nạp ĐT (nhà mạng theo đầu số, 6 mệnh giá), Danh mục (vé máy bay, vé phim, khách sạn, mua sắm; mã đặt chỗ trên biên lai). Giao dịch loại `PAYMENT`, hạn mức ngày gộp với chuyển tiền. `DESIGN.md` rút từ code bằng skill impeccable |
+
 ### Chưa làm (các feature tiếp theo)
-- **Feature 5** Utilities: tiền điện, tiền nước, nạp điện thoại, vé máy bay, vé phim, khách sạn, mua sắm.
 - **Feature 6** Navigation: bản đồ, vị trí người dùng, chi nhánh gần nhất, đường đi bộ ngắn nhất.
 - **Feature 7** AI chatbot: trả lời kèm link tới các chức năng.
 - Đưa lên Play Store, viết báo cáo, quay video demo.
@@ -58,6 +59,11 @@ Cho Feature 4 (đã merge vào `main` 2026-10-28):
    - **Chưa thử trên máy**: quét QR bằng camera (cần hướng camera vào mã trên máy khác), bước quét mặt khi chuyển ≥ 10.000.000 ₫ (đã thử ở F3 cho nạp tiền), chặn hạn mức 200 tr/ngày (unit test có).
 3. Đã merge vào `main` 2026-10-28 (sau merge: unit 216/216, rules 40/40, lint 0 error).
 - Mẹo adb cho F4: bàn phím Telex đổi "ff"→"f" và "us"→"ú" (gõ thiếu rồi đưa con trỏ về chèn chữ còn thiếu); chỉ bấm BACK để ẩn bàn phím khi `dumpsys input_method` báo `mInputShown=true`, nếu không BACK sẽ đóng màn (đóng WebView VNPay = huỷ). Phím số của sheet OTP là view tự vẽ, phải chạm theo toạ độ.
+
+Cho Feature 5 (nhánh `feature/f5-utilities`):
+1. Đã publish rules có `PAYMENT` ngày 2026-11-12. **Publish lại lần nữa** sau review: rules mới chỉ cho id `bill_<uid>_…` dùng cho `PAYMENT` của chính uid đó (chặn khách khác chiếm trước hoá đơn).
+2. Chạy trên Xiaomi 2026-11-12 với rules thật — đạt: Mua sắm 1.490.000 ₫ (biên lai mã đặt chỗ), Tiền điện `PE01000123456` 2.434.700 ₫ qua OTP, tra lại thấy "đã thanh toán" + Xem biên lai, Lịch sử có icon dịch vụ, số dư khớp; lỗi số dư hiện ngay ở thanh đáy và khoá nút. **Chưa thử**: bước quét mặt khi ≥ 10 tr (thiếu số dư), hai máy trả cùng một hoá đơn cùng lúc.
+- Mẹo adb cho F5: chạm vào ô mã khách hàng theo toạ độ của `etCode` (chạm theo chữ "Mã khách hàng" trúng nhãn, không mở bàn phím).
 
 ## 4. Những điều chủ dự án đã quyết định (đừng hỏi lại)
 
@@ -110,8 +116,8 @@ screenHost.openScreen(SomeFragment())
 // Tra người nhận theo SĐT
 FluxApp.instance.userRepository.findUidByPhone("0912345678")
 ```
-- Hiện 9 ô tiện ích (trừ Nạp tiền, Rút tiền, Tiết kiệm) vẫn mở `ComingSoonFragment`. Khi làm Feature 5–7 thì thay vào `HomeFragment` (click tiện ích).
-- Feature 5 (thanh toán hoá đơn) nên dùng lại `AccountRepository.transferExternal` (trừ tiền + TRANSFER_OUT, `counterpartyBank` = mã nhà cung cấp) hoặc thêm `type` mới cùng nhánh `ownerMoneyMoveAllowed` trong rules; `TransferPolicy.checkAmount` cho hạn mức.
+- Còn 2 ô tiện ích mở `ComingSoonFragment`: Chi nhánh (F6) và Trợ lý AI (F7). Thay trong `HomeFragment.openUtility`.
+- Thanh toán dịch vụ (F5): `AccountRepository.pay(fromId, ServicePayment, txId?)` → giao dịch `PAYMENT`; màn mới có thể kế thừa `ServicePaymentViewModel` + dùng `PaymentUi`. Chatbot F7 có thể mở thẳng `BillPayFragment.newInstance(kind)` / `TopUpFragment()` / `CatalogFragment.newInstance(kind)`.
 - Số dư chỉ đổi qua `AccountRepository.deposit/withdraw`: một `runTransaction` ghi `accounts/{id}` (`balance`, `lastTxId`) và `transactions/{txId}` mới. Rules `ownerMoneyMoveAllowed` bắt `lastTxId` trỏ tới giao dịch **chưa tồn tại trước đó**, cùng tài khoản, `balanceAfter` = số dư mới, đúng phép cộng/trừ.
 - F4 mở rộng hợp đồng: `TRANSFER_OUT` (chủ là người gửi) + `TRANSFER_IN` (chủ là người nhận) trỏ nhau qua `pairTxId`; rules `transferCreditAllowed`/`transferInBacked`. Loại giao dịch mới: thêm nhánh ở `TransactionRowAdapter.labelFor(tx)` và `ReceiptFragment.rowsFor`, thêm ca test vào `rules-test/rules.test.mjs` trước khi sửa rules.
 
@@ -158,6 +164,14 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 
 **Feature 4** đã đổi nạp tiền sang VNPay; rules vẫn không biết VNPay đã thu tiền (giới hạn Spark, ghi ở README).
 
+### Lỗi nhỏ của Feature 5 (review 2026-11-12, để lại sau)
+21. Process death ở các màn tiện ích: `load()` bị bỏ qua khi có `savedInstanceState` (giống #11).
+22. Chạm lại suất chiếu đang chọn thì chip bỏ check nhưng ViewModel vẫn giữ suất đó (thiếu `selectionRequired`).
+23. Không kiểm lại suất chiếu / ngày bay lúc bấm thanh toán nếu để màn mở qua giờ.
+24. Chạm đúp ô ngày có thể mở hai date picker (`show` → `showNow`).
+25. Giờ "đã thanh toán lúc" theo múi giờ máy, không cố định giờ VN.
+26. Chưa có test cho nhánh đọc lại sau lỗi của `FirestoreAccountRepository.pay` (đã thử bằng tay trên máy).
+
 ### Lỗi nhỏ của Feature 4 (review 2026-10-28, để lại sau)
 18. VNPay chuyển về khi app đang ở nền: `VnPayFragment` gọi `popBackStack()` sau `onSaveInstanceState` có thể crash (hiếm, chỉ khi redirect lúc app không ở trước).
 19. Trang chủ chờ `ensureIndexed` xong mới tải giao dịch gần đây (lần đầu mỗi phiên chậm hơn); nên chạy trong `launch` riêng.
@@ -170,12 +184,12 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 ## 9. Cách bắt đầu session mới
 
 Gợi ý câu lệnh mở đầu:
-> Đọc `FLUX_Bank/HANDOFF.md` và `FLUX_Bank/PROJECT_CONTEXT.md`. Tiếp theo brainstorm Feature 5 (Utilities) bằng `/superpowers:brainstorming`.
+> Đọc `FLUX_Bank/HANDOFF.md` và `FLUX_Bank/PROJECT_CONTEXT.md`. Tiếp theo brainstorm Feature 6 (Navigation) bằng `/superpowers:brainstorming`.
 
 Quy trình đã dùng và nên giữ: `superpowers:brainstorming` (hỏi từng câu, mockup HTML trên visual companion) → viết spec vào `docs/superpowers/specs/` → `superpowers:writing-plans` → `superpowers:executing-plans` (chủ dự án chọn chế độ **Native**) → review toàn nhánh → `finishing-a-development-branch`.
 
 Thứ tự đề xuất cho khoảng 34 ngày còn lại (tính từ 2026-10-28; F1–F4 đã xong):
-1. Feature 5: tận dụng `TransactionAuthSheet` và lưới tiện ích có sẵn.
+1. ~~Feature 5~~ (xong 2026-11-12 trên nhánh, chờ merge).
 2. Feature 6: Google Maps (cần API key, có hạn mức miễn phí) hoặc OSMDroid nếu muốn tránh billing.
 3. Feature 7: chatbot. Cần quyết định dùng LLM API hay luật cố định; lưu ý chi phí và không để API key nằm trong app.
 4. Play Store (tài khoản developer tốn $25, chủ dự án cần biết trước), báo cáo, video. Nên chừa ít nhất 5–7 ngày cuối cho phần này.
