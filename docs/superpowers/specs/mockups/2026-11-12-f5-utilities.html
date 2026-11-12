@@ -1,0 +1,408 @@
+<title>FLUX F5 Utilities</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: các khung điện thoại xếp lưới theo luồng demo, mỗi khung có chú thích bên dưới. Chỉ giao diện sáng (app chỉ có light theme). */
+:root{
+  --bg:#F5F5F7; --surface:#FFFFFF; --ink:#0A0D12; --muted:#64748B; --faint:#94A3B8;
+  --line:#E5E7EB; --line2:#F1F3F5; --emerald:#10B981; --emerald-ink:#059669; --mint:#E7F8EF;
+  --page:#ECEEF1; --gold:#D97706;
+  --font:"Inter",-apple-system,Roboto,"Segoe UI",sans-serif;
+}
+body{background:var(--page);color:var(--ink);font-family:var(--font);padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{max-width:1100px;margin:0 auto 8px;display:flex;flex-direction:column;gap:6px}
+header.top h1{font-size:24px;font-weight:700;letter-spacing:-.4px;margin:0;text-wrap:balance}
+header.top p{margin:0;color:var(--muted);font-size:14px;line-height:1.5;max-width:65ch}
+.group{max-width:1100px;margin:28px auto 0}
+.group h2{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:0 0 14px}
+.phones{display:flex;gap:28px;flex-wrap:wrap}
+figure{margin:0;display:flex;flex-direction:column;gap:10px;width:310px;max-width:100%}
+figcaption{font-size:13px;line-height:1.45;color:var(--muted)}
+figcaption b{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}
+.ph{width:310px;max-width:100%;height:640px;background:var(--bg);border-radius:40px;border:8px solid var(--ink);overflow:hidden;position:relative;font-variant-numeric:tabular-nums;box-shadow:0 10px 30px rgba(10,13,18,.14)}
+.sb{height:26px;display:flex;justify-content:space-between;padding:6px 20px 0;font-size:11px;font-weight:600}
+.pad{padding:0 16px;display:flex;flex-direction:column;gap:10px}
+.hdr{display:flex;align-items:center;gap:10px;padding:6px 16px 10px}
+.hdr .t{font-size:17px;font-weight:600;flex:1}
+.backb{width:36px;height:36px;border-radius:12px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+.icon{width:18px;height:18px;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px}
+.cap{font-size:12px;color:var(--muted)}
+.amt{font-size:26px;font-weight:700;letter-spacing:-.8px}
+.amt.sm{font-size:20px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.kv{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--line2)}
+.kv:last-child{border:none}.kv span{color:var(--muted)}.kv b{font-weight:600}
+.acts{display:flex;gap:10px}
+.btnp{flex:1;height:46px;border-radius:14px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;font-size:14px}
+.btnp .icon{stroke:#fff}
+.btn2{flex:1;height:46px;border-radius:14px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;font-size:14px}
+.secl{font-size:11px;font-weight:600;color:var(--faint);text-transform:uppercase;letter-spacing:.6px}
+.tx{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2)}
+.tx:last-child{border:none}
+.txi{width:34px;height:34px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center;flex:none}
+.txi.in{background:#ECFDF5}.txi.in .icon{stroke:var(--emerald-ink)}
+.tx .m{flex:1;min-width:0}.tx .m div:first-child{font-size:13px;font-weight:600}.tx .m div:last-child{font-size:11px;color:var(--muted)}
+.pos{color:var(--emerald-ink);font-weight:600;font-size:13px}.neg{font-weight:600;font-size:13px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:12px;font-weight:600;padding:7px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.seg{display:flex;background:var(--line2);border-radius:12px;padding:3px}
+.seg span{flex:1;text-align:center;font-size:12px;font-weight:600;padding:7px 0;border-radius:10px;color:var(--muted)}
+.seg .on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(10,13,18,.12)}
+.titan{aspect-ratio:1.586;border-radius:22px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,#FFFFFF 0%,#ECEDF0 40%,#FAFAFB 55%,#E1E3E8 100%);border:1px solid #D1D5DB;box-shadow:0 8px 24px rgba(16,185,129,.12)}
+.mint{position:absolute;left:0;right:0;top:0;height:250px;background:linear-gradient(180deg,var(--mint),var(--bg))}
+.rel{position:relative}
+.rate{display:flex;align-items:center;gap:12px}
+.rate .ic{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex:none}
+.fld .l{font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:500}
+.fld .i{height:50px;border-radius:14px;border:1px solid var(--line);background:var(--surface);display:flex;align-items:center;padding:0 12px;font-size:20px;font-weight:700;letter-spacing:-.4px}
+.fld .i.focus{border:1.5px solid var(--emerald)}
+.fld .i.sm{font-size:14px;font-weight:500;height:46px;letter-spacing:0}
+.fld .h{font-size:11px;color:var(--muted);margin-top:4px}
+.note{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--muted);background:var(--surface);border:1px dashed #CBD5E1;border-radius:14px;padding:10px 12px;line-height:1.4}
+.bottom{position:absolute;left:16px;right:16px;bottom:18px}
+.nav{position:absolute;bottom:0;left:0;right:0;height:62px;background:rgba(255,255,255,.97);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;font-size:10px;color:var(--faint)}
+.nav div{display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav .icon{stroke:var(--faint)}
+.nav .on{color:var(--emerald-ink);font-weight:600}.nav .on .icon{stroke:var(--emerald-ink)}
+.qr{width:50px;height:50px;border-radius:16px;background:var(--emerald);margin-top:-26px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(16,185,129,.35)}
+.qr .icon{stroke:#fff}
+.scrim{position:absolute;inset:0;background:rgba(10,13,18,.55)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:24px 24px 0 0;padding:10px 18px 22px;display:flex;flex-direction:column;gap:12px}
+.handle{width:36px;height:5px;border-radius:3px;background:#D1D5DB;margin:0 auto}
+.check{width:64px;height:64px;border-radius:50%;background:#ECFDF5;display:flex;align-items:center;justify-content:center;margin:24px auto 6px}
+.check .icon{stroke:var(--emerald-ink);width:30px;height:30px;stroke-width:2.4}
+.pill{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--line2);color:var(--muted)}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--emerald);margin-right:4px;vertical-align:1px}
+@media (prefers-reduced-motion:no-preference){figure{transition:transform .2s}figure:hover{transform:translateY(-2px)}}
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+ <symbol id="back" viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></symbol>
+ <symbol id="copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+ <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+ <symbol id="down" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></symbol>
+ <symbol id="in" viewBox="0 0 24 24"><path d="M17 7 7 17M16 17H7V8"/></symbol>
+ <symbol id="out" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+ <symbol id="piggy" viewBox="0 0 24 24"><path d="M19 10c1 0 2 1 2 2v2h-2l-1 3h-3v-2h-4v2H8l-1-3c-2-1-3-3-3-5a6 6 0 0 1 6-5h3c2 0 4 1 5 3z"/></symbol>
+ <symbol id="house" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+ <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></symbol>
+ <symbol id="swap" viewBox="0 0 24 24"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></symbol>
+ <symbol id="hist" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2"/></symbol>
+ <symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol>
+ <symbol id="scan" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/></symbol>
+ <symbol id="pct" viewBox="0 0 24 24"><path d="M19 5 5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/></symbol>
+ <symbol id="grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+ <symbol id="users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5c2.5.5 4 2.5 4 5.5"/></symbol>
+ <symbol id="id" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.5-1.5 1.7-2 3-2s2.5.5 3 2M14 10h4M14 13h3"/></symbol>
+ <symbol id="info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+ <symbol id="pen" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></symbol>
+ <symbol id="bank" viewBox="0 0 24 24"><path d="M3 9 12 4l9 5M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></symbol>
+ <symbol id="arrowr" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+ <symbol id="chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+ <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+ <symbol id="card" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></symbol>
+ <symbol id="qrc" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v7h-4M14 21v-3"/></symbol>
+ <symbol id="lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+ <symbol id="x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+</defs></svg>
+<style>
+.opt{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line2)}
+.opt:last-child{border:none}
+.opt .ic{width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex:none}
+.opt .m{flex:1}.opt .m div:first-child{font-size:14px;font-weight:600}.opt .m div:last-child{font-size:12px;color:var(--muted)}
+.av{width:34px;height:34px;border-radius:50%;background:var(--line2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted);flex:none}
+.payee{display:flex;align-items:center;gap:10px;background:#ECFDF5;border:1px solid #A7F3D0;border-radius:14px;padding:10px 12px}
+.payee .m div:first-child{font-size:13px;font-weight:700;letter-spacing:.2px}.payee .m div:last-child{font-size:11px;color:var(--muted)}
+.err{font-size:11px;color:#DC2626;margin-top:4px}
+.web{border:1px dashed #CBD5E1;border-radius:16px;background:var(--surface);height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:13px;text-align:center;padding:16px}
+.cam{position:absolute;inset:0;background:linear-gradient(160deg,#2A2F36,#14171C)}
+.frame{position:absolute;left:50%;top:44%;width:200px;height:200px;transform:translate(-50%,-50%);border-radius:24px;box-shadow:0 0 0 2000px rgba(10,13,18,.45);outline:3px solid var(--emerald)}
+.qrbox{width:180px;height:180px;margin:0 auto;background:#fff;padding:10px;border-radius:16px;border:1px solid var(--line)}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+ <symbol id="bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+ <symbol id="drop" viewBox="0 0 24 24"><path d="M12 3s-6 7-6 11a6 6 0 0 0 12 0c0-4-6-11-6-11z"/></symbol>
+ <symbol id="phone" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></symbol>
+ <symbol id="plane" viewBox="0 0 24 24"><path d="M2 13l8-2 4-8 2 1-2 8 6 2v2l-7-1-3 6H8l1-6-7 0z"/></symbol>
+ <symbol id="film" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/></symbol>
+ <symbol id="bed" viewBox="0 0 24 24"><path d="M3 18V6M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="1.6"/></symbol>
+ <symbol id="bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></symbol>
+ <symbol id="cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+ <symbol id="minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+ <symbol id="star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
+</defs></svg>
+<style>
+.ic.gold{background:#D977061A}.ic.gold .icon{stroke:#D97706}
+.ic.blue{background:#0071E31A}.ic.blue .icon{stroke:#0071E3}
+.ic.sky{background:#0EA5E91A}.ic.sky .icon{stroke:#0EA5E9}
+.ic.rose{background:#E11D481A}.ic.rose .icon{stroke:#E11D48}
+.ic.violet{background:#7C3AED1A}.ic.violet .icon{stroke:#7C3AED}
+.ic{width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex:none}
+.offer{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.offer.on{border:1.5px solid var(--emerald)}
+.offer .m{flex:1;min-width:0}.offer .m div:first-child{font-size:13px;font-weight:600}.offer .m div:last-child{font-size:11px;color:var(--muted);margin-top:2px}
+.offer .p{font-size:13px;font-weight:700;text-align:right}
+.radio{width:18px;height:18px;border-radius:50%;border:1.5px solid #CBD5E1;flex:none}
+.radio.on{border:5px solid var(--emerald)}
+.step{display:flex;align-items:center;gap:12px}
+.step .b{width:34px;height:34px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:flex;align-items:center;justify-content:center}
+.step .v{font-size:16px;font-weight:700;min-width:18px;text-align:center}
+.paybar{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:12px 16px 18px;display:flex;align-items:center;gap:12px}
+.paybar .s{flex:1}.paybar .s div:first-child{font-size:11px;color:var(--muted)}.paybar .s div:last-child{font-size:18px;font-weight:700;letter-spacing:-.4px}
+.paybar .btnp{flex:none;padding:0 22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.den{height:52px;border-radius:14px;border:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.den small{font-size:10px;font-weight:500;color:var(--muted)}
+.den.on{border:1.5px solid var(--emerald);background:#ECFDF5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.prod{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.prod.on{border:1.5px solid var(--emerald)}
+.prod .art{height:64px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.prod .n{font-size:12px;font-weight:600;line-height:1.3}.prod .pr{font-size:12px;font-weight:700}
+.paid{display:flex;gap:8px;align-items:center;background:#ECFDF5;border:1px solid #A7F3D0;border-radius:14px;padding:10px 12px;font-size:12px;color:#047857;font-weight:500}
+.otpc{display:flex;gap:7px;justify-content:center}
+.otpc i{font-style:normal;width:38px;height:46px;border-radius:12px;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700}
+.otpc i.on{background:#fff;border:1.5px solid var(--emerald)}
+.code{font-size:22px;font-weight:700;letter-spacing:3px;text-align:center}
+.starr{display:inline-flex;gap:1px;vertical-align:-2px}.starr .icon{width:11px;height:11px;stroke:#D97706;fill:#D97706}
+</style>
+
+<header class="top">
+  <h1>Feature 5 · Tiện ích</h1>
+  <p>Mockup đã duyệt ngày 12/11/2026. Bảy ô tiện ích trên trang chủ dùng ba kiểu màn: <b>Hoá đơn</b> (điện, nước), <b>Nạp điện thoại</b>, và <b>Danh mục</b> dùng chung cho vé máy bay, vé phim, khách sạn, mua sắm. Mọi lần trả tiền đều đi qua sheet OTP có sẵn (≥ 10.000.000 ₫ thì thêm quét mặt), ra biên lai và hiện trong Lịch sử. Nhà cung cấp, hoá đơn và danh mục đều là dữ liệu giả lập đặt sẵn trong app.</p>
+</header>
+
+<section class="group">
+  <h2>Hoá đơn &amp; nạp điện thoại</h2>
+  <div class="phones">
+
+    <!-- 1. Tiền điện -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="backb"><svg class="icon"><use href="#back"/></svg></div><div class="t">Tiền điện</div></div>
+        <div class="pad">
+          <div class="chips"><span class="chip on">EVN TP.HCM</span><span class="chip">EVN Hà Nội</span><span class="chip">EVN miền Nam</span></div>
+          <div class="fld"><div class="l">Mã khách hàng</div><div class="i sm">PE01000123456</div></div>
+          <div class="tile">
+            <div class="row" style="margin-bottom:6px"><div class="rate"><div class="ic gold"><svg class="icon"><use href="#bolt"/></svg></div><div><div style="font-size:13px;font-weight:700">NGUYEN VAN AN</div><div class="cap">12 Lê Lợi, Q.1</div></div></div></div>
+            <div class="kv"><span>Kỳ</span><b>10/2026</b></div>
+            <div class="kv"><span>Điện tiêu thụ</span><b>412 kWh</b></div>
+            <div class="kv"><span>Hạn thanh toán</span><b>25/11/2026</b></div>
+            <div class="row" style="padding-top:8px"><span class="cap">Số tiền</span><span class="amt sm">1.248.600 ₫</span></div>
+          </div>
+          <div class="cap">Trả từ</div>
+          <div class="chips"><span class="chip on">Thanh toán · 8.250.000 ₫</span><span class="chip">Tiết kiệm</span></div>
+        </div>
+        <div class="bottom"><div class="btnp">Thanh toán 1.248.600 ₫</div></div>
+      </div>
+      <figcaption><b>1 · Tiền điện</b>Chọn nhà cung cấp, gõ mã khách hàng rồi bấm Tra cứu; hoá đơn kỳ trước hiện ngay bên dưới. Số tiền và tên chủ hộ sinh cố định theo mã nên tra lại vẫn ra đúng số đó.</figcaption>
+    </figure>
+
+    <!-- 2. Tiền nước đã trả -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="backb"><svg class="icon"><use href="#back"/></svg></div><div class="t">Tiền nước</div></div>
+        <div class="pad">
+          <div class="chips"><span class="chip on">SAWACO</span><span class="chip">Nước sạch Hà Nội</span></div>
+          <div class="fld"><div class="l">Mã khách hàng</div><div class="i sm">2210456789</div></div>
+          <div class="tile">
+            <div class="row" style="margin-bottom:6px"><div class="rate"><div class="ic blue"><svg class="icon"><use href="#drop"/></svg></div><div><div style="font-size:13px;font-weight:700">NGUYEN VAN AN</div><div class="cap">12 Lê Lợi, Q.1</div></div></div></div>
+            <div class="kv"><span>Kỳ</span><b>10/2026</b></div>
+            <div class="kv"><span>Nước tiêu thụ</span><b>18 m³</b></div>
+            <div class="row" style="padding-top:8px"><span class="cap">Số tiền</span><span class="amt sm">216.000 ₫</span></div>
+          </div>
+          <div class="paid"><svg class="icon" style="stroke:#047857;flex:none"><use href="#check"/></svg>Bạn đã thanh toán kỳ này lúc 09:12 hôm nay.</div>
+        </div>
+        <div class="bottom"><div class="btn2" style="height:46px">Xem biên lai</div></div>
+      </div>
+      <figcaption><b>2 · Hoá đơn đã trả</b>Mỗi hoá đơn (nhà cung cấp + mã + kỳ) chỉ trả được một lần. Tra lại thì hiện trạng thái đã thanh toán và nút xem biên lai thay cho nút trả tiền.</figcaption>
+    </figure>
+
+    <!-- 3. Nạp điện thoại -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="backb"><svg class="icon"><use href="#back"/></svg></div><div class="t">Nạp điện thoại</div></div>
+        <div class="pad">
+          <div class="fld"><div class="l">Số điện thoại</div><div class="i sm focus" style="justify-content:space-between">0912 345 678<span class="pill">Vinaphone</span></div><div class="h">Mặc định là số của bạn. Nhà mạng nhận theo đầu số.</div></div>
+          <div class="cap">Mệnh giá</div>
+          <div class="grid3">
+            <div class="den">10.000</div><div class="den">20.000</div><div class="den">50.000</div>
+            <div class="den on">100.000</div><div class="den">200.000</div><div class="den">500.000</div>
+          </div>
+          <div class="cap">Trả từ</div>
+          <div class="chips"><span class="chip on">Thanh toán · 8.250.000 ₫</span><span class="chip">Tiết kiệm</span></div>
+        </div>
+        <div class="bottom"><div class="btnp">Nạp 100.000 ₫</div></div>
+      </div>
+      <figcaption><b>3 · Nạp điện thoại</b>Sáu mệnh giá cố định, không chiết khấu. Đầu số không thuộc nhà mạng nào thì báo lỗi dưới ô và khoá nút.</figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<section class="group">
+  <h2>Danh mục: vé máy bay, vé phim, khách sạn, mua sắm</h2>
+  <div class="phones">
+
+    <!-- 4. Vé máy bay -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="backb"><svg class="icon"><use href="#back"/></svg></div><div class="t">Vé máy bay</div></div>
+        <div class="pad">
+          <div class="chips"><span class="chip on">TP.HCM → Hà Nội</span><span class="chip">TP.HCM → Đà Nẵng</span><span class="chip">Hà Nội → TP.HCM</span></div>
+          <div class="fld"><div class="i sm" style="gap:8px"><svg class="icon" style="stroke:var(--muted)"><use href="#cal"/></svg>Thứ Sáu, 20/11/2026</div></div>
+          <div class="offer on"><div class="ic sky"><svg class="icon"><use href="#plane"/></svg></div><div class="m"><div>06:00 → 08:10</div><div>Vietnam Airlines · VN 213</div></div><div class="p">1.890.000 ₫</div></div>
+          <div class="offer"><div class="ic sky"><svg class="icon"><use href="#plane"/></svg></div><div class="m"><div>09:30 → 11:35</div><div>Vietjet Air · VJ 125</div></div><div class="p">1.290.000 ₫</div></div>
+          <div class="offer"><div class="ic sky"><svg class="icon"><use href="#plane"/></svg></div><div class="m"><div>14:15 → 16:20</div><div>Bamboo Airways · QH 205</div></div><div class="p">1.450.000 ₫</div></div>
+          <div class="row" style="padding-top:2px"><span style="font-size:13px;font-weight:600">Hành khách</span><div class="step"><div class="b"><svg class="icon"><use href="#minus"/></svg></div><span class="v">2</span><div class="b"><svg class="icon"><use href="#plus"/></svg></div></div></div>
+        </div>
+        <div class="paybar"><div class="s"><div>Tổng · 2 khách</div><div>3.780.000 ₫</div></div><div class="btnp">Thanh toán</div></div>
+      </div>
+      <figcaption><b>4 · Vé máy bay</b>Chọn chặng (chip) và ngày, rồi chọn một chuyến. Ô đếm là số hành khách (1–9). Thanh dưới cùng luôn hiện tổng tiền.</figcaption>
+    </figure>
+
+    <!-- 5. Vé phim -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="backb"><svg class="icon"><use href="#back"/></svg></div><div class="t">Vé xem phim</div></div>
+        <div class="pad">
+          <div class="chips"><span class="chip on">CGV Vincom Đồng Khởi</span><span class="chip">Galaxy Nguyễn Du</span></div>
+          <div class="offer on"><div class="ic rose"><svg class="icon"><use href="#film"/></svg></div><div class="m"><div>Mùa Gió Chướng</div><div>Tâm lý · 118 phút · T13</div></div><div class="p">95.000 ₫</div></div>
+          <div class="offer"><div class="ic rose"><svg class="icon"><use href="#film"/></svg></div><div class="m"><div>Biệt Đội Sao Băng</div><div>Hành động · 126 phút · T16</div></div><div class="p">110.000 ₫</div></div>
+          <div class="cap">Suất chiếu hôm nay</div>
+          <div class="chips"><span class="chip">14:30</span><span class="chip on">19:45</span><span class="chip">21:50</span></div>
+          <div class="row"><span style="font-size:13px;font-weight:600">Số vé</span><div class="step"><div class="b"><svg class="icon"><use href="#minus"/></svg></div><span class="v">2</span><div class="b"><svg class="icon"><use href="#plus"/></svg></div></div></div>
+        </div>
+        <div class="paybar"><div class="s"><div>Tổng · 2 vé</div><div>190.000 ₫</div></div><div class="btnp">Thanh toán</div></div>
+      </div>
+      <figcaption><b>5 · Vé phim</b>Chọn rạp, phim, suất chiếu và số vé (1–8). Không chọn ghế; biên lai ghi mã vé để đổi tại quầy.</figcaption>
+    </figure>
+
+    <!-- 6. Khách sạn -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="backb"><svg class="icon"><use href="#back"/></svg></div><div class="t">Đặt khách sạn</div></div>
+        <div class="pad">
+          <div class="chips"><span class="chip">TP.HCM</span><span class="chip on">Đà Nẵng</span><span class="chip">Hà Nội</span></div>
+          <div class="fld"><div class="i sm" style="gap:8px"><svg class="icon" style="stroke:var(--muted)"><use href="#cal"/></svg>Nhận phòng 20/11/2026</div></div>
+          <div class="offer on"><div class="ic violet"><svg class="icon"><use href="#bed"/></svg></div><div class="m"><div>Sông Hàn Riverside</div><div><span class="starr"><svg class="icon"><use href="#star"/></svg><svg class="icon"><use href="#star"/></svg><svg class="icon"><use href="#star"/></svg><svg class="icon"><use href="#star"/></svg></span> · Phòng đôi</div></div><div class="p">1.350.000 ₫<div class="cap" style="font-weight:400">/đêm</div></div></div>
+          <div class="offer"><div class="ic violet"><svg class="icon"><use href="#bed"/></svg></div><div class="m"><div>Mỹ Khê Beach Stay</div><div><span class="starr"><svg class="icon"><use href="#star"/></svg><svg class="icon"><use href="#star"/></svg><svg class="icon"><use href="#star"/></svg></span> · Phòng đôi</div></div><div class="p">820.000 ₫<div class="cap" style="font-weight:400">/đêm</div></div></div>
+          <div class="row"><span style="font-size:13px;font-weight:600">Số đêm</span><div class="step"><div class="b"><svg class="icon"><use href="#minus"/></svg></div><span class="v">2</span><div class="b"><svg class="icon"><use href="#plus"/></svg></div></div></div>
+          <div class="cap">Trả phòng 22/11/2026</div>
+        </div>
+        <div class="paybar"><div class="s"><div>Tổng · 2 đêm</div><div>2.700.000 ₫</div></div><div class="btnp">Thanh toán</div></div>
+      </div>
+      <figcaption><b>6 · Khách sạn</b>Chọn thành phố, ngày nhận phòng, khách sạn và số đêm (1–14). Ngày trả phòng tự tính.</figcaption>
+    </figure>
+
+    <!-- 7. Mua sắm -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="backb"><svg class="icon"><use href="#back"/></svg></div><div class="t">Mua sắm</div></div>
+        <div class="pad">
+          <div class="chips"><span class="chip on">Tất cả</span><span class="chip">Điện tử</span><span class="chip">Gia dụng</span><span class="chip">Thời trang</span></div>
+          <div class="grid2">
+            <div class="prod on"><div class="art ic rose" style="width:auto;height:64px"><svg class="icon" style="width:26px;height:26px"><use href="#bag"/></svg></div><div class="n">Tai nghe không dây</div><div class="pr">1.490.000 ₫</div></div>
+            <div class="prod"><div class="art ic rose" style="width:auto;height:64px"><svg class="icon" style="width:26px;height:26px"><use href="#bag"/></svg></div><div class="n">Bình giữ nhiệt 500 ml</div><div class="pr">290.000 ₫</div></div>
+            <div class="prod"><div class="art ic rose" style="width:auto;height:64px"><svg class="icon" style="width:26px;height:26px"><use href="#bag"/></svg></div><div class="n">Balo laptop 15"</div><div class="pr">690.000 ₫</div></div>
+            <div class="prod"><div class="art ic rose" style="width:auto;height:64px"><svg class="icon" style="width:26px;height:26px"><use href="#bag"/></svg></div><div class="n">Áo thun cotton</div><div class="pr">199.000 ₫</div></div>
+          </div>
+          <div class="row"><span style="font-size:13px;font-weight:600">Số lượng</span><div class="step"><div class="b"><svg class="icon"><use href="#minus"/></svg></div><span class="v">1</span><div class="b"><svg class="icon"><use href="#plus"/></svg></div></div></div>
+        </div>
+        <div class="paybar"><div class="s"><div>Tổng · 1 sản phẩm</div><div>1.490.000 ₫</div></div><div class="btnp">Thanh toán</div></div>
+      </div>
+      <figcaption><b>7 · Mua sắm</b>Sàn "FLUX Shop" giả lập: lọc theo nhóm, chọn một sản phẩm và số lượng (1–10). Không có giỏ hàng; mỗi lần mua là một giao dịch.</figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<section class="group">
+  <h2>Xác nhận, biên lai, lịch sử</h2>
+  <div class="phones">
+
+    <!-- 8. Sheet xác thực -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="backb"><svg class="icon"><use href="#back"/></svg></div><div class="t">Vé máy bay</div></div>
+        <div class="scrim"></div>
+        <div class="sheet">
+          <div class="handle"></div>
+          <div style="font-size:17px;font-weight:700">Xác nhận thanh toán</div>
+          <div>
+            <div class="kv"><span>Dịch vụ</span><b>Vé máy bay</b></div>
+            <div class="kv"><span>Chi tiết</span><b>VN 213 · SGN → HAN</b></div>
+            <div class="kv"><span>Ngày bay</span><b>20/11/2026 · 2 khách</b></div>
+            <div class="kv"><span>Trả từ</span><b>Thanh toán ••8242</b></div>
+          </div>
+          <div class="row"><span class="cap">Số tiền</span><span class="amt sm">3.780.000 ₫</span></div>
+          <div class="cap" style="text-align:center">Nhập mã OTP gửi tới 0912 •••678</div>
+          <div class="otpc"><i>4</i><i>8</i><i class="on"></i><i></i><i></i><i></i></div>
+        </div>
+      </div>
+      <figcaption><b>8 · Xác nhận</b>Dùng nguyên <code>TransactionAuthSheet</code>, chỉ đổi các dòng tóm tắt theo dịch vụ. Bàn phím số riêng của sheet không vẽ lại ở đây.</figcaption>
+    </figure>
+
+    <!-- 9. Biên lai -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="backb"><svg class="icon"><use href="#x"/></svg></div><div class="t">Biên lai</div></div>
+        <div class="pad">
+          <div class="check"><svg class="icon"><use href="#check"/></svg></div>
+          <div style="text-align:center"><div class="cap">Thanh toán thành công</div><div class="amt">−3.780.000 ₫</div></div>
+          <div class="tile">
+            <div class="cap" style="text-align:center">Mã đặt chỗ</div>
+            <div class="code">K7Q2MX</div>
+          </div>
+          <div class="tile" style="padding:4px 14px">
+            <div class="kv"><span>Dịch vụ</span><b>Vé máy bay</b></div>
+            <div class="kv"><span>Chi tiết</span><b>VN 213 · SGN → HAN</b></div>
+            <div class="kv"><span>Ngày bay</span><b>20/11/2026 · 2 khách</b></div>
+            <div class="kv"><span>Trả từ</span><b>Thanh toán ••8242</b></div>
+            <div class="kv"><span>Số dư sau</span><b>4.470.000 ₫</b></div>
+            <div class="kv"><span>Thời gian</span><b>09:41 · 12/11/2026</b></div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>9 · Biên lai</b><code>ReceiptFragment</code> có sẵn, thêm khối mã đặt chỗ (vé máy bay, vé phim, khách sạn, mua sắm) hoặc mã hoá đơn (điện, nước). Nạp điện thoại không có mã.</figcaption>
+    </figure>
+
+    <!-- 10. Lịch sử -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="hdr"><div class="t" style="font-size:20px;font-weight:700">Lịch sử</div></div>
+        <div class="pad">
+          <div class="chips"><span class="chip on">Tất cả</span><span class="chip">Thanh toán</span><span class="chip">Tiết kiệm</span></div>
+          <div class="secl">Hôm nay</div>
+          <div class="tile" style="padding:2px 14px">
+            <div class="tx"><div class="ic sky" style="width:34px;height:34px;border-radius:12px"><svg class="icon"><use href="#plane"/></svg></div><div class="m"><div>Vé máy bay VN 213</div><div>Thanh toán · 09:41</div></div><span class="neg">−3.780.000 ₫</span></div>
+            <div class="tx"><div class="ic gold" style="width:34px;height:34px;border-radius:12px"><svg class="icon"><use href="#bolt"/></svg></div><div class="m"><div>Tiền điện kỳ 10/2026</div><div>Thanh toán · 09:20</div></div><span class="neg">−1.248.600 ₫</span></div>
+            <div class="tx"><div class="ic blue" style="width:34px;height:34px;border-radius:12px"><svg class="icon"><use href="#phone"/></svg></div><div class="m"><div>Nạp ĐT 0912 345 678</div><div>Thanh toán · 09:15</div></div><span class="neg">−100.000 ₫</span></div>
+            <div class="tx"><div class="ic blue" style="width:34px;height:34px;border-radius:12px"><svg class="icon"><use href="#drop"/></svg></div><div class="m"><div>Tiền nước kỳ 10/2026</div><div>Thanh toán · 09:12</div></div><span class="neg">−216.000 ₫</span></div>
+          </div>
+        </div>
+        <div class="nav">
+          <div><svg class="icon"><use href="#house"/></svg>Trang chủ</div>
+          <div><svg class="icon"><use href="#swap"/></svg>Chuyển tiền</div>
+          <div class="qr"><svg class="icon"><use href="#scan"/></svg></div>
+          <div class="on"><svg class="icon"><use href="#hist"/></svg>Lịch sử</div>
+          <div><svg class="icon"><use href="#user"/></svg>Cá nhân</div>
+        </div>
+      </div>
+      <figcaption><b>10 · Lịch sử</b>Loại giao dịch mới "Thanh toán dịch vụ" dùng icon và màu của ô tiện ích tương ứng thay cho mũi tên. Trang chủ dùng chung dòng này.</figcaption>
+    </figure>
+
+  </div>
+</section>

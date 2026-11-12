@@ -1,0 +1,719 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-12T08:53:45+00:00",
+  "title": "Design System: FLUX Bank",
+  "extensions": {
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Gallery Canvas",
+        "canonical": "#F5F5F7",
+        "tonalRamp": [
+          "#0B0B0C",
+          "#252526",
+          "#424243",
+          "#616163",
+          "#828284",
+          "#A5A5A7",
+          "#C9C9CA",
+          "#EEEEEF"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Paper White",
+        "canonical": "#FFFFFF",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "bento-subcard": {
+        "role": "neutral",
+        "displayName": "Bento Subcard",
+        "canonical": "#F9FAFB",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#242526",
+          "#414243",
+          "#606162",
+          "#818283",
+          "#A4A5A6",
+          "#C8C9CA",
+          "#EEEEEF"
+        ]
+      },
+      "border-hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#E5E7EB",
+        "tonalRamp": [
+          "#0B0B0C",
+          "#242528",
+          "#404245",
+          "#5F6165",
+          "#808286",
+          "#A3A5A9",
+          "#C8C9CC",
+          "#EEEEEF"
+        ]
+      },
+      "border-subtle": {
+        "role": "neutral",
+        "displayName": "Subtle Rule",
+        "canonical": "#F1F3F5",
+        "tonalRamp": [
+          "#0B0B0C",
+          "#242526",
+          "#414244",
+          "#606163",
+          "#818284",
+          "#A3A5A7",
+          "#C8C9CA",
+          "#EEEEEF"
+        ]
+      },
+      "obsidian": {
+        "role": "primary",
+        "displayName": "Obsidian Ink",
+        "canonical": "#0A0D12",
+        "tonalRamp": [
+          "#0A0B0D",
+          "#22252A",
+          "#3E4248",
+          "#5D6168",
+          "#7E838A",
+          "#A1A5AD",
+          "#C6C9CE",
+          "#EDEEF0"
+        ]
+      },
+      "obsidian-light": {
+        "role": "neutral",
+        "displayName": "Obsidian Light",
+        "canonical": "#1E293B",
+        "tonalRamp": [
+          "#080B11",
+          "#1C2535",
+          "#374256",
+          "#556277",
+          "#768399",
+          "#98A6BD",
+          "#C0CAD9",
+          "#ECEFF4"
+        ]
+      },
+      "text-primary": {
+        "role": "neutral",
+        "displayName": "Slate Ink",
+        "canonical": "#0F172A",
+        "tonalRamp": [
+          "#080B12",
+          "#1D2536",
+          "#384258",
+          "#566178",
+          "#77829B",
+          "#99A5BF",
+          "#C1C9DB",
+          "#ECEEF4"
+        ]
+      },
+      "text-secondary": {
+        "role": "neutral",
+        "displayName": "Slate",
+        "canonical": "#64748B",
+        "tonalRamp": [
+          "#070B12",
+          "#1A2636",
+          "#344358",
+          "#536279",
+          "#73849B",
+          "#95A6BF",
+          "#BECADB",
+          "#EBEFF4"
+        ]
+      },
+      "text-tertiary": {
+        "role": "neutral",
+        "displayName": "Mist Slate",
+        "canonical": "#94A3B8",
+        "tonalRamp": [
+          "#080B11",
+          "#1C2634",
+          "#364355",
+          "#556275",
+          "#758498",
+          "#97A6BB",
+          "#C0CAD8",
+          "#EBEFF3"
+        ]
+      },
+      "emerald": {
+        "role": "primary",
+        "displayName": "Ledger Emerald",
+        "canonical": "#10B981",
+        "tonalRamp": [
+          "#001204",
+          "#00350F",
+          "#005828",
+          "#007947",
+          "#009D67",
+          "#25C189",
+          "#8CDEB6",
+          "#DEF5E9"
+        ]
+      },
+      "emerald-dark": {
+        "role": "primary",
+        "displayName": "Deep Emerald",
+        "canonical": "#059669",
+        "tonalRamp": [
+          "#001105",
+          "#003314",
+          "#00552D",
+          "#00774C",
+          "#11996C",
+          "#48BE8E",
+          "#96DBBA",
+          "#E0F4EA"
+        ]
+      },
+      "emerald-light": {
+        "role": "primary",
+        "displayName": "Emerald Mist",
+        "canonical": "#ECFDF5",
+        "tonalRamp": [
+          "#080C0A",
+          "#1D2823",
+          "#38463F",
+          "#57655E",
+          "#77867F",
+          "#9AA9A2",
+          "#C1CCC7",
+          "#ECEFEE"
+        ]
+      },
+      "mint": {
+        "role": "primary",
+        "displayName": "Mint Wash",
+        "canonical": "#E7F8EF",
+        "tonalRamp": [
+          "#080C0A",
+          "#1D2822",
+          "#38463F",
+          "#57655E",
+          "#77877F",
+          "#9AA9A1",
+          "#C1CCC6",
+          "#ECEFEE"
+        ]
+      },
+      "titanium-mid": {
+        "role": "tertiary",
+        "displayName": "Titanium Mid",
+        "canonical": "#F0F1F3",
+        "tonalRamp": [
+          "#0B0B0C",
+          "#242526",
+          "#414243",
+          "#606163",
+          "#818284",
+          "#A4A5A7",
+          "#C8C9CA",
+          "#EEEEEF"
+        ]
+      },
+      "titanium-end": {
+        "role": "tertiary",
+        "displayName": "Titanium End",
+        "canonical": "#E1E3E8",
+        "tonalRamp": [
+          "#0B0B0C",
+          "#242528",
+          "#404246",
+          "#5F6165",
+          "#808287",
+          "#A3A5AA",
+          "#C8C9CC",
+          "#EEEEEF"
+        ]
+      },
+      "titanium-border": {
+        "role": "tertiary",
+        "displayName": "Titanium Border",
+        "canonical": "#D1D5DB",
+        "tonalRamp": [
+          "#0A0B0D",
+          "#232529",
+          "#3F4247",
+          "#5E6167",
+          "#7F8388",
+          "#A1A5AB",
+          "#C7C9CD",
+          "#EEEEF0"
+        ]
+      },
+      "error": {
+        "role": "neutral",
+        "displayName": "Error",
+        "canonical": "#EF4444",
+        "tonalRamp": [
+          "#240000",
+          "#610000",
+          "#920000",
+          "#BB0016",
+          "#E4393B",
+          "#FF625E",
+          "#FFA49B",
+          "#FFE4E0"
+        ]
+      },
+      "error-dark": {
+        "role": "neutral",
+        "displayName": "Error Dark",
+        "canonical": "#DC2626",
+        "tonalRamp": [
+          "#250000",
+          "#630000",
+          "#940000",
+          "#BD0000",
+          "#E73430",
+          "#FF5F54",
+          "#FFA396",
+          "#FFE4DF"
+        ]
+      },
+      "error-bg": {
+        "role": "neutral",
+        "displayName": "Error Bg",
+        "canonical": "#FEF2F2",
+        "tonalRamp": [
+          "#0D0A0A",
+          "#2A2323",
+          "#493F3F",
+          "#685E5E",
+          "#8A7F7F",
+          "#ADA2A2",
+          "#CFC7C7",
+          "#F0EEEE"
+        ]
+      },
+      "warning-dark": {
+        "role": "neutral",
+        "displayName": "Warning Dark",
+        "canonical": "#B45309",
+        "tonalRamp": [
+          "#1D0200",
+          "#4F0000",
+          "#7A1B00",
+          "#9F4000",
+          "#C56323",
+          "#ED864B",
+          "#FDB792",
+          "#FFE9DE"
+        ]
+      },
+      "warning-bg": {
+        "role": "neutral",
+        "displayName": "Warning Bg",
+        "canonical": "#FEF3C7",
+        "tonalRamp": [
+          "#0E0B02",
+          "#2C2504",
+          "#4B421B",
+          "#6B613A",
+          "#8D825A",
+          "#B0A57C",
+          "#D0CAAE",
+          "#F1EFE6"
+        ]
+      },
+      "cat-emerald": {
+        "role": "secondary",
+        "displayName": "Cat Emerald",
+        "canonical": "#10B981",
+        "tonalRamp": [
+          "#001204",
+          "#00350F",
+          "#005828",
+          "#007947",
+          "#009D67",
+          "#25C189",
+          "#8CDEB6",
+          "#DEF5E9"
+        ]
+      },
+      "cat-gold": {
+        "role": "secondary",
+        "displayName": "Cat Gold",
+        "canonical": "#D97706",
+        "tonalRamp": [
+          "#1D0200",
+          "#4F0000",
+          "#7A1D00",
+          "#9F4200",
+          "#C56500",
+          "#EC882A",
+          "#FCB985",
+          "#FFEADA"
+        ]
+      },
+      "cat-blue": {
+        "role": "secondary",
+        "displayName": "Cat Blue",
+        "canonical": "#0071E3",
+        "tonalRamp": [
+          "#00072A",
+          "#001572",
+          "#0036A4",
+          "#005BCB",
+          "#1D7FF2",
+          "#48A4FF",
+          "#91CCFF",
+          "#DEF0FF"
+        ]
+      },
+      "cat-sky": {
+        "role": "secondary",
+        "displayName": "Cat Sky",
+        "canonical": "#0EA5E9",
+        "tonalRamp": [
+          "#000D20",
+          "#002759",
+          "#004785",
+          "#0069AA",
+          "#008CCF",
+          "#29B1F5",
+          "#8AD3FF",
+          "#DDF2FF"
+        ]
+      },
+      "cat-rose": {
+        "role": "secondary",
+        "displayName": "Cat Rose",
+        "canonical": "#E11D48",
+        "tonalRamp": [
+          "#260001",
+          "#640000",
+          "#96000C",
+          "#BF002E",
+          "#E9294E",
+          "#FF5870",
+          "#FFA0A6",
+          "#FFE3E3"
+        ]
+      },
+      "cat-violet": {
+        "role": "secondary",
+        "displayName": "Cat Violet",
+        "canonical": "#7C3AED",
+        "tonalRamp": [
+          "#10002F",
+          "#34007F",
+          "#5200B4",
+          "#6F25DC",
+          "#8E53FF",
+          "#B07AFF",
+          "#CEB3FF",
+          "#EFE9FF"
+        ]
+      },
+      "cat-emerald-bg": {
+        "role": "secondary",
+        "displayName": "Cat Emerald Bg",
+        "canonical": "#10B9811A",
+        "tonalRamp": [
+          "#001204",
+          "#00350F",
+          "#005828",
+          "#007947",
+          "#009D67",
+          "#25C189",
+          "#8CDEB6",
+          "#DEF5E9"
+        ]
+      },
+      "cat-gold-bg": {
+        "role": "secondary",
+        "displayName": "Cat Gold Bg",
+        "canonical": "#D977061A",
+        "tonalRamp": [
+          "#1D0200",
+          "#4F0000",
+          "#7A1D00",
+          "#9F4200",
+          "#C56500",
+          "#EC882A",
+          "#FCB985",
+          "#FFEADA"
+        ]
+      },
+      "cat-blue-bg": {
+        "role": "secondary",
+        "displayName": "Cat Blue Bg",
+        "canonical": "#0071E31A",
+        "tonalRamp": [
+          "#00072A",
+          "#001572",
+          "#0036A4",
+          "#005BCB",
+          "#1D7FF2",
+          "#48A4FF",
+          "#91CCFF",
+          "#DEF0FF"
+        ]
+      },
+      "cat-sky-bg": {
+        "role": "secondary",
+        "displayName": "Cat Sky Bg",
+        "canonical": "#0EA5E91A",
+        "tonalRamp": [
+          "#000D20",
+          "#002759",
+          "#004785",
+          "#0069AA",
+          "#008CCF",
+          "#29B1F5",
+          "#8AD3FF",
+          "#DDF2FF"
+        ]
+      },
+      "cat-rose-bg": {
+        "role": "secondary",
+        "displayName": "Cat Rose Bg",
+        "canonical": "#E11D481A",
+        "tonalRamp": [
+          "#260001",
+          "#640000",
+          "#96000C",
+          "#BF002E",
+          "#E9294E",
+          "#FF5870",
+          "#FFA0A6",
+          "#FFE3E3"
+        ]
+      },
+      "cat-violet-bg": {
+        "role": "secondary",
+        "displayName": "Cat Violet Bg",
+        "canonical": "#7C3AED1A",
+        "tonalRamp": [
+          "#10002F",
+          "#34007F",
+          "#5200B4",
+          "#6F25DC",
+          "#8E53FF",
+          "#B07AFF",
+          "#CEB3FF",
+          "#EFE9FF"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Tiêu đề lớn, số dư."
+      },
+      "amount": {
+        "displayName": "Amount",
+        "purpose": "Số tiền lớn, chữ số đều."
+      },
+      "title-l": {
+        "displayName": "Title L",
+        "purpose": "Tiêu đề màn phụ, sheet."
+      },
+      "title-m": {
+        "displayName": "Title M",
+        "purpose": "Tiêu đề card, chữ nút."
+      },
+      "amount-small": {
+        "displayName": "Amount Small",
+        "purpose": "Số tiền trong dòng giao dịch."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Nội dung, dòng key–value."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Chip, nút chữ, nhãn tiện ích."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Mô tả phụ, nhãn tab."
+      },
+      "section-label": {
+        "displayName": "Section Label",
+        "purpose": "Nhãn nhóm viết hoa phía trên khối."
+      }
+    },
+    "shadows": [
+      {
+        "name": "emerald-lift",
+        "value": "0 8px 24px rgba(16,185,129,0.18)",
+        "purpose": "Android elevation 8dp + outlineSpotShadowColor emerald; chỉ thẻ Titanium và nút QR."
+      },
+      {
+        "name": "scrim",
+        "value": "rgba(0,0,0,0.55)",
+        "purpose": "Lớp phủ phía sau bottom sheet (backgroundDimAmount 0.55)."
+      }
+    ],
+    "motion": [],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "360px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Nút hành động chính, luôn màu obsidian.",
+      "html": "<button class=\"ds-btn-primary\">Tiếp tục</button>",
+      "css": ".ds-btn-primary{font-family: Inter, Roboto, sans-serif;background:#0A0D12;color:#fff;height:52px;padding:0 24px;border:none;border-radius:14px;font-size:16px;font-weight:600;transition:background .15s}.ds-btn-primary:hover{background:#1E293B}.ds-btn-primary:focus-visible{outline:2px solid #10B981;outline-offset:2px}.ds-btn-primary:disabled{opacity:.35}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Hành động phụ: nền trắng viền hairline.",
+      "html": "<button class=\"ds-btn-secondary\">Huỷ</button>",
+      "css": ".ds-btn-secondary{font-family: Inter, Roboto, sans-serif;background:#fff;color:#0F172A;height:52px;padding:0 24px;border:1px solid #E5E7EB;border-radius:14px;font-size:16px;font-weight:600}.ds-btn-secondary:hover{background:#F9FAFB}.ds-btn-secondary:focus-visible{outline:2px solid #10B981;outline-offset:2px}"
+    },
+    {
+      "name": "Destructive Button",
+      "kind": "button",
+      "refersTo": "button-destructive",
+      "description": "Xoá, từ chối, đăng xuất.",
+      "html": "<button class=\"ds-btn-danger\">Từ chối</button>",
+      "css": ".ds-btn-danger{font-family: Inter, Roboto, sans-serif;background:#fff;color:#DC2626;height:52px;padding:0 24px;border:1px solid #EF4444;border-radius:14px;font-size:16px;font-weight:600}.ds-btn-danger:hover{background:#FEF2F2}.ds-btn-danger:focus-visible{outline:2px solid #EF4444;outline-offset:2px}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "text-field",
+      "description": "Ô nhập Material Outlined, focus viền emerald 1.5dp.",
+      "html": "<label class=\"ds-field\"><span>Số tài khoản</span><input placeholder=\"8868 xxxx xxxx\"></label>",
+      "css": ".ds-field{font-family: Inter, Roboto, sans-serif;display:flex;flex-direction:column;gap:4px;font-size:12px;color:#64748B}.ds-field input{font-family: Inter, Roboto, sans-serif;height:52px;padding:0 16px;border:1px solid #E5E7EB;border-radius:14px;background:#fff;font-size:14px;color:#0F172A;outline:none}.ds-field input:focus{border:1.5px solid #10B981}.ds-field:focus-within span{color:#059669}"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "filter-chip",
+      "description": "Chip lọc: chọn = nền đen chữ trắng.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip is-on\">Tất cả</button><button class=\"ds-chip\">Tiền vào</button><button class=\"ds-chip\">Tiền ra</button></div>",
+      "css": ".ds-chips{display:flex;gap:8px}.ds-chip{font-family: Inter, Roboto, sans-serif;height:36px;padding:0 16px;border:1px solid #E5E7EB;border-radius:999px;background:#fff;color:#0F172A;font-size:13px;font-weight:500}.ds-chip.is-on{background:#0A0D12;color:#fff;border-color:#0A0D12}.ds-chip:focus-visible{outline:2px solid #10B981;outline-offset:2px}"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Tile bento phẳng, viền hairline, không bóng.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-label\">GIAO DỊCH GẦN ĐÂY</div><div class=\"ds-card-row\"><span>Nhận từ TRAN THI BINH</span><b>+500.000 ₫</b></div></div>",
+      "css": ".ds-card{font-family: Inter, Roboto, sans-serif;background:#fff;border:1px solid #E5E7EB;border-radius:20px;padding:16px;width:300px}.ds-card-label{font-size:12px;font-weight:700;letter-spacing:.04em;color:#94A3B8;margin-bottom:8px}.ds-card-row{display:flex;justify-content:space-between;font-size:14px;color:#0F172A}.ds-card-row b{color:#059669;font-weight:600;font-variant-numeric:tabular-nums}"
+    },
+    {
+      "name": "Utility Tile",
+      "kind": "custom",
+      "refersTo": "icon-tile",
+      "description": "Ô tiện ích: nền cat-*-bg 10%, icon duotone màu nhóm.",
+      "html": "<div class=\"ds-util\"><div class=\"ds-util-icon\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 256 256\"><path d=\"M96 240l16-80-64-24L160 16l-16 80 64 24z\" fill=\"#D97706\" opacity=\".2\"/><path d=\"M96 240l16-80-64-24L160 16l-16 80 64 24z\" fill=\"none\" stroke=\"#D97706\" stroke-width=\"16\" stroke-linejoin=\"round\"/></svg></div><span>Tiền điện</span></div>",
+      "css": ".ds-util{font-family: Inter, Roboto, sans-serif;display:flex;flex-direction:column;align-items:center;gap:8px;width:72px;font-size:13px;font-weight:500;color:#0F172A}.ds-util-icon{width:48px;height:48px;border-radius:14px;background:#D977061A;display:grid;place-items:center;transition:transform .15s}.ds-util:hover .ds-util-icon{transform:scale(1.05)}"
+    },
+    {
+      "name": "Bottom Navigation",
+      "kind": "nav",
+      "refersTo": "bottom-nav",
+      "description": "Thanh tab 5 mục, nút QR emerald nổi ở giữa.",
+      "html": "<nav class=\"ds-nav\"><a class=\"is-on\">Trang chủ</a><a>Chuyển tiền</a><span class=\"ds-qr\">QR</span><a>Lịch sử</a><a>Cá nhân</a></nav>",
+      "css": ".ds-nav{font-family: Inter, Roboto, sans-serif;display:flex;align-items:center;justify-content:space-around;background:#fff;height:64px;width:360px;border-top:1px solid #F1F3F5}.ds-nav a{font-size:12px;color:#94A3B8;cursor:pointer}.ds-nav a.is-on{color:#059669;font-weight:600}.ds-nav a:hover{color:#0F172A}.ds-qr{width:52px;height:52px;border-radius:18px;background:#10B981;color:#fff;display:grid;place-items:center;font-weight:700;box-shadow:0 8px 20px rgba(16,185,129,.35);transform:translateY(-12px)}"
+    },
+    {
+      "name": "Titanium Card",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Thẻ tài khoản 1.586:1 ánh kim trên dải mint.",
+      "html": "<div class=\"ds-mint\"><div class=\"ds-ti\"><small>Thanh toán · 8868 1096 8242</small><b>48.250.000 ₫</b></div></div>",
+      "css": ".ds-mint{background:linear-gradient(180deg,#E7F8EF,#F5F5F7);padding:24px 16px}.ds-ti{font-family: Inter, Roboto, sans-serif;aspect-ratio:1.586;width:300px;border-radius:24px;border:1px solid #D1D5DB;background:linear-gradient(135deg,#FFFFFF,#F0F1F3,#E1E3E8);box-shadow:0 8px 24px rgba(16,185,129,.18);padding:20px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;color:#0F172A}.ds-ti small{font-size:12px;color:#64748B}.ds-ti b{font-size:28px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}"
+    },
+    {
+      "name": "OTP Cells",
+      "kind": "input",
+      "refersTo": "otp-cell",
+      "description": "6 ô OTP trong sheet xác thực; ô đang nhập viền emerald.",
+      "html": "<div class=\"ds-otp\"><i>4</i><i>8</i><i class=\"is-on\"></i><i></i><i></i><i></i></div>",
+      "css": ".ds-otp{font-family: Inter, Roboto, sans-serif;display:flex;gap:8px}.ds-otp i{font-style:normal;width:44px;height:52px;border-radius:12px;background:#F5F5F7;border:1px solid #E5E7EB;display:grid;place-items:center;font-size:20px;font-weight:600;color:#0F172A;font-variant-numeric:tabular-nums}.ds-otp i.is-on{background:#fff;border:1.5px solid #10B981}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Titanium Ledger",
+    "overview": "FLUX trông như một cuốn sổ cái làm bằng titan: nền gần trắng, chữ obsidian đậm, mọi thứ thẳng hàng và ít trang trí. Độ tin cậy đến từ sự chính xác (số tiền cột đều, khoảng cách theo thang 4, viền mảnh 1dp), không đến từ màu mè. Vật thể \"quý\" duy nhất trên màn hình là thẻ Titanium ánh kim ở trang chủ; mọi thứ khác lùi lại làm nền.\n\nMàu xuất hiện theo hai cách và chỉ hai cách: emerald đánh dấu chỗ người dùng có thể chạm hoặc đang tương tác (tab đang chọn, nút QR, ô đang nhập, viền focus, tiền vào), còn sáu màu nhóm tiện ích tô icon duotone trên nền cùng tông 10%. Nút hành động chính luôn màu đen obsidian, không phải emerald.\n\nĐây là giao diện Operate: khách hàng và nhân viên đến để làm xong một việc (chuyển tiền, duyệt eKYC). Mật độ vừa phải, bố cục quen thuộc của app ngân hàng, toàn bộ chữ tiếng Việt, tiền VND dạng `48.250.000 ₫`. Chỉ có giao diện sáng.",
+    "keyCharacteristics": [
+      "Nền canvas `#F5F5F7`, bề mặt trắng, tile phẳng viền hairline, không bóng.",
+      "Chữ Inter, 6 cấp, nhỏ nhất 12sp; số tiền dùng chữ số đều (`tnum`).",
+      "Emerald hiếm và có nghĩa: nó luôn trả lời câu \"chạm vào đâu?\".",
+      "Thẻ Titanium tỉ lệ thẻ thật 1.586:1 trên dải mint là chữ ký của trang chủ.",
+      "Icon Phosphor: duotone cho tính năng, regular cho khung giao diện."
+    ],
+    "rules": [
+      {
+        "name": "The Emerald Means Touch Rule",
+        "body": "Emerald chỉ xuất hiện ở chỗ người dùng chạm, đang tương tác, hoặc ở tiền vào. Một khối trang trí màu emerald là lỗi.",
+        "section": "colors"
+      },
+      {
+        "name": "The Black Button Rule",
+        "body": "Nút hành động chính luôn màu obsidian. Không bao giờ có nút chính màu emerald.",
+        "section": "colors"
+      },
+      {
+        "name": "The Category Cage Rule",
+        "body": "Màu `cat-*` chỉ sống bên trong ô icon 48dp. Không tô chữ, nền màn hay viền card bằng màu nhóm.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Money Rule",
+        "body": "Mọi số tiền dùng `Amount` hoặc `AmountSmall` (`tnum`) để các cột số thẳng hàng. Không hiện tiền bằng `Body`.",
+        "section": "typography"
+      },
+      {
+        "name": "The 12sp Floor Rule",
+        "body": "Không chữ nào nhỏ hơn 12sp, kể cả nhãn tab.",
+        "section": "typography"
+      },
+      {
+        "name": "The Scale-Only Rule",
+        "body": "Chỉ dùng `dimens.xml`; không viết cứng dp hay mã màu trong layout.",
+        "section": "layout"
+      },
+      {
+        "name": "The Two Floaters Rule",
+        "body": "Chỉ thẻ Titanium và nút QR được đổ bóng. Card, tile, nút thường luôn elevation 0.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "lấy màu từ `colors.xml`, khoảng cách từ `dimens.xml`, chữ từ `TextAppearance.Flux.*`, style từ `Widget.Flux.*`.",
+      "viết mọi chữ hiển thị bằng tiếng Việt trong `strings.xml`, tiền dạng `48.250.000 ₫`.",
+      "dùng icon Phosphor duotone cho tính năng mới, kèm cặp `cat-*` / `cat-*-bg` có sẵn.",
+      "làm mockup HTML theo file này và chờ duyệt trước khi code giao diện."
+    ],
+    "donts": [
+      "dùng emerald cho nút chính, nền khối hay trang trí (The Emerald Means Touch Rule).",
+      "thêm bóng cho card hay tile; chỉ thẻ Titanium và nút QR được nổi.",
+      "làm giao diện tối hay thêm màu nhấn mới ngoài bảng màu này.",
+      "dùng chữ nhỏ hơn 12sp hay hiện tiền không có `tnum`.",
+      "viết cứng dp, sp hay mã màu trong layout."
+    ]
+  }
+}
