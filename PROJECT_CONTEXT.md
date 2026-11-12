@@ -3,7 +3,8 @@
 - Language: Kotlin (XML layouts + ViewBinding, không dùng Compose)
 - Architecture: MVVM — Activity/Fragment → ViewModel → Repository (interface + Firestore impl). Service locator đơn giản trong `FluxApp`, không dùng DI library.
 - Backend: Firebase Authentication + Cloud Firestore, gói **Spark (miễn phí)** — không Storage, không Cloud Functions.
-- Thiết kế & kế hoạch: spec từng feature trong `docs/superpowers/specs/` (F1–F2, F3, F4, F5), plan tương ứng trong `docs/superpowers/plans/`, mockup đã duyệt trong `docs/superpowers/specs/mockups/`.
+- Bản đồ (F6): OpenStreetMap qua OSMDroid và đường đi bộ từ server OSRM công cộng, đều miễn phí, không key (Google Maps bị bỏ vì Google Cloud từ chối tạo tài khoản thanh toán, lỗi `OR_BACR2_59`).
+- Thiết kế & kế hoạch: spec từng feature trong `docs/superpowers/specs/` (F1–F2, F3, F4, F5, F6), plan tương ứng trong `docs/superpowers/plans/`, mockup đã duyệt trong `docs/superpowers/specs/mockups/`.
 - Design system dạng tài liệu cho AI: `DESIGN.md` (+ `.impeccable/design.json`), rút từ `res/values/` ngày 2026-11-12. Code trong `res/values/` vẫn là nguồn gốc.
 
 ## Design system (bắt buộc cho mọi màn hình mới)
@@ -68,12 +69,20 @@ Security Rules: `firestore.rules` (deploy thủ công qua Console — xem README
 - Ghi tiền: `AccountRepository.pay` dùng lại `debit()` (một Firestore transaction, loại `PAYMENT`). Hoá đơn dùng id cố định `bill_<uid>_<nhà cung cấp>_<mã>_<yyyyMM>` nên rules chặn trả lần hai (`AlreadyPaidException`); màn hoá đơn tra `TransactionRepository.findByPaymentRef` để hiện "đã thanh toán".
 - Hạn mức ngày `TransferPolicy.sentToday` gộp `TRANSFER_OUT` và `PAYMENT`. Lịch sử/biên lai lấy icon và màu từ `Utility.fromService`.
 
+### Feature 6 — Chi nhánh và đường đi bộ
+- Spec/plan: `docs/superpowers/specs/2026-11-12-navigation-f6-design.md`, `docs/superpowers/plans/2026-11-12-navigation-f6.md`, mockup `docs/superpowers/specs/mockups/2026-11-12-f6-navigation.html`.
+- Ô "Chi nhánh" mở `ui/customer/branch/BranchMapFragment`: OSMDroid `MapView` (nền OSM giảm bão hoà bằng `ColorMatrix`, ghim/chấm người dùng/đường là overlay, cache tile trong `cacheDir`) + bottom sheet cố định (gợi ý / thông báo thiếu vị trí / danh sách). Không đụng Firestore, không đổi rules.
+- `domain/branch/`: `Branches` (12 chi nhánh giả lập, cụm demo quanh cổng TDTU, bảng đo trong KDoc), `GeoMath` (haversine), `OpeningHours` (T2–T6 8–17h, T7 8–12h, theo giờ VN), `BranchRecommender` (3 chi nhánh gần nhất theo đường thẳng → gọi OSRM song song → chọn quãng đi bộ ngắn nhất; lỗi hết thì dự phòng đường thẳng; > 20 km không gọi).
+- `data/routing/OsrmWalkingRouter` (`routing.openstreetmap.de/routed-foot`, HttpURLConnection + org.json, timeout 8 s), `data/location/FusedLocationSource` (Fused Location, chờ tối đa 15 s). `BranchMapViewModel` lưu đường đã tính theo chi nhánh, bỏ kết quả về muộn (chạm nhanh hai chi nhánh, định vị lại).
+- `BottomSheetBehavior` không hỗ trợ `topMargin` (cộng dồn vào vị trí thu gọn khi layout lại): giới hạn chiều cao bằng `maxHeight`.
+
 ## Giới hạn đã biết
 - Gói Spark: OTP và đối chiếu khuôn mặt được kiểm tra trên thiết bị; rules chỉ giới hạn field được sửa. Hướng nâng cấp: Cloud Functions phát/kiểm token.
 - `FaceMatcher.MATCH_THRESHOLD = 0.6`, đã đo trên máy thật ngày 2026-10-27 (số đo ở KDoc).
 - Feature 4: hạn mức ngày chỉ kiểm ở app; chữ ký VNPay kiểm trên máy (khoá sandbox nằm trong APK) và rules không biết VNPay đã thu tiền; số TK chỉ tra được sau khi chủ đăng nhập lần đầu; chuyển liên ngân hàng là giả lập.
 - Feature 5: dữ liệu tiện ích là giả lập trong app; rules không biết số tiền hoá đơn/giá vé đúng bao nhiêu (chỉ kiểm một lần trừ tiền hợp lệ ≤ 100 tr).
 - Feature 3: lãi chỉ là dự kiến (không cộng vào số dư); nguồn tiền nạp giả lập nên khách tự nạp được, nhưng mỗi lần có bản ghi và tối đa 100 triệu; lịch sử lọc ở client trên 100 giao dịch mới nhất.
+- Feature 6: chi nhánh giả lập trong app; OSRM công cộng không cam kết luôn chạy (lỗi thì gợi ý theo đường thẳng); chỉ so 3 chi nhánh gần nhất theo đường thẳng; toạ độ người dùng gửi tới server chỉ đường bên thứ ba (khai báo Data safety khi lên Play).
 
 ## Kiểm thử
-`./gradlew testDebugUnitTest` — 292 unit test cho validator, định dạng tiền, OTP, lock policy, face matcher/blink, onboarding service, hạn mức, VNPay, dữ liệu tiện ích (hoá đơn, nhà mạng, danh mục) và các ViewModel (repository giả trong `src/test/.../fakes`). Rules: 49 ca trong `rules-test/` (README mục 5).
+`./gradlew testDebugUnitTest` — 335 unit test cho validator, định dạng tiền, OTP, lock policy, face matcher/blink, onboarding service, hạn mức, VNPay, dữ liệu tiện ích (hoá đơn, nhà mạng, danh mục), chi nhánh (khoảng cách, giờ mở cửa, gợi ý đường đi bộ, parse OSRM) và các ViewModel (repository giả trong `src/test/.../fakes`). Rules: 49 ca trong `rules-test/` (README mục 5).

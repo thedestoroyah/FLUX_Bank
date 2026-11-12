@@ -22,6 +22,14 @@ import com.flux.bank.data.repository.PayeeRepository
 import com.flux.bank.data.repository.RatesRepository
 import com.flux.bank.data.repository.TransactionRepository
 import com.flux.bank.data.repository.UserRepository
+import com.flux.bank.data.location.LocationResult
+import com.flux.bank.data.location.LocationSource
+import com.flux.bank.data.routing.RoutingException
+import com.flux.bank.data.routing.WalkingRoute
+import com.flux.bank.data.routing.WalkingRouter
+import com.flux.bank.domain.branch.Branches
+import com.flux.bank.domain.branch.GeoMath
+import com.flux.bank.domain.branch.GeoPoint
 import kotlinx.coroutines.CompletableDeferred
 
 /** Repository giả trong bộ nhớ, dùng chung cho unit test. */
@@ -227,3 +235,30 @@ class FakeKycRepository : KycRepository {
 
 fun customer(uid: String, phone: String = "09000000${uid.takeLast(2).padStart(2, '0')}", nationalId: String = "0792030012${uid.takeLast(2).padStart(2, '0')}", kyc: String = KycStatus.NOT_SUBMITTED, name: String = "Khách $uid") =
     User(uid = uid, email = "$uid@mail.com", fullName = name, phoneNumber = phone, nationalId = nationalId, kycStatus = kyc)
+
+/** Vị trí giả: trả [result], đếm số lần được hỏi; [gate] giữ kết quả lại, [error] giả lỗi của API vị trí. */
+class FakeLocationSource(var result: LocationResult = LocationResult.Found(Branches.DEMO_ANCHOR)) : LocationSource {
+    var calls = 0
+    var gate: CompletableDeferred<Unit>? = null
+    var error: Exception? = null
+    override suspend fun current(): LocationResult {
+        calls++
+        gate?.await()
+        error?.let { throw it }
+        return result
+    }
+}
+
+/** Router giả: đi bộ = 1,3 × đường thẳng; [fail] để giả lỗi mạng; [gates] giữ một điểm đến cho tới khi complete. */
+class FakeWalkingRouter : WalkingRouter {
+    val calls = mutableListOf<GeoPoint>()
+    var fail = false
+    val gates = mutableMapOf<GeoPoint, CompletableDeferred<Unit>>()
+    override suspend fun route(from: GeoPoint, to: GeoPoint): WalkingRoute {
+        calls += to
+        gates[to]?.await()
+        if (fail) throw RoutingException("down")
+        val meters = GeoMath.distanceMeters(from, to) * 1.3
+        return WalkingRoute(meters, meters / 1.25, listOf(from, to))
+    }
+}

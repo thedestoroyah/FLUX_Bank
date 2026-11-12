@@ -85,6 +85,10 @@ npx firebase emulators:exec --only firestore --project demo-flux "node --test ru
    ngân hàng **NCB**, số thẻ `9704198526191432198`, chủ thẻ `NGUYEN VAN A`, ngày phát hành `07/15`, OTP `123456`.
    Danh sách đầy đủ (gồm thẻ cố ý lỗi: không đủ số dư, bị khoá…) ở https://sandbox.vnpayment.vn/apis/vnpay-demo/.
 
+### 7. Bản đồ chi nhánh (Feature 6)
+Không cần cấu hình gì: bản đồ là OpenStreetMap qua OSMDroid, đường đi bộ từ server OSRM công cộng, cả hai miễn phí, không key, không billing.
+(Đã thử Google Maps nhưng Google Cloud từ chối tạo tài khoản thanh toán, lỗi `OR_BACR2_59`.) Cần mạng để tải nền bản đồ và đường đi.
+
 ## Luồng demo
 Nhân viên đăng nhập → tạo khách hàng (mật khẩu tạm) → khách đăng nhập, bắt buộc đổi mật khẩu → khách nộp eKYC → nhân viên duyệt → khách bật sinh trắc học, khoá/mở khoá app → đổi SĐT qua OTP → kiểm tra xác thực khuôn mặt.
 
@@ -103,6 +107,11 @@ Tiền điện → EVN TP.HCM, mã `PE01000123456` → Tra cứu → Thanh toán
 → thử mã đuôi `0000` ("Không tìm thấy hoá đơn") → Tiền nước (SAWACO, mã 8–12 số) → Nạp ĐT 100.000 ₫ cho SĐT của mình
 → Vé máy bay TP.HCM → Hà Nội, 2 khách → biên lai có mã đặt chỗ → Vé phim, Khách sạn, Mua sắm → tab Lịch sử có icon theo dịch vụ.
 
+Feature 6 (chi nhánh, cần mạng): Trang chủ → Chi nhánh → cho phép vị trí → bản đồ có chấm vị trí, ghim chi nhánh, đường đi bộ emerald tới chi nhánh gợi ý
+→ card ghi quãng đi bộ và phút; nếu chi nhánh gần nhất theo đường thẳng phải đi vòng thì có dòng giải thích → "Xem tất cả chi nhánh"
+→ chạm chi nhánh khác (đường vẽ lại) → "Quay lại gợi ý" → tắt mạng, bấm nút vị trí: đường thẳng nét đứt + "Thử lại".
+Cụm chi nhánh demo đặt quanh cổng TDTU (19 Nguyễn Hữu Thọ, Q.7): đứng ở đó sẽ thấy FLUX Tân Phong gần hơn theo đường thẳng (393 m) nhưng phải đi bộ 1,3 km, app gợi ý FLUX Nguyễn Hữu Thọ (612 m).
+
 ## Giới hạn đã biết
 Gói Spark không có Cloud Functions nên OTP và đối chiếu khuôn mặt được kiểm tra trên thiết bị; Security Rules chỉ giới hạn ai được sửa field nào. Hướng nâng cấp: Cloud Functions phát/kiểm token xác thực trước khi ghi giao dịch.
 
@@ -118,3 +127,9 @@ Feature 5:
 - Rules chỉ biết đây là một lần trừ tiền `PAYMENT` hợp lệ (đúng chủ, đúng số dư, ≤ 100.000.000 ₫), không biết số tiền hoá đơn hay giá vé đúng bao nhiêu. Khách sửa app có thể trả số khác, nhưng chỉ trừ tiền của chính mình và vẫn có bản ghi.
 - Mỗi hoá đơn (nhà cung cấp + mã + kỳ) chỉ trả được một lần cho mỗi khách: id giao dịch suy ra từ hoá đơn nên rules chặn lần ghi thứ hai. Hai khách khác nhau vẫn trả được cùng một mã.
 - Hạn mức 200.000.000 ₫/ngày tính chung chuyển tiền và thanh toán, chỉ kiểm ở app.
+
+Feature 6:
+- Chi nhánh là dữ liệu giả lập nằm trong app (tên tự đặt, đường thật ở TP.HCM), không lưu Firestore.
+- Nền bản đồ (tile.openstreetmap.org) và đường đi bộ (OSRM công cộng của FOSSGIS) là dịch vụ miễn phí, không cam kết luôn chạy, chỉ dùng mức nhẹ theo chính sách của OSM. Lỗi hoặc mất mạng thì app gợi ý theo đường thẳng và ghi rõ.
+- Gợi ý chỉ so 3 chi nhánh gần nhất theo đường thẳng; xa hơn 20 km thì không tính đường đi bộ.
+- Toạ độ người dùng được gửi tới server chỉ đường bên thứ ba (không lưu ở FLUX); khai báo ở mục Data safety khi lên Play Store.
