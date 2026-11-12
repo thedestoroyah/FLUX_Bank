@@ -15,8 +15,8 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 
 ## 2. Trạng thái hiện tại
 
-- Repo git ở `FLUX_Bank/`, remote `origin` = GitHub private `thedestoroyah/FLUX_Bank` (HTTPS, tạo 2026-11-12; SSH key chưa gắn với GitHub nên dùng HTTPS qua `gh`). **`main` có F1–F5; F6 nằm trên nhánh `feature/f6-navigation` (chưa merge; đã chạy thử đạt trên máy, mục 3)** (F4 merge 2026-10-28, commit `9f6e5c3`; F5 merge 2026-11-12, commit `9c3a311`, đã review toàn nhánh và chạy trên máy thật với rules đã publish, mục 3).
-- **Unit test 340/340 pass** (trên nhánh F6), rules test 49/49, `assembleDebug` + `lintDebug` pass (0 error). F6 review toàn nhánh (2026-11-12): 0 Critical, 6 Important đã sửa có test (chạm chi nhánh lúc đang định vị lại vẽ đường từ vị trí cũ, test cache yếu, ở xa > 20 km bị báo lỗi mạng, lỗi API vị trí làm crash, định vị lại không có khung chờ, "Thử lại" bật GPS lại; thêm chặn lỗi camera khi xoay ngang). F5 review toàn nhánh: 0 Critical, 3 Important đã sửa có test (chiếm id hoá đơn của người khác, mã biên lai hoá đơn trùng, lỗi hạn mức hiện muộn). F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test).
+- Repo git ở `FLUX_Bank/`, remote `origin` = GitHub private `thedestoroyah/FLUX_Bank` (HTTPS, tạo 2026-11-12; SSH key chưa gắn với GitHub nên dùng HTTPS qua `gh`). **`main` có F1–F6** (F6 merge 2026-11-12, commit `ac3de12`, đã review toàn nhánh và chạy trên máy thật, mục 3) (F4 merge 2026-10-28, commit `9f6e5c3`; F5 merge 2026-11-12, commit `9c3a311`, đã review toàn nhánh và chạy trên máy thật với rules đã publish, mục 3).
+- **Unit test 340/340 pass**, rules test 49/49, `assembleDebug` + `lintDebug` pass (0 error). F6 review toàn nhánh (2026-11-12): 0 Critical, 6 Important đã sửa có test (chạm chi nhánh lúc đang định vị lại vẽ đường từ vị trí cũ, test cache yếu, ở xa > 20 km bị báo lỗi mạng, lỗi API vị trí làm crash, định vị lại không có khung chờ, "Thử lại" bật GPS lại; thêm chặn lỗi camera khi xoay ngang). F5 review toàn nhánh: 0 Critical, 3 Important đã sửa có test (chiếm id hoá đơn của người khác, mã biên lai hoá đơn trùng, lỗi hạn mức hiện muộn). F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test).
 - F1–F2 và F3 đều đã được reviewer độc lập review toàn nhánh, đã sửa hết lỗi Important; lỗi Minor còn lại ở mục 7. F3 đã chạy demo đạt trên máy thật (mục 3).
 
 ### Đã hoàn thành
@@ -28,7 +28,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 | Feature 2 | eKYC (ML Kit + MobileFaceNet embedding), nhân viên duyệt / từ chối có lý do. Khoá app sinh trắc học (cold start, khi app bị khôi phục, sau ≥ 60 s ở nền). OTP 6 số / 120 s / dùng 1 lần / gắn với giao dịch / sai 5 lần thì khoá, gửi qua SMS giả lập kèm banner dự phòng. `TransactionAuthSheet` (bàn phím riêng + bước quét mặt khi giao dịch ≥ 10.000.000 ₫). Security Rules |
 | Feature 3 | Chi tiết riêng cho Checking/Saving/Mortgage, lãi suất chung + lãi dự kiến, tiền trả mỗi tháng / 2 tuần, nạp/rút qua OTP (+ mặt khi ≥ 10 tr) bằng Firestore transaction, biên lai, tab Lịch sử, tab Lãi suất và mở tài khoản cho nhân viên. Rules có test trên emulator (`rules-test/`, 20/20) |
 | Feature 4 | Tab Chuyển tiền: trong FLUX (tra tên theo số TK qua `accountIndex`), giữa tài khoản của tôi, liên ngân hàng giả lập (10 ngân hàng), người nhận gần đây. Kiểm tra trước khi ghi (`TransferPolicy`: 10k–100tr/lần, 200tr/ngày giờ VN). Rules: cộng tiền cho người khác phải có TRANSFER_OUT cặp đã trừ nguồn cùng lần ghi, thông tin người gửi trên TRANSFER_IN không giả được (40 ca test). Nạp tiền qua VNPay sandbox (WebView, kiểm HMAC-SHA512). Nút QR giữa: quét / "Mã của tôi" |
-| Feature 6 (nhánh `feature/f6-navigation`) | Ô Chi nhánh: bản đồ OpenStreetMap (OSMDroid) + bottom sheet, vị trí qua Fused Location, gợi ý chi nhánh có **quãng đi bộ ngắn nhất** (OSRM công cộng, so 3 chi nhánh gần nhất theo đường thẳng, có dòng giải thích khi chi nhánh gần nhất phải đi vòng), danh sách, chọn chi nhánh khác, dự phòng đường thẳng khi mất mạng, xử lý từ chối quyền / tắt định vị / hết giờ chờ. 12 chi nhánh giả lập, cụm demo quanh TDTU |
+| Feature 6 | Ô Chi nhánh: bản đồ OpenStreetMap (OSMDroid) + bottom sheet, vị trí qua Fused Location, gợi ý chi nhánh có **quãng đi bộ ngắn nhất** (OSRM công cộng, so 3 chi nhánh gần nhất theo đường thẳng, có dòng giải thích khi chi nhánh gần nhất phải đi vòng), danh sách, chọn chi nhánh khác, dự phòng đường thẳng khi mất mạng, xử lý từ chối quyền / tắt định vị / hết giờ chờ. 12 chi nhánh giả lập, cụm demo quanh TDTU |
 | Feature 5 | 7 ô tiện ích qua 3 kiểu màn: Hoá đơn (điện, nước; tra cứu giả lập, mỗi hoá đơn trả một lần, rules chặn trùng), Nạp ĐT (nhà mạng theo đầu số, 6 mệnh giá), Danh mục (vé máy bay, vé phim, khách sạn, mua sắm; mã đặt chỗ trên biên lai). Giao dịch loại `PAYMENT`, hạn mức ngày gộp với chuyển tiền. `DESIGN.md` rút từ code bằng skill impeccable |
 
 ### Chưa làm (các feature tiếp theo)
@@ -64,10 +64,9 @@ Cho Feature 5 (đã merge vào `main` 2026-11-12):
 2. Chạy trên Xiaomi 2026-11-12 với rules thật — đạt: Mua sắm 1.490.000 ₫ (biên lai mã đặt chỗ), Tiền điện `PE01000123456` 2.434.700 ₫ qua OTP, tra lại thấy "đã thanh toán" + Xem biên lai, Lịch sử có icon dịch vụ, số dư khớp; lỗi số dư hiện ngay ở thanh đáy và khoá nút. **Chưa thử**: bước quét mặt khi ≥ 10 tr (thiếu số dư), hai máy trả cùng một hoá đơn cùng lúc.
 - Mẹo adb cho F5: chạm vào ô mã khách hàng theo toạ độ của `etCode` (chạm theo chữ "Mã khách hàng" trúng nhãn, không mở bàn phím).
 
-Cho Feature 6 (nhánh `feature/f6-navigation`, chưa merge):
+Cho Feature 6 (đã merge vào `main` 2026-11-12):
 1. Không cần key hay billing (đã chuyển Google Maps → OpenStreetMap ngày 2026-11-12).
 2. Đã chạy trên Xiaomi 2026-11-12 (bản Google Maps chưa có key, nền bản đồ trống; logic giống hệt bản OSM) — đạt: hộp thoại quyền, từ chối → khối "Chưa biết bạn đang ở đâu", cấp quyền sau → tự gợi ý; gợi ý thật từ vị trí nhà chủ dự án (FLUX Lê Văn Lương 3,8 km, có dòng "FLUX Phú Mỹ Hưng gần hơn theo đường thẳng (2,8 km) nhưng phải đi vòng, đi bộ 4,1 km"); danh sách xếp theo quãng đi bộ; chọn chi nhánh khác + "Quay lại gợi ý"; tắt mạng → đường thẳng + "Thử lại", bật mạng → đường đi bộ. Bản OSM chạy trên Xiaomi 2026-11-12 — đạt: nền OSM giảm màu + ghi công, ghim, chấm vị trí, đường emerald theo phố thật, camera khung đủ người dùng và chi nhánh (trên sheet và nút vị trí), chạm ghim → chọn chi nhánh + vẽ lại đường, "Gọi chi nhánh" mở trình quay số với số đúng, ép xoay ngang → màn giữ chiều dọc (khoá khi màn đang hiện), không crash.
-3. Merge nhánh khi chủ dự án đồng ý.
 - Mẹo adb cho F6: đừng `input swipe` từ mép dưới (trúng cử chỉ về màn hình chính của MIUI); kéo sheet từ giữa sheet. Đặt lại quyền vị trí: `pm revoke` + `pm clear-permission-flags … user-set user-fixed`.
 
 ## 4. Những điều chủ dự án đã quyết định (đừng hỏi lại)
@@ -99,7 +98,7 @@ Cho Feature 6 (nhánh `feature/f6-navigation`, chưa merge):
 | `docs/superpowers/specs/2026-10-27-account-management-f3-design.md`, `docs/superpowers/plans/2026-10-27-account-management-f3.md` | Spec + plan F3 (đã merge) |
 | `docs/superpowers/specs/2026-10-27-transfers-f4-design.md`, `docs/superpowers/plans/2026-10-27-transfers-f4.md` | Spec + plan F4 (đã merge) |
 | `docs/superpowers/specs/2026-11-12-utilities-f5-design.md`, `docs/superpowers/plans/2026-11-12-utilities-f5.md` | Spec + plan F5 (đã merge) |
-| `docs/superpowers/specs/2026-11-12-navigation-f6-design.md`, `docs/superpowers/plans/2026-11-12-navigation-f6.md` | Spec + plan F6 (nhánh `feature/f6-navigation`) |
+| `docs/superpowers/specs/2026-11-12-navigation-f6-design.md`, `docs/superpowers/plans/2026-11-12-navigation-f6.md` | Spec + plan F6 (đã merge) |
 | `DESIGN.md`, `.impeccable/design.json` | Design system "The Titanium Ledger" rút từ code (token, quy tắc, component) — đọc trước khi làm mockup/màn mới |
 | `docs/licenses/` | Giấy phép Inter (OFL), Phosphor (MIT), MobileFaceNet (MIT) |
 
@@ -219,8 +218,7 @@ Mở Claude Code từ thư mục `Final_Exam/` (để có skill impeccable), c�
 
 Quy trình đã dùng và nên giữ: `superpowers:brainstorming` (hỏi từng câu, mockup HTML trên visual companion) → viết spec vào `docs/superpowers/specs/` → `superpowers:writing-plans` → `superpowers:executing-plans` (chủ dự án chọn chế độ **Native**) → review toàn nhánh → `finishing-a-development-branch`.
 
-Còn **19 ngày** (tính từ 2026-11-12; F1–F5 trên `main`, F6 xong và đã chạy thử trên máy, chờ merge). Lịch đề xuất:
-1. **Feature 6**: merge nhánh `feature/f6-navigation`.
-2. **Feature 7 Chatbot** (khoảng 3 ngày, tới ~19/11). Quyết định: LLM API (ví dụ gói miễn phí của Gemini; không để key trong APK nếu được) hay luật cố định theo ý định. Đề yêu cầu trả lời **kèm link mở chức năng**: nạp ĐT, trả hoá đơn, xem giao dịch trong tháng… — mở thẳng `TopUpFragment()`, `BillPayFragment.newInstance(kind)`, tab Lịch sử.
-3. **Play Store** — làm **sớm, song song**: tài khoản developer tốn 25 USD; tài khoản cá nhân mới thường phải chạy kiểm thử kín (closed testing) với nhiều người thử trong nhiều ngày trước khi được lên production, nên kiểm tra chính sách hiện hành ngay và tạo bản internal/closed testing sớm.
-4. **Báo cáo + video** (từ ~20/11): class diagram, ERD, use case, kiến trúc; trước khi quay chạy `/impeccable critique` hoặc `audit` trên các màn chính và sửa lỗi nhìn thấy (giới hạn 1 ngày). Chừa 5–7 ngày cuối.
+Còn **19 ngày** (tính từ 2026-11-12; F1–F6 đã xong trên `main`). Lịch đề xuất:
+1. **Feature 7 Chatbot** (khoảng 3 ngày, tới ~19/11). Quyết định: LLM API (ví dụ gói miễn phí của Gemini; không để key trong APK nếu được) hay luật cố định theo ý định. Đề yêu cầu trả lời **kèm link mở chức năng**: nạp ĐT, trả hoá đơn, xem giao dịch trong tháng… — mở thẳng `TopUpFragment()`, `BillPayFragment.newInstance(kind)`, tab Lịch sử.
+2. **Play Store** — làm **sớm, song song**: tài khoản developer tốn 25 USD; tài khoản cá nhân mới thường phải chạy kiểm thử kín (closed testing) với nhiều người thử trong nhiều ngày trước khi được lên production, nên kiểm tra chính sách hiện hành ngay và tạo bản internal/closed testing sớm.
+3. **Báo cáo + video** (từ ~20/11): class diagram, ERD, use case, kiến trúc; trước khi quay chạy `/impeccable critique` hoặc `audit` trên các màn chính và sửa lỗi nhìn thấy (giới hạn 1 ngày). Chừa 5–7 ngày cuối.
