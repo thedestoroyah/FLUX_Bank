@@ -3,7 +3,8 @@
 - Language: Kotlin (XML layouts + ViewBinding, không dùng Compose)
 - Architecture: MVVM — Activity/Fragment → ViewModel → Repository (interface + Firestore impl). Service locator đơn giản trong `FluxApp`, không dùng DI library.
 - Backend: Firebase Authentication + Cloud Firestore, gói **Spark (miễn phí)** — không Storage, không Cloud Functions.
-- Thiết kế & kế hoạch: `docs/superpowers/specs/2026-10-26-ui-foundation-f1-f2-design.md`, `docs/superpowers/plans/2026-10-26-ui-foundation-f1-f2.md`, mockup đã duyệt trong `docs/superpowers/specs/mockups/`.
+- Thiết kế & kế hoạch: spec từng feature trong `docs/superpowers/specs/` (F1–F2, F3, F4, F5), plan tương ứng trong `docs/superpowers/plans/`, mockup đã duyệt trong `docs/superpowers/specs/mockups/`.
+- Design system dạng tài liệu cho AI: `DESIGN.md` (+ `.impeccable/design.json`), rút từ `res/values/` ngày 2026-11-12. Code trong `res/values/` vẫn là nguồn gốc.
 
 ## Design system (bắt buộc cho mọi màn hình mới)
 - Chỉ giao diện sáng. Nền `#F5F5F7`, bề mặt trắng, chữ Obsidian `#0A0D12`.
@@ -75,4 +76,4 @@ Security Rules: `firestore.rules` (deploy thủ công qua Console — xem README
 - Feature 3: lãi chỉ là dự kiến (không cộng vào số dư); nguồn tiền nạp giả lập nên khách tự nạp được, nhưng mỗi lần có bản ghi và tối đa 100 triệu; lịch sử lọc ở client trên 100 giao dịch mới nhất.
 
 ## Kiểm thử
-`./gradlew testDebugUnitTest` — unit test cho validator, định dạng tiền, OTP, lock policy, face matcher/blink, onboarding service và các ViewModel (repository giả trong `src/test/.../fakes`).
+`./gradlew testDebugUnitTest` — 292 unit test cho validator, định dạng tiền, OTP, lock policy, face matcher/blink, onboarding service, hạn mức, VNPay, dữ liệu tiện ích (hoá đơn, nhà mạng, danh mục) và các ViewModel (repository giả trong `src/test/.../fakes`). Rules: 49 ca trong `rules-test/` (README mục 5).
