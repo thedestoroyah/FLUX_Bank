@@ -80,6 +80,7 @@ class FluxApp : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        installAppCheck(this)
         otpNotifier.createChannel()
         ProcessLifecycleOwner.get().lifecycle.addObserver(appLockObserver)
     }
