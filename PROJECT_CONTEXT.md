@@ -25,7 +25,7 @@
 | `phoneIndex/{sđt}` | `{uid}` — SĐT duy nhất (rules chặn trùng) + tra người nhận cho chuyển tiền |
 | `kyc/{uid}` | ảnh CCCD/selfie Base64 (≤ 1024px), `faceEmbedding` (MobileFaceNet 192 chiều), `submittedBy`, `reviewedBy` |
 | `accounts/{id}` | `ownerUid`, `type` CHECKING/SAVING/MORTGAGE, `accountNumber` 8868xxxxxxxx, `balance` Long VND (Mortgage: dư nợ), `lastTxId`; Mortgage thêm `loanAmount`, `annualRate` (%/năm, cố định), `termMonths`, `startDate` |
-| `transactions/{id}` | `accountId`, `ownerUid`, `accountNumber`, `type` DEPOSIT/WITHDRAW/TRANSFER_OUT/TRANSFER_IN, `amount` > 0, `balanceAfter` (null ở TRANSFER_IN), `description`, `counterpartyName/Account/Bank` (`FLUX` nếu cùng ngân hàng), `pairTxId` (nối OUT↔IN), `paymentRef` (mã VNPay), `createdAt` — chỉ tạo, không sửa/xoá. Index (ownerUid ASC, createdAt DESC) |
+| `transactions/{id}` | `accountId`, `ownerUid`, `accountNumber`, `type` DEPOSIT/WITHDRAW/TRANSFER_OUT/TRANSFER_IN/PAYMENT, `amount` > 0, `balanceAfter` (null ở TRANSFER_IN), `description`, `counterpartyName/Account/Bank` (`FLUX` nếu cùng ngân hàng), `pairTxId` (nối OUT↔IN), `paymentRef` (mã VNPay; với PAYMENT là khoá hoá đơn hoặc mã đặt chỗ), `service` (PAYMENT: tên enum `Utility`), `details` (PAYMENT: các dòng biên lai), `createdAt` — chỉ tạo, không sửa/xoá. Index (ownerUid ASC, createdAt DESC) |
 | `accountIndex/{số TK}` | `accountId`, `ownerUid`, `type`, `holderName` (= `users.fullName`) — danh bạ tra người nhận; chủ tài khoản tự ghi khi mở trang chủ, chỉ `get`, không `list` |
 | `config/rates` | `savingRate`, `mortgageRate` (%/năm), `updatedAt`, `updatedBy`, `updatedByName` — nhân viên sửa |
 
@@ -60,10 +60,18 @@ Security Rules: `firestore.rules` (deploy thủ công qua Console — xem README
 - Nạp tiền qua VNPay sandbox (`payment/VnPay`, `VnPayFragment` WebView), khoá trong `local.properties`. `vnp_TxnRef` = id giao dịch nên không cộng hai lần.
 - Nút QR giữa thanh tab (`ui/customer/qr/QrFragment`): quét `fluxbank:<số TK>` (ML Kit) hoặc hiện "Mã của tôi" (ZXing).
 
+### Feature 5 — Tiện ích
+- Spec/plan: `docs/superpowers/specs/2026-11-12-utilities-f5-design.md`, `docs/superpowers/plans/2026-11-12-utilities-f5.md`, mockup `docs/superpowers/specs/mockups/2026-11-12-f5-utilities.html`. Design system rút từ code: `DESIGN.md` (+ `.impeccable/design.json`).
+- Ba kiểu màn cho 7 ô (`ui/customer/utility/`): `BillPayFragment` (tiền điện, nước), `TopUpFragment` (nạp ĐT), `CatalogFragment` (vé máy bay, vé phim, khách sạn, mua sắm). Phần chung: `ServicePaymentViewModel` (nguồn tiền, hạn mức, eKYC, mở sheet một lần, lỗi) và `PaymentUi` (chip nguồn, sheet xác thực, mở biên lai).
+- Dữ liệu giả lập thuần Kotlin trong `domain/utility/`: `BillLookup` (hoá đơn cố định theo nhà cung cấp + mã + kỳ; mã đuôi `0000` = không tìm thấy), `Carriers` (nhà mạng theo đầu số, 6 mệnh giá), `ServiceCatalog`, `BookingCode`, `ServicePayments` (dựng `ServicePayment`).
+- Ghi tiền: `AccountRepository.pay` dùng lại `debit()` (một Firestore transaction, loại `PAYMENT`). Hoá đơn dùng id cố định `bill_<uid>_<nhà cung cấp>_<mã>_<yyyyMM>` nên rules chặn trả lần hai (`AlreadyPaidException`); màn hoá đơn tra `TransactionRepository.findByPaymentRef` để hiện "đã thanh toán".
+- Hạn mức ngày `TransferPolicy.sentToday` gộp `TRANSFER_OUT` và `PAYMENT`. Lịch sử/biên lai lấy icon và màu từ `Utility.fromService`.
+
 ## Giới hạn đã biết
 - Gói Spark: OTP và đối chiếu khuôn mặt được kiểm tra trên thiết bị; rules chỉ giới hạn field được sửa. Hướng nâng cấp: Cloud Functions phát/kiểm token.
 - `FaceMatcher.MATCH_THRESHOLD = 0.6`, đã đo trên máy thật ngày 2026-10-27 (số đo ở KDoc).
 - Feature 4: hạn mức ngày chỉ kiểm ở app; chữ ký VNPay kiểm trên máy (khoá sandbox nằm trong APK) và rules không biết VNPay đã thu tiền; số TK chỉ tra được sau khi chủ đăng nhập lần đầu; chuyển liên ngân hàng là giả lập.
+- Feature 5: dữ liệu tiện ích là giả lập trong app; rules không biết số tiền hoá đơn/giá vé đúng bao nhiêu (chỉ kiểm một lần trừ tiền hợp lệ ≤ 100 tr).
 - Feature 3: lãi chỉ là dự kiến (không cộng vào số dư); nguồn tiền nạp giả lập nên khách tự nạp được, nhưng mỗi lần có bản ghi và tối đa 100 triệu; lịch sử lọc ở client trên 100 giao dịch mới nhất.
 
 ## Kiểm thử

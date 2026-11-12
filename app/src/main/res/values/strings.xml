@@ -342,6 +342,11 @@
     <string name="receipt_history">Xem lịch sử</string>
     <string name="receipt_transfer_ok">Chuyển tiền thành công</string>
     <string name="receipt_transfer_in_ok">Đã nhận tiền</string>
+    <string name="receipt_payment_ok">Thanh toán thành công</string>
+    <string name="receipt_service">Dịch vụ</string>
+    <string name="receipt_paid_from">Trả từ</string>
+    <string name="receipt_booking_code">Mã đặt chỗ</string>
+    <string name="err_already_paid">Hoá đơn này đã được thanh toán.</string>
     <string name="receipt_from">Từ</string>
     <string name="receipt_to">Đến</string>
     <string name="receipt_to_account">Đến tài khoản</string>
@@ -401,6 +406,7 @@
     <string name="tx_transfer_out">Chuyển đến %1$s</string>
     <string name="tx_transfer_in">Nhận từ %1$s</string>
     <string name="tx_deposit_vnpay">Nạp tiền qua VNPay</string>
+    <string name="tx_payment_title">%1$s</string>
     <!-- Feature 3: lịch sử -->
     <string name="history_all">Tất cả</string>
     <string name="history_today">Hôm nay</string>
@@ -408,4 +414,56 @@
     <string name="history_load_failed">Không tải được lịch sử giao dịch. Kiểm tra kết nối rồi thử lại.</string>
     <string name="saving_none_title">Chưa có tài khoản tiết kiệm</string>
     <string name="saving_none">Liên hệ nhân viên FLUX để mở tài khoản tiết kiệm.</string>
+
+    <!-- Feature 5: tiện ích -->
+    <string name="pay_kyc_blocked">Bạn cần hoàn tất xác minh danh tính (eKYC) trước khi thanh toán.</string>
+    <string name="pay_from">Trả từ</string>
+    <string name="pay_confirm_title">Xác nhận thanh toán</string>
+    <string name="pay_action">Thanh toán</string>
+    <string name="pay_action_amount">Thanh toán %1$s</string>
+    <string name="err_pay_max">Tối đa 100.000.000 ₫ mỗi lần thanh toán</string>
+    <string name="err_pay_daily">Vượt hạn mức trong ngày (còn lại %1$s)</string>
+    <string name="bill_code">Mã khách hàng</string>
+    <string name="bill_code_hint_power">PE và 11 chữ số, in trên hoá đơn điện</string>
+    <string name="bill_code_hint_water">8–12 chữ số, in trên hoá đơn nước</string>
+    <string name="bill_lookup">Tra cứu</string>
+    <string name="bill_code_error">Mã khách hàng không đúng định dạng</string>
+    <string name="bill_not_found">Không tìm thấy hoá đơn cho mã này</string>
+    <string name="bill_period">Kỳ</string>
+    <string name="bill_usage">Tiêu thụ</string>
+    <string name="bill_usage_power">%1$d kWh</string>
+    <string name="bill_usage_water">%1$d m³</string>
+    <string name="bill_due">Hạn thanh toán</string>
+    <string name="bill_paid">Bạn đã thanh toán kỳ này lúc %1$s.</string>
+    <string name="bill_view_receipt">Xem biên lai</string>
+    <string name="topup_phone">Số điện thoại</string>
+    <string name="topup_phone_hint">Mặc định là số của bạn. Nhà mạng nhận theo đầu số.</string>
+    <string name="topup_phone_error">Số không thuộc nhà mạng hỗ trợ</string>
+    <string name="topup_denomination">Mệnh giá</string>
+    <string name="topup_action">Nạp tiền</string>
+    <string name="topup_action_amount">Nạp %1$s</string>
+    <string name="catalog_title_flight">Vé máy bay</string>
+    <string name="catalog_title_movie">Vé xem phim</string>
+    <string name="catalog_title_hotel">Đặt khách sạn</string>
+    <string name="catalog_title_shop">Mua sắm</string>
+    <string name="catalog_date_flight">Ngày bay</string>
+    <string name="catalog_date_hotel">Nhận phòng</string>
+    <string name="catalog_checkout">Trả phòng %1$s</string>
+    <string name="catalog_showtimes">Suất chiếu hôm nay</string>
+    <string name="catalog_qty_flight">Hành khách</string>
+    <string name="catalog_qty_movie">Số vé</string>
+    <string name="catalog_qty_hotel">Số đêm</string>
+    <string name="catalog_qty_shop">Số lượng</string>
+    <string name="catalog_total_flight">Tổng · %1$d khách</string>
+    <string name="catalog_total_movie">Tổng · %1$d vé</string>
+    <string name="catalog_total_hotel">Tổng · %1$d đêm</string>
+    <string name="catalog_total_shop">Tổng · %1$d sản phẩm</string>
+    <string name="catalog_per_flight">/khách</string>
+    <string name="catalog_per_movie">/vé</string>
+    <string name="catalog_per_hotel">/đêm</string>
+    <string name="catalog_minus" translatable="false">−</string>
+    <string name="catalog_plus" translatable="false">+</string>
+    <string name="catalog_decrease">Giảm</string>
+    <string name="catalog_increase">Tăng</string>
+    <string name="catalog_stars">%1$s · %2$s</string>
 </resources>

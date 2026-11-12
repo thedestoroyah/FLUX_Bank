@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chọn tài khoản trả tiền + lỗi số tiền / lỗi chung (dùng chung cho các màn tiện ích F5) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/space_16"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pay_from"
+        android:textAppearance="@style/TextAppearance.Flux.Caption" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/groupSources"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:selectionRequired="true"
+        app:singleSelection="true" />
+
+    <TextView
+        android:id="@+id/tvAmountError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_4"
+        android:textAppearance="@style/TextAppearance.Flux.Caption"
+        android:textColor="@color/flux_error_dark"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_12"
+        android:background="@drawable/bg_dashed_tile"
+        android:padding="@dimen/space_12"
+        android:text="@string/move_auth_note"
+        android:textAppearance="@style/TextAppearance.Flux.Caption" />
+
+    <TextView
+        android:id="@+id/tvError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_12"
+        android:textAppearance="@style/TextAppearance.Flux.Caption"
+        android:textColor="@color/flux_error_dark"
+        android:visibility="gone" />
+</LinearLayout>

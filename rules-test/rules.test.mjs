@@ -102,3 +102,21 @@ test('other user can get index entry', async () => {
   await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'accountIndex/886800000002'), idx({ accountId: 'bobchk', ownerUid: 'bob', holderName: 'Trần Thị Bình' })));
   await assertSucceeds(getDoc(doc(cust(), 'accountIndex/886800000002')));
 });
+
+// Feature 5: thanh toán dịch vụ (PAYMENT) trừ tiền như rút tiền, tối đa 100 tr; id hoá đơn cố định nên không trả được hai lần.
+test('valid payment allowed', () => assertSucceeds(move(cust(), 'acc1', 'p1', 'PAYMENT', 60000, 40000, { service: 'TIEN_DIEN' })));
+test('payment overdraft denied', () => assertFails(move(cust(), 'acc1', 'p1', 'PAYMENT', 100001, -1)));
+test('payment over 100M denied', () => assertFails(move(cust(), 'rich', 'p1', 'PAYMENT', 100000001, 399999999)));
+test('payment with wrong arithmetic denied', () => assertFails(move(cust(), 'acc1', 'p1', 'PAYMENT', 60000, 50000)));
+test('payment owned by someone else denied', () => assertFails(move(cust(), 'acc1', 'p1', 'PAYMENT', 60000, 40000, { ownerUid: 'bob' })));
+test('payment from another customers account denied', () => assertFails(move(cust(), 'other', 'p1', 'PAYMENT', 60000, 40000)));
+test('second payment of same bill id denied', async () => {
+  await assertSucceeds(move(cust(), 'acc1', 'bill_cust_EVN_HCM_PE01000123456_202610', 'PAYMENT', 60000, 40000));
+  await assertFails(move(cust(), 'acc1', 'bill_cust_EVN_HCM_PE01000123456_202610', 'PAYMENT', 20000, 20000));
+});
+test('paying into another customers bill id denied', async () => {
+  const bob = env.authenticatedContext('bob').firestore();
+  await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'accounts/bobchk'), { ownerUid: 'bob', type: 'CHECKING', balance: 100000, accountNumber: '886800000002' }));
+  await assertFails(move(bob, 'bobchk', 'bill_cust_EVN_HCM_PE01000123456_202610', 'PAYMENT', 10000, 90000, { ownerUid: 'bob' }));
+});
+test('bill id only for PAYMENT', () => assertFails(move(cust(), 'acc1', 'bill_cust_EVN_HCM_PE01000123456_202610', 'WITHDRAW', 10000, 90000)));
