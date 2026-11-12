@@ -1,0 +1,348 @@
+<title>FLUX F6 Navigation</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: các khung điện thoại xếp theo luồng demo, mỗi khung có chú thích. Chỉ giao diện sáng (app chỉ có light theme), cố ý một theme. */
+:root{
+  --bg:#F5F5F7; --surface:#FFFFFF; --sub:#F9FAFB; --ink:#0A0D12; --muted:#64748B; --faint:#94A3B8;
+  --line:#E5E7EB; --line2:#F1F3F5; --emerald:#10B981; --emerald-ink:#059669; --emerald-bg:#ECFDF5;
+  --page:#ECEEF1; --blue:#0071E3; --blue-bg:#0071E31A;
+  /* nền bản đồ OSM đã giảm bão hoà */
+  --land:#EDEEF0; --block:#E3E5E8; --road:#FFFFFF; --casing:#D6D9DE; --water:#CBD5DD; --park:#DDE3DD;
+  --font:"Inter",-apple-system,Roboto,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+body{background:var(--page);color:var(--ink);font-family:var(--font);padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+::selection{background:var(--emerald-bg);color:var(--ink)}
+header.top{max-width:1100px;margin:0 auto 8px;display:flex;flex-direction:column;gap:6px}
+header.top h1{font-size:24px;font-weight:700;letter-spacing:-.4px;margin:0;text-wrap:balance}
+header.top p{margin:0;color:var(--muted);font-size:14px;line-height:1.5;max-width:68ch}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted);margin-top:6px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.group{max-width:1100px;margin:28px auto 0}
+.group h2{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:0 0 14px}
+.phones{display:flex;gap:28px;flex-wrap:wrap}
+figure{margin:0;display:flex;flex-direction:column;gap:10px;width:310px;max-width:100%}
+figcaption{font-size:13px;line-height:1.45;color:var(--muted)}
+figcaption b{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}
+.ph{width:310px;max-width:100%;height:640px;background:var(--bg);border-radius:40px;border:8px solid var(--ink);overflow:hidden;position:relative;font-variant-numeric:tabular-nums;box-shadow:0 10px 30px rgba(10,13,18,.14)}
+.map{position:absolute;inset:0;width:100%;height:100%}
+.sb{position:absolute;top:0;left:0;right:0;height:26px;display:flex;justify-content:space-between;padding:6px 20px 0;font-size:11px;font-weight:600;z-index:3}
+.icon{width:18px;height:18px;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.fab{position:absolute;z-index:3;height:40px;min-width:40px;border-radius:14px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:6px;padding:0 10px 0 8px;font-size:14px;font-weight:600}
+.fab.sq{padding:0}
+.fab.back{top:34px;left:14px}
+.glogo{position:absolute;z-index:2;left:12px;font-size:15px;font-weight:700;letter-spacing:-.2px;color:#5F6B7A;text-shadow:0 0 3px #fff}
+.osm{font-size:12px;color:var(--muted)}
+.sheet{position:absolute;z-index:4;left:0;right:0;bottom:0;background:var(--surface);border-radius:24px 24px 0 0;border-top:1px solid var(--line);padding:8px 16px 18px;display:flex;flex-direction:column;gap:12px}
+.handle{width:36px;height:5px;border-radius:3px;background:#D1D5DB;margin:0 auto 2px}
+.secl{font-size:12px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.5px}
+.bname{font-size:16px;font-weight:600}
+.addr{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4}
+.walk{display:flex;align-items:baseline;gap:8px}
+.walk .amt{font-size:28px;font-weight:700;letter-spacing:-.6px}
+.walk .amt.sm{font-size:22px}
+.walk .t{font-size:14px;color:var(--muted)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:4px 9px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--ink);white-space:nowrap}
+.pill.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--emerald);flex:none}
+.dot.off{background:var(--faint)}
+.note{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--muted);background:var(--sub);border:1px solid var(--line2);border-radius:14px;padding:10px 12px;line-height:1.45}
+.note b{color:var(--ink);font-weight:600}
+.note .icon{width:16px;height:16px;stroke:var(--muted);flex:none;margin-top:1px}
+.tbtn{font-size:13px;font-weight:500;color:var(--emerald-ink);display:flex;align-items:center;gap:4px;min-height:32px}
+.tbtn .icon{stroke:var(--emerald-ink);width:16px;height:16px}
+.acts{display:flex;gap:10px}
+.btnp{flex:1;height:48px;border-radius:14px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;font-size:15px}
+.btnp .icon{stroke:#fff}
+.btn2{flex:1;height:48px;border-radius:14px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;font-size:15px}
+.list{display:flex;flex-direction:column}
+.li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line2)}
+.li:last-child{border:none}
+.ic{width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--blue-bg)}
+.ic .icon{stroke:var(--blue)}
+.li .m{flex:1;min-width:0}
+.li .m div:first-child{font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.li .m div:last-child{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li .d{font-size:14px;font-weight:600;text-align:right;white-space:nowrap}
+.li .d small{display:block;font-size:12px;font-weight:400;color:var(--muted)}
+.li.on .m div:first-child{color:var(--ink)}
+.sk{background:linear-gradient(90deg,var(--line2),#E9ECEF,var(--line2));background-size:200% 100%;border-radius:8px}
+@media (prefers-reduced-motion:no-preference){.sk{animation:sh 1.4s ease-in-out infinite}@keyframes sh{to{background-position:-200% 0}}}
+.prompt{display:flex;gap:12px;align-items:flex-start}
+.prompt .ic{background:var(--line2)}.prompt .ic .icon{stroke:var(--ink)}
+.prompt .m div:first-child{font-size:15px;font-weight:600}
+.prompt .m div:last-child{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+ <symbol id="back" viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></symbol>
+ <symbol id="bank" viewBox="0 0 24 24"><path d="M3 9 12 4l9 5M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></symbol>
+ <symbol id="pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></symbol>
+ <symbol id="target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
+ <symbol id="walk" viewBox="0 0 24 24"><circle cx="13" cy="4.5" r="1.8"/><path d="m9 21 2.5-6.5L14 17v4M8 11l3-4 3 1 2 4M11.5 14.5 12 9"/></symbol>
+ <symbol id="info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+ <symbol id="phonec" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></symbol>
+ <symbol id="list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+ <symbol id="retry" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6L20 9M20 4v5h-5"/></symbol>
+ <symbol id="wifix" viewBox="0 0 24 24"><path d="M2 8.5a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0M12 19h.01M3 3l18 18"/></symbol>
+ <symbol id="locoff" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 1.2-3.9M9 3.6A7 7 0 0 1 19 9c0 2.2-1 4.4-2.3 6.3M3 3l18 18"/></symbol>
+
+ <!-- Nền bản đồ chung (viewBox của màn trong khung: 294 × 624) -->
+ <symbol id="base" viewBox="0 0 294 624">
+  <rect width="294" height="624" fill="var(--land)"/>
+  <g fill="var(--block)">
+   <rect x="12" y="70" width="58" height="60" rx="3"/><rect x="88" y="70" width="24" height="60" rx="3"/>
+   <rect x="12" y="150" width="58" height="90" rx="3"/><rect x="88" y="150" width="24" height="90" rx="3"/>
+   <rect x="12" y="260" width="58" height="30" rx="3"/><rect x="88" y="260" width="24" height="30" rx="3"/>
+   <rect x="12" y="310" width="58" height="60" rx="3"/><rect x="88" y="310" width="70" height="60" rx="3"/>
+   <rect x="196" y="130" width="70" height="70" rx="3"/><rect x="196" y="225" width="30" height="65" rx="3"/>
+   <rect x="244" y="225" width="40" height="65" rx="3"/><rect x="244" y="310" width="40" height="60" rx="3"/>
+   <rect x="12" y="390" width="100" height="70" rx="3"/><rect x="128" y="390" width="96" height="70" rx="3"/>
+   <rect x="244" y="390" width="40" height="70" rx="3"/>
+  </g>
+  <rect x="128" y="20" width="40" height="70" rx="6" fill="var(--park)"/>
+  <!-- Rạch: chắn đường đi bộ thẳng từ người dùng sang FLUX Tân Phong -->
+  <path d="M206 -10 C 168 70, 150 150, 160 215 S 214 300, 304 322" fill="none" stroke="var(--water)" stroke-width="16" stroke-linecap="round"/>
+  <g fill="none" stroke-linecap="round">
+   <g stroke="var(--casing)" stroke-width="9">
+    <path d="M-5 60H304M-5 140H160M-5 250H150M-5 300H304M-5 380H304M80 -5V470M120 -5V470M235 120V470M40 -5V470M270 120V470M185 120H304M185 210H304"/>
+   </g>
+   <g stroke="var(--road)" stroke-width="7">
+    <path d="M-5 60H304M-5 140H160M-5 250H150M-5 300H304M-5 380H304M80 -5V470M120 -5V470M235 120V470M40 -5V470M270 120V470M185 120H304M185 210H304"/>
+   </g>
+   <!-- Trục lớn -->
+   <path d="M-5 300H304" stroke="var(--casing)" stroke-width="13"/><path d="M-5 300H304" stroke="var(--road)" stroke-width="11"/>
+  </g>
+  <g font-family="Inter,Roboto,sans-serif" font-size="12" fill="#5F6B7A" font-weight="500">
+   <text x="132" y="294" letter-spacing=".3">Nguyễn Văn Linh</text>
+   <text x="126" y="200" transform="rotate(-90 126 200)">Nguyễn Hữu Thọ</text>
+   <text x="186" y="64" transform="rotate(-62 186 64)" fill="#566573">Rạch Ông Lớn</text>
+  </g>
+ </symbol>
+
+ <!-- Ghim chi nhánh thường -->
+ <symbol id="bpin" viewBox="0 0 28 28" overflow="visible">
+  <circle cx="14" cy="14" r="12" fill="var(--ink)" stroke="#fff" stroke-width="2.5"/>
+  <path d="M8 12 14 9l6 3M9.5 12.5v4.5M12.5 12.5v4.5M15.5 12.5v4.5M18.5 12.5v4.5M8 18.5h12" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+ </symbol>
+ <!-- Ghim đang chọn / gợi ý -->
+ <symbol id="bpinOn" viewBox="0 0 40 40" overflow="visible">
+  <circle cx="20" cy="20" r="19" fill="var(--emerald)" opacity=".18"/>
+  <circle cx="20" cy="20" r="15" fill="var(--ink)" stroke="var(--emerald)" stroke-width="3.5"/>
+  <path d="M12 17.5 20 13l8 4.5M14 18v6M18 18v6M22 18v6M26 18v6M12 26h16" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+ </symbol>
+ <!-- Chấm người dùng -->
+ <symbol id="me" viewBox="0 0 60 60" overflow="visible">
+  <circle cx="30" cy="30" r="28" fill="var(--blue)" opacity=".12"/>
+  <circle cx="30" cy="30" r="9" fill="var(--blue)" stroke="#fff" stroke-width="3.5"/>
+ </symbol>
+</defs></svg>
+
+<header class="top">
+  <h1>FLUX Bank · Feature 6: Chi nhánh và đường đi bộ</h1>
+  <p>Một màn bản đồ mở từ ô "Chi nhánh" trên trang chủ. Mở là tự tìm vị trí, gợi ý chi nhánh có <b>quãng đường đi bộ ngắn nhất</b> (không phải gần nhất theo đường thẳng) và vẽ đường đi. Bản đồ là Google Maps với style giảm màu để emerald chỉ còn ở chỗ đang tương tác; đường đi bộ tính bằng OSRM trên dữ liệu OpenStreetMap (miễn phí, không key).</p>
+  <div class="legend">
+    <span><svg width="18" height="18"><use href="#me" x="-6" y="-6" width="30" height="30"/></svg>Bạn</span>
+    <span><svg width="18" height="18"><use href="#bpin" width="18" height="18"/></svg>Chi nhánh</span>
+    <span><svg width="22" height="22"><use href="#bpinOn" width="22" height="22"/></svg>Đang chọn</span>
+    <span><svg width="26" height="8"><path d="M2 4h22" stroke="#fff" stroke-width="7" stroke-linecap="round"/><path d="M2 4h22" stroke="#10B981" stroke-width="4" stroke-linecap="round"/></svg>Đường đi bộ</span>
+    <span><svg width="26" height="8"><path d="M2 4h22" stroke="#0A0D12" stroke-width="2.5" stroke-dasharray="4 4" stroke-linecap="round"/></svg>Đường thẳng (dự phòng)</span>
+  </div>
+</header>
+
+<section class="group">
+  <h2>Luồng chính</h2>
+  <div class="phones">
+
+    <!-- 1. Gợi ý -->
+    <figure>
+      <div class="ph">
+        <svg class="map" viewBox="0 0 294 624" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+          <use href="#base"/>
+          <path d="M120 250V172H80V140" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M120 250V172H80V140" fill="none" stroke="var(--emerald)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <use href="#bpin" x="176" y="200" width="28" height="28"/>
+          <use href="#bpin" x="221" y="336" width="28" height="28"/>
+          <use href="#bpin" x="26" y="336" width="28" height="28"/>
+          <use href="#me" x="90" y="220" width="60" height="60"/>
+          <use href="#bpinOn" x="60" y="120" width="40" height="40"/>
+        </svg>
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="fab back"><svg class="icon"><use href="#back"/></svg>Chi nhánh</div>
+        <div class="fab sq" style="right:14px;top:326px"><svg class="icon"><use href="#target"/></svg></div>
+        <div class="glogo" style="bottom:282px">Google</div>
+        <div class="sheet">
+          <div class="handle"></div>
+          <div class="secl">Gợi ý cho bạn</div>
+          <div>
+            <div class="row"><div class="bname">FLUX Nguyễn Hữu Thọ</div><span class="pill"><span class="dot"></span>Mở đến 17:00</span></div>
+            <div class="addr">125 Nguyễn Hữu Thọ, Tân Hưng, Quận 7</div>
+          </div>
+          <div class="walk"><svg class="icon" style="align-self:center"><use href="#walk"/></svg><span class="amt">850 m</span><span class="t">11 phút đi bộ</span></div>
+          <div class="note"><svg class="icon"><use href="#info"/></svg><span><b>FLUX Tân Phong</b> gần hơn theo đường thẳng (450 m) nhưng phải đi vòng qua cầu, đi bộ 2,1 km.</span></div>
+          <div class="row"><div class="tbtn"><svg class="icon"><use href="#list"/></svg>Xem tất cả chi nhánh</div><span class="osm">© OpenStreetMap</span></div>
+        </div>
+      </div>
+      <figcaption><b>1 · Gợi ý tự động</b>Vừa mở màn: chấm vị trí, các ghim, đường đi bộ emerald tới chi nhánh có quãng đi bộ ngắn nhất. Dòng xám giải thích vì sao không chọn chi nhánh gần hơn theo đường thẳng (chỉ hiện khi hai chi nhánh khác nhau).</figcaption>
+    </figure>
+
+    <!-- 2. Danh sách -->
+    <figure>
+      <div class="ph">
+        <svg class="map" viewBox="0 0 294 624" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+          <use href="#base"/>
+          <path d="M120 250V172H80V140" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M120 250V172H80V140" fill="none" stroke="var(--emerald)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <use href="#bpin" x="176" y="200" width="28" height="28"/>
+          <use href="#me" x="90" y="220" width="60" height="60"/>
+          <use href="#bpinOn" x="60" y="120" width="40" height="40"/>
+        </svg>
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="fab back"><svg class="icon"><use href="#back"/></svg>Chi nhánh</div>
+        <div class="sheet" style="top:170px">
+          <div class="handle"></div>
+          <div class="row"><div class="secl">12 chi nhánh · gần nhất trước</div></div>
+          <div class="list">
+            <div class="li on"><div class="ic"><svg class="icon"><use href="#bank"/></svg></div><div class="m"><div>FLUX Nguyễn Hữu Thọ <span class="pill dark">Đi bộ ngắn nhất</span></div><div>125 Nguyễn Hữu Thọ, Quận 7</div></div><div class="d">850 m<small>11 phút</small></div></div>
+            <div class="li"><div class="ic"><svg class="icon"><use href="#bank"/></svg></div><div class="m"><div>FLUX Tân Phong</div><div>32 Đường số 15, Tân Phong, Quận 7</div></div><div class="d">2,1 km<small>27 phút</small></div></div>
+            <div class="li"><div class="ic"><svg class="icon"><use href="#bank"/></svg></div><div class="m"><div>FLUX Phú Mỹ Hưng</div><div>801 Nguyễn Văn Linh, Quận 7</div></div><div class="d">1,4 km<small>18 phút</small></div></div>
+            <div class="li"><div class="ic"><svg class="icon"><use href="#bank"/></svg></div><div class="m"><div>FLUX Lê Văn Lương</div><div>210 Lê Văn Lương, Nhà Bè</div></div><div class="d">1,9 km<small>đường thẳng</small></div></div>
+            <div class="li"><div class="ic"><svg class="icon"><use href="#bank"/></svg></div><div class="m"><div>FLUX Quận 4</div><div>88 Khánh Hội, Quận 4</div></div><div class="d">4,6 km<small>đường thẳng</small></div></div>
+            <div class="li"><div class="ic"><svg class="icon"><use href="#bank"/></svg></div><div class="m"><div>FLUX Bến Thành</div><div>15 Lê Lợi, Quận 1</div></div><div class="d">6,8 km<small>đường thẳng</small></div></div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>2 · Kéo sheet lên: danh sách</b>Xếp theo quãng đi bộ với 3 ứng viên đã tính, các chi nhánh còn lại theo đường thẳng (ghi rõ). Ô icon dùng màu xanh của ô Chi nhánh trên trang chủ. Chạm một dòng thì chọn chi nhánh đó và thu sheet lại.</figcaption>
+    </figure>
+
+    <!-- 3. Chọn chi nhánh khác -->
+    <figure>
+      <div class="ph">
+        <svg class="map" viewBox="0 0 294 624" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+          <use href="#base"/>
+          <path d="M120 250V300H235V350" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M120 250V300H235V350" fill="none" stroke="var(--emerald)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <use href="#bpin" x="176" y="200" width="28" height="28"/>
+          <use href="#bpin" x="66" y="126" width="28" height="28"/>
+          <use href="#bpin" x="26" y="336" width="28" height="28"/>
+          <use href="#me" x="90" y="220" width="60" height="60"/>
+          <use href="#bpinOn" x="215" y="330" width="40" height="40"/>
+        </svg>
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="fab back"><svg class="icon"><use href="#back"/></svg>Chi nhánh</div>
+        <div class="fab sq" style="right:14px;top:326px"><svg class="icon"><use href="#target"/></svg></div>
+        <div class="glogo" style="bottom:282px">Google</div>
+        <div class="sheet">
+          <div class="handle"></div>
+          <div class="secl">Chi nhánh bạn chọn</div>
+          <div>
+            <div class="row"><div class="bname">FLUX Phú Mỹ Hưng</div><span class="pill"><span class="dot"></span>Mở đến 17:00</span></div>
+            <div class="addr">801 Nguyễn Văn Linh, Tân Phú, Quận 7</div>
+          </div>
+          <div class="walk"><svg class="icon" style="align-self:center"><use href="#walk"/></svg><span class="amt">1,4 km</span><span class="t">18 phút đi bộ</span></div>
+          <div class="acts"><div class="btn2"><svg class="icon"><use href="#phonec"/></svg>Gọi chi nhánh</div></div>
+          <div class="row"><div class="tbtn"><svg class="icon"><use href="#back"/></svg>Quay lại gợi ý</div><span class="osm">© OpenStreetMap</span></div>
+        </div>
+      </div>
+      <figcaption><b>3 · Chọn chi nhánh khác</b>Chạm ghim trên bản đồ hoặc một dòng trong danh sách. Đường vẽ lại tới chi nhánh đó (đã tính rồi thì không gọi lại server). "Gọi chi nhánh" mở trình quay số, chỉ điền sẵn số.</figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<section class="group">
+  <h2>Trạng thái chờ và lỗi</h2>
+  <div class="phones">
+
+    <!-- 4. Đang tính -->
+    <figure>
+      <div class="ph">
+        <svg class="map" viewBox="0 0 294 624" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+          <use href="#base"/>
+          <use href="#bpin" x="176" y="200" width="28" height="28"/>
+          <use href="#bpin" x="66" y="126" width="28" height="28"/>
+          <use href="#bpin" x="221" y="336" width="28" height="28"/>
+          <use href="#bpin" x="26" y="336" width="28" height="28"/>
+          <use href="#me" x="90" y="220" width="60" height="60"/>
+        </svg>
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="fab back"><svg class="icon"><use href="#back"/></svg>Chi nhánh</div>
+        <div class="fab sq" style="right:14px;top:326px"><svg class="icon"><use href="#target"/></svg></div>
+        <div class="glogo" style="bottom:282px">Google</div>
+        <div class="sheet" style="height:262px;box-sizing:border-box">
+          <div class="handle"></div>
+          <div class="secl">Đang tìm đường đi bộ ngắn nhất…</div>
+          <div class="sk" style="height:18px;width:62%"></div>
+          <div class="sk" style="height:12px;width:80%"></div>
+          <div class="sk" style="height:30px;width:48%;margin-top:6px"></div>
+          <div class="sk" style="height:44px;width:100%;border-radius:14px"></div>
+        </div>
+      </div>
+      <figcaption><b>4 · Đang tính</b>Chấm vị trí và ghim hiện ngay; sheet giữ chỗ trong lúc gọi server đi bộ cho 3 ứng viên (song song, tối đa 8 s). Không có vòng xoay giữa màn.</figcaption>
+    </figure>
+
+    <!-- 5. Chưa có quyền vị trí -->
+    <figure>
+      <div class="ph">
+        <svg class="map" viewBox="0 0 294 624" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+          <use href="#base"/>
+          <use href="#bpin" x="176" y="200" width="28" height="28"/>
+          <use href="#bpin" x="66" y="126" width="28" height="28"/>
+          <use href="#bpin" x="221" y="336" width="28" height="28"/>
+          <use href="#bpin" x="26" y="336" width="28" height="28"/>
+          <use href="#bpin" x="250" y="60" width="28" height="28"/>
+        </svg>
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="fab back"><svg class="icon"><use href="#back"/></svg>Chi nhánh</div>
+        <div class="glogo" style="bottom:330px">Google</div>
+        <div class="sheet" style="top:302px">
+          <div class="handle"></div>
+          <div class="prompt">
+            <div class="ic"><svg class="icon"><use href="#locoff"/></svg></div>
+            <div class="m"><div>Chưa biết bạn đang ở đâu</div><div>Cho phép vị trí để FLUX tìm chi nhánh có đường đi bộ ngắn nhất từ chỗ bạn.</div></div>
+          </div>
+          <div class="acts"><div class="btnp">Cho phép vị trí</div></div>
+          <div class="list">
+            <div class="li"><div class="ic"><svg class="icon"><use href="#bank"/></svg></div><div class="m"><div>FLUX Bến Thành</div><div>15 Lê Lợi, Quận 1</div></div></div>
+            <div class="li"><div class="ic"><svg class="icon"><use href="#bank"/></svg></div><div class="m"><div>FLUX Lê Văn Lương</div><div>210 Lê Văn Lương, Nhà Bè</div></div></div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>5 · Từ chối quyền vị trí</b>Bản đồ vẫn hiện mọi chi nhánh, danh sách xếp theo tên, không có khoảng cách. Hai biến thể dùng cùng khối này: "Định vị đang tắt" → <i>Mở cài đặt định vị</i>; quá 15 s chưa có vị trí → <i>Thử lại</i>.</figcaption>
+    </figure>
+
+    <!-- 6. Mất mạng -->
+    <figure>
+      <div class="ph">
+        <svg class="map" viewBox="0 0 294 624" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+          <use href="#base"/>
+          <path d="M120 250L190 214" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-dasharray="5 5" stroke-linecap="round"/>
+          <use href="#bpin" x="66" y="126" width="28" height="28"/>
+          <use href="#bpin" x="221" y="336" width="28" height="28"/>
+          <use href="#bpin" x="26" y="336" width="28" height="28"/>
+          <use href="#me" x="90" y="220" width="60" height="60"/>
+          <use href="#bpinOn" x="170" y="194" width="40" height="40"/>
+        </svg>
+        <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="fab back"><svg class="icon"><use href="#back"/></svg>Chi nhánh</div>
+        <div class="fab sq" style="right:14px;top:326px"><svg class="icon"><use href="#target"/></svg></div>
+        <div class="glogo" style="bottom:282px">Google</div>
+        <div class="sheet">
+          <div class="handle"></div>
+          <div class="secl">Gần nhất theo đường thẳng</div>
+          <div>
+            <div class="row"><div class="bname">FLUX Tân Phong</div><span class="pill"><span class="dot off"></span>Đã đóng · mở 8:00 T2</span></div>
+            <div class="addr">32 Đường số 15, Tân Phong, Quận 7</div>
+          </div>
+          <div class="walk"><span class="amt sm">450 m</span><span class="t">đường thẳng</span></div>
+          <div class="note"><svg class="icon"><use href="#wifix"/></svg><span>Không tải được đường đi bộ. Đường thật có thể dài hơn vì phải qua cầu hoặc đi vòng.</span></div>
+          <div class="acts"><div class="btn2"><svg class="icon"><use href="#retry"/></svg>Thử lại</div></div>
+        </div>
+      </div>
+      <figcaption><b>6 · Không tải được đường đi</b>Cả 3 ứng viên đều lỗi (mất mạng, server sập): gợi ý theo đường thẳng, nét đứt obsidian, nói rõ là ước lượng. Pill giờ mở cửa minh hoạ trạng thái "đã đóng" (tính theo giờ Việt Nam).</figcaption>
+    </figure>
+
+  </div>
+</section>
