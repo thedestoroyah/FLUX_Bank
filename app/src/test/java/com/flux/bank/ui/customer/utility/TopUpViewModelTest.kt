@@ -98,4 +98,14 @@ class TopUpViewModelTest {
         assertEquals("0912345678", tx.counterpartyAccount)
         assertEquals("pay0", tx.id)
     }
+
+    @Test
+    fun amountAboveBalanceShowsErrorOnSelect() {
+        accounts.accounts[0] = accounts.accounts[0].copy(balance = 50_000)
+        val vm = vm()
+        vm.selectAmount(100_000)
+        assertEquals(com.flux.bank.domain.TransferError.INSUFFICIENT_FUNDS, vm.checkout.value!!.amountError)
+        vm.selectAmount(50_000)
+        assertNull(vm.checkout.value!!.amountError)
+    }
 }

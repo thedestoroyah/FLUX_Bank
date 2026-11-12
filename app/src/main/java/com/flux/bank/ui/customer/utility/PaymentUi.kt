@@ -1,6 +1,7 @@
 package com.flux.bank.ui.customer.utility
 
 import android.view.View
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.flux.bank.FluxApp
@@ -30,7 +31,9 @@ class PaymentUi(
     private val vm: ServicePaymentViewModel,
     private val utility: Utility,
     private val kyc: ViewPaymentKycBinding,
-    private val source: ViewPaymentSourceBinding
+    private val source: ViewPaymentSourceBinding,
+    // Màn có thanh đáy cố định (danh mục) hiện lỗi ở đó để không bị khuất khi đang cuộn
+    private val errorView: TextView? = null
 ) {
     // Chip được tạo lại khi danh sách tài khoản đổi
     private var chipIds: List<String> = emptyList()
@@ -82,14 +85,22 @@ class PaymentUi(
             )
             if (account.accountId == s.sourceId && !chip.isChecked) chip.isChecked = true
         }
-        source.tvAmountError.isVisible = s.amountError != null
-        source.tvAmountError.text = s.amountError?.let { errorText(it, s.remainingToday) }
-        source.tvError.isVisible = s.errorRes != null
-        s.errorRes?.let(source.tvError::setText)
+        val amountText = s.amountError?.let { errorText(it, s.remainingToday) }
+        val errorText = s.errorRes?.let(fragment::getString)
+        if (errorView != null) {
+            val text = amountText ?: errorText
+            errorView.isVisible = text != null
+            errorView.text = text
+        } else {
+            source.tvAmountError.isVisible = amountText != null
+            source.tvAmountError.text = amountText
+            source.tvError.isVisible = errorText != null
+            source.tvError.text = errorText
+        }
     }
 
-    /** Nút trả tiền chỉ bật khi không đang ghi, đã eKYC và có tài khoản nguồn. */
-    fun canPay(s: CheckoutState): Boolean = !s.submitting && !s.kycBlocked && s.source != null
+    /** Nút trả tiền chỉ bật khi không đang ghi, đã eKYC, có tài khoản nguồn và số tiền không vượt số dư/hạn mức. */
+    fun canPay(s: CheckoutState): Boolean = !s.submitting && !s.kycBlocked && s.source != null && s.amountError == null
 
     /** Nhãn tài khoản cho biên lai, ví dụ "Thanh toán · 886812034471". */
     fun accountLabel(account: BankAccount?): String = account?.let {

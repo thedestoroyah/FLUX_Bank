@@ -91,7 +91,10 @@ class CatalogViewModel(
     private fun update(block: (CatalogState) -> CatalogState) {
         val next = block(current())
         _catalog.value = next.copy(total = next.item?.let { ServiceCatalog.total(it, next.quantity) } ?: 0)
+        revalidate()
     }
+
+    override fun currentAmount(): Long? = current().takeIf { it.item != null }?.total
 
     private fun current() = _catalog.value!!
 }

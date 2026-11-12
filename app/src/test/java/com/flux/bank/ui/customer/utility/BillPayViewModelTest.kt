@@ -198,4 +198,13 @@ class BillPayViewModelTest {
         vm.confirm()
         assertEquals(2, asked)
     }
+
+    @Test
+    fun billAboveBalanceShowsErrorOnLookup() {
+        accounts.accounts[0] = accounts.accounts[0].copy(balance = 100_000)
+        val vm = vm().looked()
+        assertEquals(TransferError.INSUFFICIENT_FUNDS, vm.c().amountError)
+        vm.selectSource("sav")
+        assertNull(vm.c().amountError)
+    }
 }

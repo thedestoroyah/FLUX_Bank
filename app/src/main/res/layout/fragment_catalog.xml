@@ -188,6 +188,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.Flux.AmountSmall" />
+
+            <TextView
+                android:id="@+id/tvPayError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Flux.Caption"
+                android:textColor="@color/flux_error_dark"
+                android:visibility="gone" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton

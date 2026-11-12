@@ -81,7 +81,7 @@ class CatalogFragment : Fragment() {
         binding.btnPlus.setOnClickListener { viewModel.increment() }
         binding.btnPay.setOnClickListener { viewModel.confirm() }
 
-        ui = PaymentUi(this, viewModel, Utility.fromService(kind.service)!!, binding.kyc, binding.source).also { it.attach() }
+        ui = PaymentUi(this, viewModel, Utility.fromService(kind.service)!!, binding.kyc, binding.source, binding.tvPayError).also { it.attach() }
         viewModel.catalog.observe(viewLifecycleOwner) { render() }
         viewModel.checkout.observe(viewLifecycleOwner) { render() }
         if (savedInstanceState == null) viewModel.load()
