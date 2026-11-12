@@ -414,4 +414,26 @@
     <string name="history_load_failed">Không tải được lịch sử giao dịch. Kiểm tra kết nối rồi thử lại.</string>
     <string name="saving_none_title">Chưa có tài khoản tiết kiệm</string>
     <string name="saving_none">Liên hệ nhân viên FLUX để mở tài khoản tiết kiệm.</string>
+
+    <!-- Feature 5: tiện ích -->
+    <string name="pay_kyc_blocked">Bạn cần hoàn tất xác minh danh tính (eKYC) trước khi thanh toán.</string>
+    <string name="pay_from">Trả từ</string>
+    <string name="pay_confirm_title">Xác nhận thanh toán</string>
+    <string name="pay_action">Thanh toán</string>
+    <string name="pay_action_amount">Thanh toán %1$s</string>
+    <string name="err_pay_max">Tối đa 100.000.000 ₫ mỗi lần thanh toán</string>
+    <string name="err_pay_daily">Vượt hạn mức trong ngày (còn lại %1$s)</string>
+    <string name="bill_code">Mã khách hàng</string>
+    <string name="bill_code_hint_power">PE và 11 chữ số, in trên hoá đơn điện</string>
+    <string name="bill_code_hint_water">8–12 chữ số, in trên hoá đơn nước</string>
+    <string name="bill_lookup">Tra cứu</string>
+    <string name="bill_code_error">Mã khách hàng không đúng định dạng</string>
+    <string name="bill_not_found">Không tìm thấy hoá đơn cho mã này</string>
+    <string name="bill_period">Kỳ</string>
+    <string name="bill_usage">Tiêu thụ</string>
+    <string name="bill_usage_power">%1$d kWh</string>
+    <string name="bill_usage_water">%1$d m³</string>
+    <string name="bill_due">Hạn thanh toán</string>
+    <string name="bill_paid">Bạn đã thanh toán kỳ này lúc %1$s.</string>
+    <string name="bill_view_receipt">Xem biên lai</string>
 </resources>
