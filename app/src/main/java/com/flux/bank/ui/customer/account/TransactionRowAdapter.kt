@@ -14,6 +14,7 @@ import com.flux.bank.core.format.TextNormalizer
 import com.flux.bank.data.model.Transaction
 import com.flux.bank.data.model.TransactionType
 import com.flux.bank.databinding.ItemTransactionBinding
+import com.flux.bank.ui.customer.Utility
 
 /**
  * Danh sách dòng giao dịch dùng chung (chi tiết tài khoản, trang chủ).
@@ -69,10 +70,16 @@ class TransactionRowAdapter(
 fun ItemTransactionBinding.bind(tx: Transaction, subtitle: String) {
     val context = root.context
     val incoming = tx.type.isIncoming
-    ivIcon.setImageResource(if (incoming) R.drawable.ic_plus else R.drawable.ic_arrow_down)
-    ivIcon.backgroundTintList = ContextCompat.getColorStateList(context, if (incoming) R.color.cat_emerald_bg else R.color.flux_border_subtle)
+    // Thanh toán dịch vụ dùng icon + màu của ô tiện ích (mockup F5 màn 10); không khớp thì dùng túi mua sắm
+    val utility = if (tx.type == TransactionType.PAYMENT) Utility.fromService(tx.service) ?: Utility.MUA_SAM else null
+    ivIcon.setImageResource(utility?.icon ?: if (incoming) R.drawable.ic_plus else R.drawable.ic_arrow_down)
+    ivIcon.backgroundTintList = ContextCompat.getColorStateList(
+        context, utility?.tileBg ?: if (incoming) R.color.cat_emerald_bg else R.color.flux_border_subtle
+    )
     ImageViewCompat.setImageTintList(
-        ivIcon, ColorStateList.valueOf(ContextCompat.getColor(context, if (incoming) R.color.flux_emerald_dark else R.color.flux_text_secondary))
+        ivIcon, ColorStateList.valueOf(
+            ContextCompat.getColor(context, utility?.tint ?: if (incoming) R.color.flux_emerald_dark else R.color.flux_text_secondary)
+        )
     )
     tvTitle.text = TransactionRowAdapter.title(context, tx)
     tvSubtitle.text = subtitle

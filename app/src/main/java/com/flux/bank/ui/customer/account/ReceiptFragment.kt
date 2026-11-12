@@ -13,11 +13,14 @@ import com.flux.bank.R
 import com.flux.bank.core.format.MoneyFormatter
 import com.flux.bank.core.format.TextNormalizer
 import com.flux.bank.data.model.Banks
+import com.flux.bank.data.model.DetailRow
 import com.flux.bank.data.model.Transaction
 import com.flux.bank.data.model.TransactionType
 import com.flux.bank.databinding.FragmentReceiptBinding
+import com.flux.bank.domain.utility.CatalogKind
 import com.flux.bank.ui.common.setKeyValueRows
 import com.flux.bank.ui.customer.CustomerMainActivity
+import com.flux.bank.ui.customer.Utility
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -54,6 +57,10 @@ class ReceiptFragment : Fragment() {
             ContextCompat.getColor(requireContext(), if (type.isIncoming) R.color.flux_emerald_dark else R.color.flux_text_primary)
         )
         binding.rows.setKeyValueRows(rowsFor(tx, requireArguments().getString(ARG_ACCOUNT_LABEL).orEmpty()))
+        // Vé, phòng, đơn hàng có mã đặt chỗ (mockup F5 màn 9); hoá đơn và nạp ĐT thì không
+        val bookingCode = tx.paymentRef.takeIf { tx.type == TransactionType.PAYMENT && CatalogKind.entries.any { it.service == tx.service } }
+        binding.codeCard.isVisible = bookingCode != null
+        binding.tvCode.text = bookingCode
         binding.btnHome.setOnClickListener { leaveTo(CustomerMainActivity.CustomerTab.HOME) }
         if (transfer) binding.btnHistory.setText(R.string.receipt_transfer_again)
         binding.btnHistory.setOnClickListener {
@@ -86,7 +93,9 @@ class ReceiptFragment : Fragment() {
                 getString(R.string.receipt_account) to accountLabel,
                 getString(R.string.move_destination) to getString(R.string.move_destination_value)
             )
-            TransactionType.PAYMENT -> listOf(getString(R.string.receipt_account) to accountLabel)
+            TransactionType.PAYMENT -> listOfNotNull(
+                Utility.fromService(tx.service)?.let { getString(R.string.receipt_service) to getString(it.label) }
+            ) + tx.details.map { it.label to it.value } + listOf(getString(R.string.receipt_paid_from) to accountLabel)
         }
         return head + listOfNotNull(
             getString(R.string.receipt_time) to TIME_FORMAT.format(Date(tx.createdAt)),
@@ -122,6 +131,9 @@ class ReceiptFragment : Fragment() {
         private const val ARG_CP_ACCOUNT = "cp_account"
         private const val ARG_CP_BANK = "cp_bank"
         private const val ARG_PAYMENT_REF = "payment_ref"
+        private const val ARG_SERVICE = "service"
+        private const val ARG_DETAIL_LABELS = "detail_labels"
+        private const val ARG_DETAIL_VALUES = "detail_values"
         private const val ID_LENGTH = 10
         private val TIME_FORMAT = SimpleDateFormat("HH:mm · dd/MM/yyyy", Locale("vi"))
 
@@ -133,7 +145,8 @@ class ReceiptFragment : Fragment() {
                 ARG_ID to tx.id, ARG_TYPE to tx.type.name, ARG_AMOUNT to tx.amount, ARG_CREATED_AT to tx.createdAt,
                 ARG_ACCOUNT_LABEL to accountLabel, ARG_VIEW_ONLY to viewOnly, ARG_DESCRIPTION to tx.description,
                 ARG_CP_NAME to tx.counterpartyName, ARG_CP_ACCOUNT to tx.counterpartyAccount, ARG_CP_BANK to tx.counterpartyBank,
-                ARG_PAYMENT_REF to tx.paymentRef
+                ARG_PAYMENT_REF to tx.paymentRef, ARG_SERVICE to tx.service,
+                ARG_DETAIL_LABELS to ArrayList(tx.details.map { it.label }), ARG_DETAIL_VALUES to ArrayList(tx.details.map { it.value })
             ).apply { tx.balanceAfter?.let { putLong(ARG_BALANCE_AFTER, it) } }
         }
 
@@ -143,7 +156,9 @@ class ReceiptFragment : Fragment() {
             balanceAfter = if (args.containsKey(ARG_BALANCE_AFTER)) args.getLong(ARG_BALANCE_AFTER) else null,
             description = args.getString(ARG_DESCRIPTION).orEmpty(), counterpartyName = args.getString(ARG_CP_NAME).orEmpty(),
             counterpartyAccount = args.getString(ARG_CP_ACCOUNT).orEmpty(), counterpartyBank = args.getString(ARG_CP_BANK).orEmpty(),
-            paymentRef = args.getString(ARG_PAYMENT_REF)
+            paymentRef = args.getString(ARG_PAYMENT_REF), service = args.getString(ARG_SERVICE),
+            details = args.getStringArrayList(ARG_DETAIL_LABELS).orEmpty()
+                .zip(args.getStringArrayList(ARG_DETAIL_VALUES).orEmpty()) { label, value -> DetailRow(label, value) }
         )
     }
 }
