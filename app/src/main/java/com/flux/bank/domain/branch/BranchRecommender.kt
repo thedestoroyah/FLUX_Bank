@@ -12,13 +12,14 @@ data class RankedBranch(val branch: Branch, val straightMeters: Double, val walk
 
 /**
  * Kết quả gợi ý. [ranked]: các ứng viên có đường đi bộ (ngắn trước), rồi các chi nhánh còn lại theo đường thẳng.
- * [routed] = false khi không tính được đường đi bộ nào (lỗi mạng, hoặc ở quá xa).
+ * [routed] = false khi không tính được đường đi bộ nào; [tooFar] = true nghĩa là do ở quá xa (không gọi server), không phải lỗi.
  */
 data class Recommendation(
     val ranked: List<RankedBranch>,
     val pick: RankedBranch,
     val straightNearest: RankedBranch,
-    val routed: Boolean
+    val routed: Boolean,
+    val tooFar: Boolean = false
 ) {
     /** Có hiện dòng "X gần hơn theo đường thẳng nhưng phải đi vòng" hay không. */
     val showsDetour: Boolean get() = routed && pick.branch.id != straightNearest.branch.id
@@ -40,7 +41,7 @@ class BranchRecommender(
             .sortedBy { it.straightMeters }
         val nearest = byStraight.first()
         if (nearest.straightMeters > MAX_ROUTED_STRAIGHT_METERS) {
-            return Recommendation(byStraight, nearest, nearest, routed = false)
+            return Recommendation(byStraight, nearest, nearest, routed = false, tooFar = true)
         }
         val candidates = byStraight.take(CANDIDATES)
         val routed = coroutineScope {

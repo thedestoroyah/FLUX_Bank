@@ -236,10 +236,17 @@ class FakeKycRepository : KycRepository {
 fun customer(uid: String, phone: String = "09000000${uid.takeLast(2).padStart(2, '0')}", nationalId: String = "0792030012${uid.takeLast(2).padStart(2, '0')}", kyc: String = KycStatus.NOT_SUBMITTED, name: String = "Khách $uid") =
     User(uid = uid, email = "$uid@mail.com", fullName = name, phoneNumber = phone, nationalId = nationalId, kycStatus = kyc)
 
-/** Vị trí giả: trả [result], đếm số lần được hỏi. */
+/** Vị trí giả: trả [result], đếm số lần được hỏi; [gate] giữ kết quả lại, [error] giả lỗi của API vị trí. */
 class FakeLocationSource(var result: LocationResult = LocationResult.Found(Branches.DEMO_ANCHOR)) : LocationSource {
     var calls = 0
-    override suspend fun current(): LocationResult = result.also { calls++ }
+    var gate: CompletableDeferred<Unit>? = null
+    var error: Exception? = null
+    override suspend fun current(): LocationResult {
+        calls++
+        gate?.await()
+        error?.let { throw it }
+        return result
+    }
 }
 
 /** Router giả: đi bộ = 1,3 × đường thẳng; [fail] để giả lỗi mạng; [gates] giữ một điểm đến cho tới khi complete. */

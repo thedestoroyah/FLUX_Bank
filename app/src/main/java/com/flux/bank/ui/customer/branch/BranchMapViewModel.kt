@@ -37,7 +37,8 @@ data class BranchMapState(
     val recommendation: Recommendation? = null,
     val selectedId: String? = null,
     val route: RouteUi? = null,
-    val routeFailed: Boolean = false
+    val routeFailed: Boolean = false,
+    val tooFar: Boolean = false
 )
 
 /** Màn bản đồ chi nhánh (spec F6 §5, §7): lấy vị trí, gợi ý, chọn chi nhánh khác, lưu đường đã tính trong phiên. */
@@ -72,33 +73,51 @@ class BranchMapViewModel(
         }
     }
 
-    /** Lấy vị trí rồi tính gợi ý; đường đã lưu theo vị trí cũ bị xoá. */
+    /**
+     * Lấy vị trí rồi tính gợi ý. Xoá gợi ý và vị trí cũ ngay: sheet hiện khung chờ, và chạm chi nhánh lúc này
+     * chỉ đổi lựa chọn chứ không tính đường từ vị trí cũ.
+     */
     fun locate() {
         val gen = ++locateGen
         routeGen++
         cache.clear()
-        _state.value = current().copy(loading = true, issue = null)
+        _state.value = current().copy(
+            loading = true, issue = null, user = null, recommendation = null,
+            selectedId = null, route = null, routeFailed = false, tooFar = false
+        )
         viewModelScope.launch {
-            val result = location.current()
+            val result = try {
+                location.current()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                LocationResult.Timeout // máy không có / lỗi Play services: báo như chưa lấy được vị trí, không crash
+            }
             if (gen != locateGen) return@launch
             when (result) {
                 LocationResult.Disabled -> showIssue(LocationIssue.DISABLED)
                 LocationResult.Timeout -> showIssue(LocationIssue.TIMEOUT)
-                is LocationResult.Found -> {
-                    val rec = recommender.recommend(result.point)
-                    if (gen != locateGen) return@launch
-                    rec.ranked.forEach { r -> r.walk?.let { cache[r.branch.id] = it } }
-                    _state.value = BranchMapState(
-                        user = result.point,
-                        branches = rec.ranked,
-                        recommendation = rec,
-                        selectedId = rec.pick.branch.id,
-                        route = routeOf(rec.pick),
-                        routeFailed = !rec.routed
-                    )
-                }
+                is LocationResult.Found -> recommendFrom(result.point, gen)
             }
         }
+    }
+
+    private suspend fun recommendFrom(point: GeoPoint, gen: Int) {
+        val rec = recommender.recommend(point)
+        if (gen != locateGen) return
+        // Bỏ mọi đường tính trong lúc chờ (có thể từ vị trí cũ) trước khi nạp đường của gợi ý mới
+        routeGen++
+        cache.clear()
+        rec.ranked.forEach { r -> r.walk?.let { cache[r.branch.id] = it } }
+        _state.value = BranchMapState(
+            user = point,
+            branches = rec.ranked,
+            recommendation = rec,
+            selectedId = rec.pick.branch.id,
+            route = routeOf(rec.pick),
+            routeFailed = !rec.routed && !rec.tooFar,
+            tooFar = rec.tooFar
+        )
     }
 
     /** Chọn một chi nhánh (chạm ghim hoặc dòng danh sách) và vẽ đường tới đó; đã tính rồi thì dùng lại. */
@@ -109,6 +128,10 @@ class BranchMapViewModel(
         val user = s.user ?: return run { _state.value = s.copy(selectedId = branchId) }
         cache[branchId]?.let {
             _state.value = s.copy(selectedId = branchId, route = RouteUi.Walking(it), routeFailed = false, loading = false)
+            return
+        }
+        if (target.straightMeters > BranchRecommender.MAX_ROUTED_STRAIGHT_METERS) {
+            _state.value = s.copy(selectedId = branchId, route = RouteUi.Straight(target.straightMeters), routeFailed = false, loading = false)
             return
         }
         _state.value = s.copy(selectedId = branchId, route = null, routeFailed = false, loading = true)
@@ -136,16 +159,25 @@ class BranchMapViewModel(
         val rec = current().recommendation ?: return
         routeGen++
         _state.value = current().copy(
-            selectedId = rec.pick.branch.id, route = routeOf(rec.pick), routeFailed = !rec.routed, loading = false
+            selectedId = rec.pick.branch.id, route = routeOf(rec.pick), routeFailed = !rec.routed && !rec.tooFar, loading = false
         )
     }
 
-    /** Nút "Thử lại" khi không tải được đường: gợi ý lỗi thì tính lại từ đầu, chi nhánh tự chọn thì gọi lại đường. */
+    /**
+     * Nút "Thử lại" khi không tải được đường: chi nhánh tự chọn thì gọi lại đường đó; gợi ý lỗi thì tính lại gợi ý
+     * từ vị trí đã có (không bật GPS lại, tránh mất card đường thẳng nếu lần định vị sau hết giờ).
+     */
     fun retryRoute() {
         val s = current()
         val rec = s.recommendation
+        val user = s.user
         val selected = s.selectedId
-        if (rec == null || selected == null || selected == rec.pick.branch.id) locate() else select(selected)
+        if (rec == null || user == null) return locate()
+        if (selected != null && selected != rec.pick.branch.id) return select(selected)
+        val gen = ++locateGen
+        routeGen++
+        _state.value = s.copy(loading = true, recommendation = null, selectedId = null, route = null, routeFailed = false)
+        viewModelScope.launch { recommendFrom(user, gen) }
     }
 
     private fun showIssue(issue: LocationIssue) {

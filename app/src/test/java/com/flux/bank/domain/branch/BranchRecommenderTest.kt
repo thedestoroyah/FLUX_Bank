@@ -77,6 +77,7 @@ class BranchRecommenderTest {
         assertEquals(r.straightNearest, r.pick)
         assertTrue(r.ranked.all { it.walk == null })
         assertFalse(r.showsDetour)
+        assertFalse(r.tooFar)
     }
 
     @Test
@@ -86,6 +87,7 @@ class BranchRecommenderTest {
         assertEquals(0, router.calls.size)
         assertFalse(r.routed)
         assertEquals("b0", r.pick.branch.id)
+        assertTrue(r.tooFar)
     }
 
     @Test
