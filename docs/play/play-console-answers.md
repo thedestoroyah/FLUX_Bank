@@ -9,7 +9,7 @@
 ## 1. Policy and programs → App content
 
 ### Privacy policy
-`<LINK_GIST>` (Gist công khai từ `docs/play/privacy-policy.md`).
+`https://gist.github.com/thedestoroyah/a48a98939a1fc13b32d8913c0d8711df` (Gist công khai từ `docs/play/privacy-policy.md`).
 
 ### App access
 Chọn **All or some functionality is restricted** → thêm một bộ hướng dẫn:
@@ -47,7 +47,7 @@ Không chọn personal loan (khoản vay chỉ hiển thị, nhân viên tạo, 
 Tổng quan:
 - Does your app collect or share any of the required user data types? **Yes**.
 - Is all of the user data collected by your app encrypted in transit? **Yes**.
-- Which methods of account creation does your app support? **Other** (tài khoản do nhân viên tạo trong app). Delete account URL: `<LINK_GIST>#quyền-của-bạn` (mục "Quyền của bạn" trong chính sách) — người dùng gửi email để xoá.
+- Which methods of account creation does your app support? **Other** (tài khoản do nhân viên tạo trong app). Delete account URL: `https://gist.github.com/thedestoroyah/a48a98939a1fc13b32d8913c0d8711df` (mục "Quyền của bạn" trong chính sách) — người dùng gửi email để xoá.
 - Can users request that data be deleted? **Yes**.
 
 Từng loại dữ liệu (Collected = thu thập; Shared = chuyển cho bên thứ ba **không phải** nhà cung cấp dịch vụ xử lý thay mình — Firebase và Gemini là nhà cung cấp dịch vụ nên không tính "Shared"):
@@ -94,7 +94,7 @@ Không khai: Contacts, Calendar, Audio, Health, App activity, App info and perfo
 - **Feature graphic:** `docs/play/graphics/feature-1024x500.png`
 - **Phone screenshots:** `docs/play/graphics/screenshot-01.png` … `screenshot-06.png`
 - **App category:** Finance · **Tags:** chọn tối đa 5 gợi ý liên quan ngân hàng/tài chính cá nhân.
-- **Contact details:** Email `<EMAIL_LIÊN_HỆ>` (bắt buộc, hiện công khai) · Website: để trống · Phone: để trống.
+- **Contact details:** Email `datpham1365@gmail.com` (bắt buộc, hiện công khai) · Website: để trống · Phone: để trống.
 
 ## 3. Test and release → Testing → Closed testing
 - Tạo track (mặc định *Closed testing - Alpha*) → **Countries/regions:** Việt Nam.
