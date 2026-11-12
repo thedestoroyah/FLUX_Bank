@@ -30,10 +30,10 @@ Chúng tôi không bán dữ liệu, không dùng quảng cáo.
 Dữ liệu được mã hoá khi truyền (HTTPS). Quyền truy cập được giới hạn bởi Firebase Security Rules: mỗi khách chỉ đọc được dữ liệu của mình. Dữ liệu được giữ đến khi đồ án kết thúc hoặc khi bạn yêu cầu xoá.
 
 ### Quyền của bạn
-Bạn có thể yêu cầu xem hoặc xoá toàn bộ dữ liệu của mình bằng cách gửi email tới **<EMAIL_LIÊN_HỆ>**. Chúng tôi xử lý trong vòng 7 ngày.
+Bạn có thể yêu cầu xem hoặc xoá toàn bộ dữ liệu của mình bằng cách gửi email tới **datpham1365@gmail.com**. Chúng tôi xử lý trong vòng 7 ngày.
 
 ### Liên hệ
-<EMAIL_LIÊN_HỆ>
+datpham1365@gmail.com
 
 ---
 
@@ -63,7 +63,7 @@ We do not sell data and show no ads.
 Data is encrypted in transit (HTTPS). Access is limited by Firebase Security Rules: each customer can only read their own data. Data is kept until the project ends or until you ask us to delete it.
 
 ### Your rights
-You can ask to see or delete all your data by emailing **<EMAIL_LIÊN_HỆ>**. We handle requests within 7 days.
+You can ask to see or delete all your data by emailing **datpham1365@gmail.com**. We handle requests within 7 days.
 
 ### Contact
-<EMAIL_LIÊN_HỆ>
+datpham1365@gmail.com
