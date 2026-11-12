@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.flux.bank.data.model.AccountType
 import com.flux.bank.data.model.BankAccount
 import com.flux.bank.data.model.Transaction
+import com.flux.bank.data.model.TransactionType
 import com.flux.bank.fakes.FakeAccountRepository
 import com.flux.bank.fakes.FakeAuthRepository
 import com.flux.bank.fakes.FakeTransactionRepository
@@ -12,11 +13,13 @@ import com.flux.bank.ui.customer.history.DayLabel
 import com.flux.bank.ui.customer.history.HistoryRow
 import com.flux.bank.ui.customer.history.HistoryViewModel
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.YearMonth
 import java.time.ZoneId
 
 class HistoryViewModelTest {
@@ -66,5 +69,32 @@ class HistoryViewModelTest {
     @Test
     fun emptyHistoryHasNoRows() {
         assertTrue(vm().rows.value!!.isEmpty())
+    }
+
+    @Test
+    fun restrictToMonthKeepsOnlyThatMonth() {
+        transactions.items += Transaction(id = "oct", ownerUid = "c1", accountId = "chk", createdAt = at(2026, 10, 27, 9, 0))
+        transactions.items += Transaction(id = "sep", ownerUid = "c1", accountId = "chk", createdAt = at(2026, 9, 30, 9, 0))
+        val vm = vm()
+        vm.restrictTo(YearMonth.of(2026, 10))
+        assertEquals(listOf(HistoryRow.Header(DayLabel.Today), HistoryRow.Item(transactions.items[0])), vm.rows.value)
+        assertEquals(YearMonth.of(2026, 10), vm.monthTotals.value!!.month)
+    }
+
+    @Test
+    fun monthTotalsFollowAccountFilter() {
+        transactions.items += Transaction(id = "p", ownerUid = "c1", accountId = "chk", type = TransactionType.PAYMENT, amount = 300_000, createdAt = at(2026, 10, 27, 9, 0))
+        transactions.items += Transaction(id = "d", ownerUid = "c1", accountId = "sav", type = TransactionType.DEPOSIT, amount = 200_000, createdAt = at(2026, 10, 26, 9, 0))
+        val vm = vm()
+        vm.restrictTo(YearMonth.of(2026, 10))
+        vm.filter("chk")
+        assertEquals(300_000L, vm.monthTotals.value!!.outgoing)
+        assertEquals(0L, vm.monthTotals.value!!.incoming)
+    }
+
+    @Test
+    fun noMonthFilterMeansNoTotals() {
+        transactions.items += Transaction(id = "t1", ownerUid = "c1", accountId = "chk", createdAt = at(2026, 10, 27, 9, 0))
+        assertNull(vm().monthTotals.value)
     }
 }
