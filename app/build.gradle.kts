@@ -81,6 +81,9 @@ dependencies {
     implementation("com.google.mlkit:face-detection:16.1.7")
     implementation("com.google.mlkit:barcode-scanning:17.3.0") // Quét QR nhận tiền (F4)
     implementation("com.google.zxing:core:3.5.3") // Sinh mã QR "Mã của tôi" (Apache-2.0)
+    // --- Bản đồ chi nhánh và vị trí (F6) ---
+    implementation("org.osmdroid:osmdroid-android:6.1.20") // Bản đồ OpenStreetMap, Apache-2.0, không key
+    implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation("com.google.ai.edge.litert:litert:1.4.2")
     implementation("androidx.camera:camera-core:1.6.2")
     implementation("androidx.camera:camera-camera2:1.6.2")
@@ -90,4 +93,5 @@ dependencies {
     // --- Test ---
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("org.json:json:20240303") // org.json của Android trong unit test chỉ là stub
 }

@@ -466,4 +466,46 @@
     <string name="catalog_decrease">Giảm</string>
     <string name="catalog_increase">Tăng</string>
     <string name="catalog_stars">%1$s · %2$s</string>
+    <!-- F6: Chi nhánh và đường đi bộ -->
+    <string name="branch_recommended">Gợi ý cho bạn</string>
+    <string name="branch_selected">Chi nhánh bạn chọn</string>
+    <string name="branch_straight_nearest">Gần nhất theo đường thẳng</string>
+    <string name="branch_walk_minutes">%d phút đi bộ</string>
+    <string name="branch_minutes">%d phút</string>
+    <string name="branch_straight_line">đường thẳng</string>
+    <string name="branch_shortest_walk">Đi bộ ngắn nhất</string>
+    <string name="branch_open_until">Mở đến %s</string>
+    <string name="branch_closed_until">Đã đóng · mở %s</string>
+    <string name="branch_opens_tomorrow">%s ngày mai</string>
+    <string name="branch_opens_on">%1$s %2$s</string>
+    <string-array name="branch_weekdays">
+        <item>T2</item>
+        <item>T3</item>
+        <item>T4</item>
+        <item>T5</item>
+        <item>T6</item>
+        <item>T7</item>
+        <item>CN</item>
+    </string-array>
+    <string name="branch_detour">%1$s gần hơn theo đường thẳng (%2$s) nhưng phải đi vòng, đi bộ %3$s.</string>
+    <string name="branch_route_failed">Không tải được đường đi bộ. Đường thật có thể dài hơn vì phải qua cầu hoặc đi vòng.</string>
+    <string name="branch_see_all">Xem tất cả chi nhánh</string>
+    <string name="branch_back_to_pick">Quay lại gợi ý</string>
+    <string name="branch_call">Gọi chi nhánh</string>
+    <string name="branch_retry">Thử lại</string>
+    <string name="branch_osm_credit">© OpenStreetMap</string>
+    <string name="branch_finding">Đang tìm đường đi bộ ngắn nhất…</string>
+    <string name="branch_list_header_near">%d chi nhánh · gần nhất trước</string>
+    <string name="branch_list_header">%d chi nhánh</string>
+    <string name="branch_no_permission_title">Chưa biết bạn đang ở đâu</string>
+    <string name="branch_no_permission_body">Cho phép vị trí để FLUX tìm chi nhánh có đường đi bộ ngắn nhất từ chỗ bạn.</string>
+    <string name="branch_no_permission_action">Cho phép vị trí</string>
+    <string name="branch_blocked_body">Quyền vị trí của FLUX đang tắt. Mở cài đặt ứng dụng để bật lại.</string>
+    <string name="branch_blocked_action">Mở cài đặt</string>
+    <string name="branch_disabled_title">Định vị đang tắt</string>
+    <string name="branch_disabled_body">Bật định vị của máy để tìm chi nhánh gần bạn.</string>
+    <string name="branch_disabled_action">Mở cài đặt định vị</string>
+    <string name="branch_timeout_title">Chưa lấy được vị trí</string>
+    <string name="branch_timeout_body">Thử đứng gần cửa sổ hoặc ra chỗ thoáng rồi thử lại.</string>
+    <string name="cd_my_location">Vị trí của tôi</string>
 </resources>
