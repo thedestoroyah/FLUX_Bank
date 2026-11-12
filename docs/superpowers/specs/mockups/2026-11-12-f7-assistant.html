@@ -1,0 +1,290 @@
+<title>FLUX F7 Assistant</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: các khung điện thoại xếp theo luồng demo, chú thích bên dưới. Chỉ một giao diện sáng, cố ý (app chỉ có light theme), mọi màu đặt tường minh. */
+:root{
+  --bg:#F5F5F7; --surface:#FFFFFF; --ink:#0A0D12; --muted:#64748B; --faint:#94A3B8;
+  --line:#E5E7EB; --line2:#F1F3F5; --emerald:#10B981; --emerald-ink:#059669; --emerald-light:#ECFDF5;
+  --page:#ECEEF1; --violet:#7C3AED; --violet-bg:#7C3AED1A; --warn:#B45309; --warn-bg:#FEF3C7;
+  --font:"Inter",-apple-system,Roboto,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--ink);font-family:var(--font);padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{max-width:1100px;margin:0 auto 8px;display:flex;flex-direction:column;gap:6px}
+header.top h1{font-size:24px;font-weight:700;letter-spacing:-.4px;margin:0;text-wrap:balance}
+header.top p{margin:0;color:var(--muted);font-size:14px;line-height:1.5;max-width:70ch}
+.group{max-width:1100px;margin:28px auto 0}
+.group h2{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:0 0 14px}
+.phones{display:flex;gap:28px;flex-wrap:wrap}
+figure{margin:0;display:flex;flex-direction:column;gap:10px;width:310px;max-width:100%}
+figcaption{font-size:13px;line-height:1.45;color:var(--muted)}
+figcaption b{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}
+.ph{width:310px;max-width:100%;height:640px;background:var(--bg);border-radius:40px;border:8px solid var(--ink);overflow:hidden;position:relative;font-variant-numeric:tabular-nums;box-shadow:0 10px 30px rgba(10,13,18,.14);display:flex;flex-direction:column}
+.sb{height:26px;display:flex;justify-content:space-between;padding:6px 20px 0;font-size:12px;font-weight:600;flex:none}
+.hdr{display:flex;align-items:center;gap:10px;padding:6px 16px 10px;flex:none;border-bottom:1px solid var(--line2)}
+.hdr .t{flex:1;min-width:0}
+.hdr .t div:first-child{font-size:16px;font-weight:600}
+.hdr .t div:last-child{font-size:12px;color:var(--muted)}
+.backb{width:36px;height:36px;border-radius:12px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex:none}
+.icon{width:18px;height:18px;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sm .icon,.icon.sm{width:15px;height:15px}
+
+/* Vùng chat */
+.chat{flex:1;overflow:hidden;padding:14px 14px 8px;display:flex;flex-direction:column;gap:10px}
+.msg{display:flex;gap:8px;align-items:flex-end}
+.msg.me{justify-content:flex-end}
+.bot-av{width:26px;height:26px;border-radius:9px;background:var(--violet-bg);display:flex;align-items:center;justify-content:center;flex:none;align-self:flex-start}
+.bot-av .icon{stroke:var(--violet);width:14px;height:14px}
+.col{display:flex;flex-direction:column;gap:6px;max-width:84%;min-width:0}
+.bub{font-size:13px;line-height:1.45;padding:9px 12px;border-radius:18px}
+.bot .bub{background:var(--surface);border:1px solid var(--line);border-top-left-radius:6px}
+.me .bub{background:var(--ink);color:#fff;border-bottom-right-radius:6px;max-width:80%}
+.bub b{font-weight:600}
+.acts{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.act{display:flex;align-items:center;gap:10px;padding:0 12px;min-height:48px;border-bottom:1px solid var(--line2);font-size:13px;font-weight:600}
+.act:last-child{border:none}
+.act .lab{flex:1}
+.act .chev{stroke:var(--faint);width:15px;height:15px}
+.ic{width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none}
+.ic .icon{width:16px;height:16px}
+.ic.blue{background:#0071E31A}.ic.blue .icon{stroke:#0071E3}
+.ic.gold{background:#D977061A}.ic.gold .icon{stroke:#D97706}
+.ic.emer{background:#10B9811A}.ic.emer .icon{stroke:#10B981}
+.ic.violet{background:var(--violet-bg)}.ic.violet .icon{stroke:var(--violet)}
+.ic.grey{background:var(--line2)}.ic.grey .icon{stroke:var(--muted)}
+.tag{align-self:flex-start;display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--warn-bg);color:var(--warn)}
+.tag .icon{stroke:var(--warn);width:12px;height:12px}
+.typing{display:flex;gap:4px;padding:12px 14px}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--faint);display:block}
+@media (prefers-reduced-motion:no-preference){
+  .typing i{animation:blink 1.2s infinite}
+  .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,80%,100%{opacity:.35}40%{opacity:1}}
+}
+
+/* Trạng thái trống */
+.hello{display:flex;flex-direction:column;gap:6px;padding:14px 2px 4px}
+.hello h3{margin:0;font-size:20px;font-weight:600;letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
+.hello h3 .icon{stroke:var(--violet);width:20px;height:20px}
+.hello p{margin:0;font-size:13px;color:var(--muted);line-height:1.45;max-width:30ch}
+.safe{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:9px 12px}
+.safe .icon{stroke:var(--muted);width:15px;height:15px}
+.secl{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-top:4px}
+.sugg{display:flex;flex-wrap:wrap;gap:8px}
+.sg{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:0 12px;min-height:36px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
+.sg .icon{width:14px;height:14px}
+
+/* Thanh nhập */
+.inbar{flex:none;display:flex;gap:8px;align-items:center;padding:10px 12px 16px;background:var(--surface);border-top:1px solid var(--line)}
+.field{flex:1;height:44px;border-radius:14px;border:1px solid var(--line);background:var(--surface);display:flex;align-items:center;padding:0 12px;font-size:13px;color:var(--muted);min-width:0;white-space:nowrap;overflow:hidden}
+.field.focus{border:1.5px solid var(--emerald);color:var(--ink)}
+.field .caret{display:inline-block;width:1.5px;height:16px;background:var(--emerald);margin-left:1px;vertical-align:-3px}
+.send{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;background:var(--ink);opacity:.35}
+.send.on{background:var(--emerald);opacity:1}
+.send .icon{stroke:#fff}
+
+/* Màn giao dịch tháng */
+.pad{padding:12px 16px;display:flex;flex-direction:column;gap:12px;flex:1;overflow:hidden}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px}
+.sum{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sum .cap{font-size:12px;color:var(--muted)}
+.sum .v{font-size:17px;font-weight:700;letter-spacing:-.3px;margin-top:2px}
+.sum .v.in{color:var(--emerald-ink)}
+.sum .n{font-size:12px;color:var(--muted);margin-top:2px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:12px;font-weight:600;padding:7px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.day{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:2px 0 -4px}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:2px 14px}
+.tx{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line2)}
+.tx:last-child{border:none}
+.tx .m{flex:1;min-width:0}
+.tx .m div:first-child{font-size:13px;font-weight:600}
+.tx .m div:last-child{font-size:12px;color:var(--muted)}
+.pos{color:var(--emerald-ink);font-weight:600;font-size:13px}
+.neg{font-weight:600;font-size:13px}
+
+.notes{max-width:1100px;margin:32px auto 0;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px 20px;font-size:13px;line-height:1.55;color:var(--ink)}
+.notes h3{margin:0 0 8px;font-size:14px}
+.notes ul{margin:0;padding-left:18px;color:var(--muted);max-width:90ch}
+.notes li+li{margin-top:4px}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+ <symbol id="back" viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></symbol>
+ <symbol id="sparkle" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
+ <symbol id="send" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+ <symbol id="phone" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></symbol>
+ <symbol id="bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+ <symbol id="drop" viewBox="0 0 24 24"><path d="M12 3s-6 7-6 11a6 6 0 0 0 12 0c0-4-6-11-6-11z"/></symbol>
+ <symbol id="hist" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2"/></symbol>
+ <symbol id="pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+ <symbol id="swap" viewBox="0 0 24 24"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></symbol>
+ <symbol id="chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+ <symbol id="lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+ <symbol id="wifi" viewBox="0 0 24 24"><path d="M2 8.5a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0M12 19h.01M3 3l18 18"/></symbol>
+ <symbol id="bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></symbol>
+ <symbol id="in" viewBox="0 0 24 24"><path d="M17 7 7 17M16 17H7V8"/></symbol>
+</defs></svg>
+
+<header class="top">
+  <h1>Feature 7 · Trợ lý FLUX</h1>
+  <p>Màn chat mở từ ô "Trợ lý AI" trên trang chủ. Gemini (Firebase AI Logic, gói Spark) trả lời, kèm nút mở thẳng chức năng thật. Mất mạng hoặc hết lượt thì app tự trả lời bằng từ khoá. Dữ liệu trong mockup là ví dụ.</p>
+</header>
+
+<section class="group">
+  <h2>Luồng demo</h2>
+  <div class="phones">
+
+    <!-- 1. Trạng thái trống -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:41</span><span>5G 87%</span></div>
+        <div class="hdr">
+          <div class="backb"><svg class="icon"><use href="#back"/></svg></div>
+          <div class="t"><div>Trợ lý FLUX</div><div>Trả lời bởi AI, có thể chưa chính xác</div></div>
+        </div>
+        <div class="chat">
+          <div class="hello">
+            <h3><svg class="icon"><use href="#sparkle"/></svg>Chào Bình</h3>
+            <p>Mình giúp bạn tìm chức năng và xem chi tiêu. Bạn cứ hỏi tự nhiên.</p>
+          </div>
+          <div class="safe"><svg class="icon"><use href="#lock"/></svg>Không nhập mật khẩu hay mã OTP vào đây.</div>
+          <div class="secl">Gợi ý</div>
+          <div class="sugg">
+            <span class="sg"><svg class="icon" style="stroke:#0071E3"><use href="#phone"/></svg>Nạp tiền điện thoại</span>
+            <span class="sg"><svg class="icon" style="stroke:#D97706"><use href="#bolt"/></svg>Thanh toán tiền điện</span>
+            <span class="sg"><svg class="icon" style="stroke:#10B981"><use href="#hist"/></svg>Tháng này tôi chi bao nhiêu?</span>
+            <span class="sg"><svg class="icon" style="stroke:#0071E3"><use href="#pin"/></svg>Chi nhánh gần nhất</span>
+          </div>
+        </div>
+        <div class="inbar">
+          <div class="field">Hỏi Trợ lý FLUX…</div>
+          <div class="send"><svg class="icon"><use href="#send"/></svg></div>
+        </div>
+      </div>
+      <figcaption><b>1 · Mở màn chat</b>Chào bằng tên, nhắc không gửi OTP. Chạm chip là gửi luôn câu đó. Nút gửi mờ khi ô trống.</figcaption>
+    </figure>
+
+    <!-- 2. Hỏi đáp có nút hành động -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:42</span><span>5G 87%</span></div>
+        <div class="hdr">
+          <div class="backb"><svg class="icon"><use href="#back"/></svg></div>
+          <div class="t"><div>Trợ lý FLUX</div><div>Trả lời bởi AI, có thể chưa chính xác</div></div>
+        </div>
+        <div class="chat">
+          <div class="msg me"><div class="bub">Nạp tiền điện thoại</div></div>
+          <div class="msg bot">
+            <div class="bot-av"><svg class="icon"><use href="#sparkle"/></svg></div>
+            <div class="col">
+              <div class="bub">Bạn chọn nhà mạng tự nhận theo số, có 6 mệnh giá từ 10.000 ₫. Chạm bên dưới để nạp nhé.</div>
+              <div class="acts">
+                <div class="act"><span class="ic blue"><svg class="icon"><use href="#phone"/></svg></span><span class="lab">Nạp tiền điện thoại</span><svg class="icon chev"><use href="#chev"/></svg></div>
+              </div>
+            </div>
+          </div>
+          <div class="msg me"><div class="bub">tháng này mình tiêu hết bao nhiêu rồi</div></div>
+          <div class="msg bot">
+            <div class="bot-av"><svg class="icon"><use href="#sparkle"/></svg></div>
+            <div class="col">
+              <div class="bub">Tháng 11 bạn đã chi <b>4.282.200 ₫</b> qua 3 giao dịch, nhiều nhất là tiền điện 2.434.700 ₫. Tiền vào là 500.000 ₫.</div>
+              <div class="acts">
+                <div class="act"><span class="ic emer"><svg class="icon"><use href="#hist"/></svg></span><span class="lab">Xem giao dịch tháng 11</span><svg class="icon chev"><use href="#chev"/></svg></div>
+                <div class="act"><span class="ic gold"><svg class="icon"><use href="#bolt"/></svg></span><span class="lab">Thanh toán tiền điện</span><svg class="icon chev"><use href="#chev"/></svg></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="inbar">
+          <div class="field focus">hoá đơn nước<span class="caret"></span></div>
+          <div class="send on"><svg class="icon"><use href="#send"/></svg></div>
+        </div>
+      </div>
+      <figcaption><b>2 · Trả lời kèm nút</b>Mỗi câu trả lời có 0–3 nút, dùng icon và màu của lưới tiện ích. Chạm nút mở đúng màn, back thì cuộc trò chuyện vẫn còn. Số liệu là số thật của khách.</figcaption>
+    </figure>
+
+    <!-- 3. An toàn + chế độ cơ bản -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:44</span><span><svg class="icon sm" style="width:12px;height:12px;vertical-align:-2px"><use href="#wifi"/></svg> 86%</span></div>
+        <div class="hdr">
+          <div class="backb"><svg class="icon"><use href="#back"/></svg></div>
+          <div class="t"><div>Trợ lý FLUX</div><div>Trả lời bởi AI, có thể chưa chính xác</div></div>
+        </div>
+        <div class="chat">
+          <div class="msg me"><div class="bub">mã OTP của tôi là 482915</div></div>
+          <div class="msg bot">
+            <div class="bot-av"><svg class="icon"><use href="#sparkle"/></svg></div>
+            <div class="col">
+              <div class="bub">Bạn đừng gửi mã OTP cho ai, kể cả mình. FLUX không bao giờ hỏi mã này. Mã chỉ nhập ở màn xác thực giao dịch.</div>
+            </div>
+          </div>
+          <div class="msg me"><div class="bub">chuyen tien cho me</div></div>
+          <div class="msg bot">
+            <div class="bot-av"><svg class="icon"><use href="#sparkle"/></svg></div>
+            <div class="col">
+              <span class="tag"><svg class="icon"><use href="#wifi"/></svg>Chế độ cơ bản</span>
+              <div class="bub">Bạn có thể chuyển tiền ở đây.</div>
+              <div class="acts">
+                <div class="act"><span class="ic emer"><svg class="icon"><use href="#swap"/></svg></span><span class="lab">Chuyển tiền</span><svg class="icon chev"><use href="#chev"/></svg></div>
+              </div>
+            </div>
+          </div>
+          <div class="msg me"><div class="bub">còn chi nhánh nào mở không</div></div>
+          <div class="msg bot">
+            <div class="bot-av"><svg class="icon"><use href="#sparkle"/></svg></div>
+            <div class="bub typing" style="background:var(--surface);border:1px solid var(--line);border-top-left-radius:6px"><i></i><i></i><i></i></div>
+          </div>
+        </div>
+        <div class="inbar">
+          <div class="field">Hỏi Trợ lý FLUX…</div>
+          <div class="send"><svg class="icon"><use href="#send"/></svg></div>
+        </div>
+      </div>
+      <figcaption><b>3 · An toàn và mất mạng</b>Gửi OTP thì bot nhắc không chia sẻ. Mất mạng / hết lượt / quá 20 s: app trả lời bằng từ khoá, có nhãn "Chế độ cơ bản". Ba chấm khi đang chờ, nút gửi khoá.</figcaption>
+    </figure>
+
+    <!-- 4. Giao dịch tháng này -->
+    <figure>
+      <div class="ph">
+        <div class="sb"><span>9:43</span><span>5G 87%</span></div>
+        <div class="hdr">
+          <div class="backb"><svg class="icon"><use href="#back"/></svg></div>
+          <div class="t"><div>Giao dịch tháng 11/2026</div><div>Mở từ Trợ lý FLUX</div></div>
+        </div>
+        <div class="pad">
+          <div class="tile sum">
+            <div><div class="cap">Tiền vào</div><div class="v in">+500.000 ₫</div><div class="n">1 giao dịch</div></div>
+            <div><div class="cap">Tiền ra</div><div class="v">−4.282.200 ₫</div><div class="n">3 giao dịch</div></div>
+          </div>
+          <div class="chips"><span class="chip on">Tất cả</span><span class="chip">Thanh toán ··8242</span></div>
+          <div class="day">Hôm nay</div>
+          <div class="list">
+            <div class="tx"><span class="ic blue"><svg class="icon"><use href="#drop"/></svg></span><div class="m"><div>Tiền nước</div><div>09:12 · Thanh toán</div></div><span class="neg">−357.500 ₫</span></div>
+            <div class="tx"><span class="ic gold"><svg class="icon"><use href="#bolt"/></svg></span><div class="m"><div>Tiền điện</div><div>08:40 · Thanh toán</div></div><span class="neg">−2.434.700 ₫</span></div>
+          </div>
+          <div class="day">10 tháng 11</div>
+          <div class="list">
+            <div class="tx"><span class="ic violet" style="background:#E11D481A"><svg class="icon" style="stroke:#E11D48"><use href="#bag"/></svg></span><div class="m"><div>Mua sắm</div><div>20:05 · Thanh toán</div></div><span class="neg">−1.490.000 ₫</span></div>
+            <div class="tx"><span class="ic emer"><svg class="icon"><use href="#in"/></svg></span><div class="m"><div>Nhận từ NGUYEN CUSTOMER</div><div>14:31 · Thanh toán</div></div><span class="pos">+500.000 ₫</span></div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>4 · Giao dịch tháng này</b>Nút "Xem giao dịch tháng 11" mở lại màn Lịch sử, lọc theo tháng (giờ VN), thêm header back và ô tổng vào/ra. Tab Lịch sử thường giữ nguyên.</figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<section class="notes">
+  <h3>Cần duyệt</h3>
+  <ul>
+    <li>Bot dùng màu violet của ô "Trợ lý AI" cho avatar. Emerald chỉ xuất hiện ở viền ô đang nhập, nút gửi khi có chữ và tiền vào.</li>
+    <li>Nút hành động là các dòng tile gộp trong một khung dưới bong bóng bot, cao 48dp, icon duotone giống lưới tiện ích.</li>
+    <li>Bot chỉ mở màn, không điền sẵn số tiền hay số điện thoại. Giao dịch vẫn qua form và OTP như cũ.</li>
+    <li>Nhãn "Chế độ cơ bản" màu vàng cảnh báo, chỉ hiện trên câu trả lời không do AI viết.</li>
+  </ul>
+</section>
