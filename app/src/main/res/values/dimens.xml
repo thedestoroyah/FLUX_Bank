@@ -16,4 +16,8 @@
     <dimen name="touch_min">48dp</dimen>
     <dimen name="icon_tile">48dp</dimen>
     <dimen name="button_height">52dp</dimen>
+    <!-- F6: khoảng hở phía trên khi kéo sheet chi nhánh lên hết, chừa nút back nổi -->
+    <dimen name="map_sheet_top_gap">112dp</dimen>
+    <dimen name="map_marker">28dp</dimen>
+    <dimen name="map_marker_selected">40dp</dimen>
 </resources>

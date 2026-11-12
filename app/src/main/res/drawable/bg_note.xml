@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Khối ghi chú xám trong sheet chi nhánh (giải thích đi vòng, lỗi tải đường) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/flux_bento_subcard" />
+    <stroke android:width="@dimen/stroke_hairline" android:color="@color/flux_border_subtle" />
+    <corners android:radius="@dimen/radius_button" />
+</shape>
