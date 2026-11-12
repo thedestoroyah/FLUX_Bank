@@ -10,9 +10,11 @@ import com.flux.bank.data.model.Transaction
 import com.flux.bank.data.repository.AccountRepository
 import com.flux.bank.data.repository.AuthRepository
 import com.flux.bank.data.repository.TransactionRepository
+import com.flux.bank.domain.MonthSummary
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.ZoneId
 
 /** Nhãn nhóm ngày trong lịch sử. */
@@ -50,8 +52,13 @@ class HistoryViewModel(
     private val _failed = MutableLiveData(false)
     val failed: LiveData<Boolean> = _failed
 
+    /** Tổng vào/ra của tháng đang lọc (sau lọc tài khoản); null khi không lọc theo tháng. */
+    private val _monthTotals = MutableLiveData<MonthSummary?>(null)
+    val monthTotals: LiveData<MonthSummary?> = _monthTotals
+
     private var all: List<Transaction> = emptyList()
     private var filterId: String? = null
+    private var month: YearMonth? = null
 
     fun load() {
         val uid = auth.currentUid() ?: return
@@ -73,8 +80,18 @@ class HistoryViewModel(
 
     fun selectedFilter(): String? = filterId
 
+    /** Chỉ hiện giao dịch của [month] (màn "Giao dịch tháng này" mở từ Trợ lý F7). */
+    fun restrictTo(month: YearMonth) {
+        this.month = month
+        publish()
+    }
+
     private fun publish() {
-        val list = all.filter { filterId == null || it.accountId == filterId }.sortedByDescending { it.createdAt }
+        val byAccount = all.filter { filterId == null || it.accountId == filterId }
+        // Tháng luôn tính theo giờ Việt Nam (khớp con số Trợ lý nói), không theo múi giờ của máy
+        val summary = month?.let { MonthSummary.of(byAccount, it) }
+        _monthTotals.value = summary
+        val list = summary?.transactions ?: byAccount.sortedByDescending { it.createdAt }
         val now = today()
         _rows.value = list.groupBy { Instant.ofEpochMilli(it.createdAt).atZone(zone).toLocalDate() }
             .flatMap { (date, items) -> listOf(HistoryRow.Header(labelFor(date, now))) + items.map { HistoryRow.Item(it) } }

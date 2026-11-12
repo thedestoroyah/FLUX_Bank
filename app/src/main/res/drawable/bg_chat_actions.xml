@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Khung gộp các nút hành động dưới câu trả lời của bot -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/flux_surface" />
+    <stroke android:width="@dimen/stroke_hairline" android:color="@color/flux_border_hairline" />
+    <corners android:radius="@dimen/radius_chip" />
+</shape>

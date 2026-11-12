@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tin của bot: avatar violet, nhãn "Chế độ cơ bản" (nếu có), bong bóng trắng, khung nút hành động -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="@dimen/space_4"
+    android:paddingBottom="@dimen/space_4">
+
+    <include
+        android:id="@+id/avatar"
+        layout="@layout/view_chat_avatar" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_8"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvBasic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/space_4"
+            android:background="@drawable/bg_basic_mode"
+            android:drawablePadding="@dimen/space_4"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/space_8"
+            android:paddingTop="@dimen/space_4"
+            android:paddingEnd="@dimen/space_8"
+            android:paddingBottom="@dimen/space_4"
+            android:text="@string/assistant_basic_mode"
+            android:textAppearance="@style/TextAppearance.Flux.Caption"
+            android:textColor="@color/flux_warning_dark"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_wifi_slash"
+            app:drawableTint="@color/flux_warning_dark" />
+
+        <TextView
+            android:id="@+id/tvText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_bubble_bot"
+            android:maxWidth="@dimen/chat_bubble_max"
+            android:paddingStart="@dimen/space_12"
+            android:paddingTop="@dimen/space_8"
+            android:paddingEnd="@dimen/space_12"
+            android:paddingBottom="@dimen/space_8"
+            android:textAppearance="@style/TextAppearance.Flux.Body"
+            android:textColor="@color/flux_text_primary"
+            android:textIsSelectable="true" />
+
+        <LinearLayout
+            android:id="@+id/actions"
+            android:layout_width="@dimen/chat_bubble_max"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_8"
+            android:background="@drawable/bg_chat_actions"
+            android:orientation="vertical"
+            android:visibility="gone" />
+    </LinearLayout>
+</LinearLayout>

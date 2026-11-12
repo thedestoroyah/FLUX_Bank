@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Một nút hành động: icon duotone + nhãn + mũi tên, cao tối thiểu 48dp -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/touch_min"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/space_12"
+    android:paddingEnd="@dimen/space_12">
+
+    <ImageView
+        android:id="@+id/ivIcon"
+        android:layout_width="@dimen/chat_action_icon"
+        android:layout_height="@dimen/chat_action_icon"
+        android:background="@drawable/bg_icon_tile"
+        android:importantForAccessibility="no"
+        android:padding="@dimen/space_8" />
+
+    <TextView
+        android:id="@+id/tvLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_12"
+        android:layout_weight="1"
+        android:textAppearance="@style/TextAppearance.Flux.Label"
+        android:textColor="@color/flux_text_primary" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_caret_right"
+        app:tint="@color/flux_text_tertiary" />
+</LinearLayout>

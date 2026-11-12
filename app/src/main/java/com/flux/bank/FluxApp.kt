@@ -9,6 +9,8 @@ import com.flux.bank.core.security.AppLockObserver
 import com.flux.bank.core.security.LockPolicy
 import com.flux.bank.core.security.OtpManager
 import com.flux.bank.core.security.OtpNotifier
+import com.flux.bank.data.assistant.AssistantClient
+import com.flux.bank.data.assistant.GeminiAssistantClient
 import com.flux.bank.data.location.FusedLocationSource
 import com.flux.bank.data.location.LocationSource
 import com.flux.bank.data.repository.AccountRepository
@@ -56,6 +58,7 @@ class FluxApp : Application() {
         BuildConfig.VNPAY_TMN_CODE.takeIf { it.isNotBlank() }?.let { VnPay(VnPayConfig(it, BuildConfig.VNPAY_HASH_SECRET)) }
     }
     /** Chỉ đường đi bộ (F6): server OSRM công cộng, miễn phí, không key. */
+    val assistantClient: AssistantClient by lazy { GeminiAssistantClient() }
     val walkingRouter: WalkingRouter by lazy { OsrmWalkingRouter() }
     val branchRecommender: BranchRecommender by lazy { BranchRecommender(walkingRouter) }
     val locationSource: LocationSource by lazy { FusedLocationSource(this) }

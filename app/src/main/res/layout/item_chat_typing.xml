@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bot đang trả lời: bong bóng ba chấm -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:contentDescription="@string/assistant_typing"
+    android:orientation="horizontal"
+    android:paddingTop="@dimen/space_4"
+    android:paddingBottom="@dimen/space_4">
+
+    <include layout="@layout/view_chat_avatar" />
+
+    <TextView
+        android:id="@+id/tvDots"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_8"
+        android:background="@drawable/bg_bubble_bot"
+        android:importantForAccessibility="no"
+        android:paddingStart="@dimen/space_16"
+        android:paddingTop="@dimen/space_8"
+        android:paddingEnd="@dimen/space_16"
+        android:paddingBottom="@dimen/space_8"
+        android:text="@string/assistant_typing_dots"
+        android:textAppearance="@style/TextAppearance.Flux.TitleM"
+        android:textColor="@color/flux_text_tertiary" />
+</LinearLayout>

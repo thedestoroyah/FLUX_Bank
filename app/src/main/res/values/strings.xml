@@ -412,6 +412,10 @@
     <string name="history_today">Hôm nay</string>
     <string name="history_yesterday">Hôm qua</string>
     <string name="history_load_failed">Không tải được lịch sử giao dịch. Kiểm tra kết nối rồi thử lại.</string>
+    <string name="history_month_title">Giao dịch tháng %1$d/%2$d</string>
+    <string name="history_month_in">Tiền vào</string>
+    <string name="history_month_out">Tiền ra</string>
+    <string name="history_month_count">%d giao dịch</string>
     <string name="saving_none_title">Chưa có tài khoản tiết kiệm</string>
     <string name="saving_none">Liên hệ nhân viên FLUX để mở tài khoản tiết kiệm.</string>
 
@@ -508,4 +512,34 @@
     <string name="branch_timeout_title">Chưa lấy được vị trí</string>
     <string name="branch_timeout_body">Thử đứng gần cửa sổ hoặc ra chỗ thoáng rồi thử lại.</string>
     <string name="cd_my_location">Vị trí của tôi</string>
+
+    <!-- Trợ lý FLUX (F7) -->
+    <string name="assistant_title">Trợ lý FLUX</string>
+    <string name="assistant_subtitle">Trả lời bởi AI, có thể chưa chính xác</string>
+    <string name="assistant_hello">Chào %s</string>
+    <string name="assistant_intro">Mình giúp bạn tìm chức năng và xem chi tiêu. Bạn cứ hỏi tự nhiên.</string>
+    <string name="assistant_safety">Không nhập mật khẩu hay mã OTP vào đây.</string>
+    <string name="assistant_suggest_label">Gợi ý</string>
+    <string name="assistant_suggest_topup">Nạp tiền điện thoại</string>
+    <string name="assistant_suggest_electricity">Thanh toán tiền điện</string>
+    <string name="assistant_suggest_month">Tháng này tôi chi bao nhiêu?</string>
+    <string name="assistant_suggest_branch">Chi nhánh gần nhất</string>
+    <string name="assistant_hint">Hỏi Trợ lý FLUX…</string>
+    <string name="assistant_send">Gửi câu hỏi</string>
+    <string name="assistant_typing">Trợ lý đang trả lời</string>
+    <string name="assistant_typing_dots" translatable="false">•••</string>
+    <string name="assistant_basic_mode">Chế độ cơ bản</string>
+    <string name="assistant_action_topup">Nạp tiền điện thoại</string>
+    <string name="assistant_action_electricity">Thanh toán tiền điện</string>
+    <string name="assistant_action_water">Thanh toán tiền nước</string>
+    <string name="assistant_action_month">Xem giao dịch tháng %d</string>
+    <string name="assistant_action_transfer">Chuyển tiền</string>
+    <string name="assistant_action_deposit">Nạp tiền vào tài khoản</string>
+    <string name="assistant_action_withdraw">Rút tiền</string>
+    <string name="assistant_action_saving">Tài khoản tiết kiệm</string>
+    <string name="assistant_action_flight">Vé máy bay</string>
+    <string name="assistant_action_movie">Vé xem phim</string>
+    <string name="assistant_action_hotel">Khách sạn</string>
+    <string name="assistant_action_shop">Mua sắm</string>
+    <string name="assistant_action_branch">Chi nhánh gần nhất</string>
 </resources>

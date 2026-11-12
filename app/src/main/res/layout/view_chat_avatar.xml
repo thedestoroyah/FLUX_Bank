@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Avatar của Trợ lý: sparkle violet trên nền violet 10% -->
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/chat_avatar"
+    android:layout_height="@dimen/chat_avatar"
+    android:background="@drawable/bg_icon_tile"
+    android:backgroundTint="@color/cat_violet_bg"
+    android:importantForAccessibility="no"
+    android:padding="@dimen/space_4"
+    android:src="@drawable/ic_sparkle"
+    app:tint="@color/cat_violet" />
