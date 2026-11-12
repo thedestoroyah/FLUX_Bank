@@ -436,4 +436,10 @@
     <string name="bill_due">Hạn thanh toán</string>
     <string name="bill_paid">Bạn đã thanh toán kỳ này lúc %1$s.</string>
     <string name="bill_view_receipt">Xem biên lai</string>
+    <string name="topup_phone">Số điện thoại</string>
+    <string name="topup_phone_hint">Mặc định là số của bạn. Nhà mạng nhận theo đầu số.</string>
+    <string name="topup_phone_error">Số không thuộc nhà mạng hỗ trợ</string>
+    <string name="topup_denomination">Mệnh giá</string>
+    <string name="topup_action">Nạp tiền</string>
+    <string name="topup_action_amount">Nạp %1$s</string>
 </resources>
