@@ -16,7 +16,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 ## 2. Trạng thái hiện tại
 
 - Repo git ở `FLUX_Bank/`, remote `origin` = GitHub private `thedestoroyah/FLUX_Bank` (HTTPS, tạo 2026-11-12; SSH key chưa gắn với GitHub nên dùng HTTPS qua `gh`). **`main` có F1–F5; F6 nằm trên nhánh `feature/f6-navigation` (chưa merge, chờ key Maps để chạy thử phần bản đồ, mục 3)** (F4 merge 2026-10-28, commit `9f6e5c3`; F5 merge 2026-11-12, commit `9c3a311`, đã review toàn nhánh và chạy trên máy thật với rules đã publish, mục 3).
-- **Unit test 335/335 pass** (trên nhánh F6), rules test 49/49, `assembleDebug` + `lintDebug` pass (0 error). F5 review toàn nhánh: 0 Critical, 3 Important đã sửa có test (chiếm id hoá đơn của người khác, mã biên lai hoá đơn trùng, lỗi hạn mức hiện muộn). F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test).
+- **Unit test 340/340 pass** (trên nhánh F6), rules test 49/49, `assembleDebug` + `lintDebug` pass (0 error). F6 review toàn nhánh (2026-11-12): 0 Critical, 6 Important đã sửa có test (chạm chi nhánh lúc đang định vị lại vẽ đường từ vị trí cũ, test cache yếu, ở xa > 20 km bị báo lỗi mạng, lỗi API vị trí làm crash, định vị lại không có khung chờ, "Thử lại" bật GPS lại; thêm chặn lỗi camera khi xoay ngang). F5 review toàn nhánh: 0 Critical, 3 Important đã sửa có test (chiếm id hoá đơn của người khác, mã biên lai hoá đơn trùng, lỗi hạn mức hiện muộn). F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test).
 - F1–F2 và F3 đều đã được reviewer độc lập review toàn nhánh, đã sửa hết lỗi Important; lỗi Minor còn lại ở mục 7. F3 đã chạy demo đạt trên máy thật (mục 3).
 
 ### Đã hoàn thành
@@ -66,7 +66,7 @@ Cho Feature 5 (đã merge vào `main` 2026-11-12):
 
 Cho Feature 6 (nhánh `feature/f6-navigation`, chưa merge):
 1. **Tạo key Maps** theo README mục 7: project Google Cloud **mới** (không phải project Firebase, nếu không Firebase tự lên Blaze), gắn thanh toán, bật chỉ Maps SDK for Android, khoá key theo `com.flux.bank` + SHA-1, thêm `maps.api.key` vào `local.properties`, kiểm Firebase vẫn Spark.
-2. Đã chạy trên Xiaomi 2026-11-12 (chưa có key, nền bản đồ trống) — đạt: hộp thoại quyền, từ chối → khối "Chưa biết bạn đang ở đâu", cấp quyền sau → tự gợi ý; gợi ý thật từ vị trí nhà chủ dự án (FLUX Lê Văn Lương 3,8 km, có dòng "FLUX Phú Mỹ Hưng gần hơn theo đường thẳng (2,8 km) nhưng phải đi vòng, đi bộ 4,1 km"); danh sách xếp theo quãng đi bộ; chọn chi nhánh khác + "Quay lại gợi ý"; tắt mạng → đường thẳng + "Thử lại", bật mạng → đường đi bộ. **Chưa thử** (cần key): nền bản đồ, ghim, đường emerald, camera, chạm ghim; "Gọi chi nhánh"; xoay màn.
+2. Đã chạy trên Xiaomi 2026-11-12 (chưa có key, nền bản đồ trống) — đạt: hộp thoại quyền, từ chối → khối "Chưa biết bạn đang ở đâu", cấp quyền sau → tự gợi ý; gợi ý thật từ vị trí nhà chủ dự án (FLUX Lê Văn Lương 3,8 km, có dòng "FLUX Phú Mỹ Hưng gần hơn theo đường thẳng (2,8 km) nhưng phải đi vòng, đi bộ 4,1 km"); danh sách xếp theo quãng đi bộ; chọn chi nhánh khác + "Quay lại gợi ý"; tắt mạng → đường thẳng + "Thử lại", bật mạng → đường đi bộ. **Chưa thử** (cần key): nền bản đồ, ghim, đường emerald, camera, chạm ghim; "Gọi chi nhánh"; xoay ngang (đã chặn lỗi `newLatLngBounds` bằng try/catch, cần xem trên máy).
 3. Sau khi có key: chạy lại kịch bản trong README "Luồng demo" Feature 6 rồi merge nhánh.
 - Mẹo adb cho F6: đừng `input swipe` từ mép dưới (trúng cử chỉ về màn hình chính của MIUI); kéo sheet từ giữa sheet. Đặt lại quyền vị trí: `pm revoke` + `pm clear-permission-flags … user-set user-fixed`.
 
@@ -198,6 +198,14 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 24. Chạm đúp ô ngày có thể mở hai date picker (`show` → `showNow`).
 25. Giờ "đã thanh toán lúc" theo múi giờ máy, không cố định giờ VN.
 26. Chưa có test cho nhánh đọc lại sau lỗi của `FirestoreAccountRepository.pay` (đã thử bằng tay trên máy).
+
+### Lỗi nhỏ của Feature 6 (review 2026-11-12, để lại sau)
+27. Bấm ra ngoài hộp thoại quyền (không chọn gì) bị coi là "chặn hẳn": nút dẫn sang cài đặt app thay vì hỏi lại.
+28. `ACTION_DIAL` / mở trang bản quyền OSM trên máy không có app xử lý sẽ crash (`ActivityNotFoundException`).
+29. Chưa có vị trí mà chạm chi nhánh thì chỉ phóng to ghim (không có card, camera không dời tới chi nhánh đó).
+30. Chọn chi nhánh khác xong, dòng của nó trong danh sách vẫn ghi khoảng cách đường thẳng.
+31. `DistanceFormatter`: 999,5–999,99 m in ra "1000 m".
+32. Timeout OSRM không cứng 8 s (connect và read tính riêng, chưa tính DNS).
 
 ## 8. Giới hạn đã biết (ghi vào báo cáo)
 - Gói Spark: OTP và đối chiếu khuôn mặt chỉ được kiểm tra trên thiết bị; rules chỉ giới hạn field nào được sửa. Hướng nâng cấp: Cloud Functions phát và kiểm token xác thực.
