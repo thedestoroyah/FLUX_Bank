@@ -97,4 +97,13 @@ class HistoryViewModelTest {
         transactions.items += Transaction(id = "t1", ownerUid = "c1", accountId = "chk", createdAt = at(2026, 10, 27, 9, 0))
         assertNull(vm().monthTotals.value)
     }
+
+    @Test
+    fun monthFilterUsesVietnamTimeWhateverTheDeviceZone() {
+        transactions.items += Transaction(id = "early", ownerUid = "c1", accountId = "chk", createdAt = at(2026, 11, 1, 0, 30))
+        val vm = HistoryViewModel(transactions, accounts, FakeAuthRepository().apply { uid = "c1" }, ZoneId.of("UTC")) { LocalDate.of(2026, 11, 2) }
+            .apply { load() }
+        vm.restrictTo(YearMonth.of(2026, 11))
+        assertEquals(listOf("early"), vm.monthTotals.value!!.transactions.map { it.id })
+    }
 }

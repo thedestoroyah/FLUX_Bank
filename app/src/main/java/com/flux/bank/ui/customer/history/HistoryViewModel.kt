@@ -88,7 +88,8 @@ class HistoryViewModel(
 
     private fun publish() {
         val byAccount = all.filter { filterId == null || it.accountId == filterId }
-        val summary = month?.let { MonthSummary.of(byAccount, it, zone) }
+        // Tháng luôn tính theo giờ Việt Nam (khớp con số Trợ lý nói), không theo múi giờ của máy
+        val summary = month?.let { MonthSummary.of(byAccount, it) }
         _monthTotals.value = summary
         val list = summary?.transactions ?: byAccount.sortedByDescending { it.createdAt }
         val now = today()
