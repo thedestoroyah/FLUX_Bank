@@ -13,7 +13,7 @@
 
 ### App access
 Chọn **All or some functionality is restricted** → thêm một bộ hướng dẫn:
-- Name: `Tài khoản khách demo`
+- Name: `Tài khoản khách demo` (dùng khách thử sẵn có, đã đổi mật khẩu riêng cho việc thử)
 - Username: `<EMAIL_KHÁCH_DEMO>` · Password: `<MẬT_KHẨU_KHÁCH_DEMO>`
 - Any other information:
   > Simulated banking app (university project, no real money). Log in with the demo customer above. Transactions ask for a 6-digit OTP delivered as a local notification titled "SMS giả lập" (allow notifications; tap the notification to auto-fill). Keep amounts under 10,000,000 VND: larger amounts require a face match against the account owner's eKYC photo. Customer accounts are created by bank officers, so there is no sign-up screen.
