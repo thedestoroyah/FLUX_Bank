@@ -114,3 +114,9 @@ test('second payment of same bill id denied', async () => {
   await assertSucceeds(move(cust(), 'acc1', 'bill_cust_EVN_HCM_PE01000123456_202610', 'PAYMENT', 60000, 40000));
   await assertFails(move(cust(), 'acc1', 'bill_cust_EVN_HCM_PE01000123456_202610', 'PAYMENT', 20000, 20000));
 });
+test('paying into another customers bill id denied', async () => {
+  const bob = env.authenticatedContext('bob').firestore();
+  await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'accounts/bobchk'), { ownerUid: 'bob', type: 'CHECKING', balance: 100000, accountNumber: '886800000002' }));
+  await assertFails(move(bob, 'bobchk', 'bill_cust_EVN_HCM_PE01000123456_202610', 'PAYMENT', 10000, 90000, { ownerUid: 'bob' }));
+});
+test('bill id only for PAYMENT', () => assertFails(move(cust(), 'acc1', 'bill_cust_EVN_HCM_PE01000123456_202610', 'WITHDRAW', 10000, 90000)));

@@ -127,6 +127,8 @@ service cloud.firestore {
       let d = request.resource.data;
       let acc = getAfter(/databases/$(database)/documents/accounts/$(d.accountId)).data;
       return signedIn() && d.amount is int && d.amount >= 10000 && acc.lastTxId == txId
+        // Id cố định của hoá đơn (bill_<uid>_…) chỉ dành cho PAYMENT của chính uid đó, để không ai chiếm trước hoá đơn của người khác
+        && (!txId.matches('bill_.*') || (d.type == 'PAYMENT' && txId.matches('bill_' + request.auth.uid + '_.*')))
         && ((d.type in ['DEPOSIT', 'WITHDRAW', 'TRANSFER_OUT', 'PAYMENT'] && d.ownerUid == request.auth.uid
              && (d.type == 'WITHDRAW' || d.amount <= 100000000))
             || (d.type == 'TRANSFER_IN' && d.ownerUid == acc.ownerUid && transferInBacked(d)));
