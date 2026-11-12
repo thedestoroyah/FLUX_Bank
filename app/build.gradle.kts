@@ -84,6 +84,8 @@ dependencies {
     implementation("com.google.firebase:firebase-auth") // Dùng cho Login, 2FA OTP
     implementation("com.google.firebase:firebase-firestore") // Lưu dữ liệu & ảnh Base64 eKYC
     implementation("com.google.firebase:firebase-ai") // Trợ lý AI (F7), Gemini Developer API qua Firebase AI Logic
+    implementation("com.google.firebase:firebase-appcheck-playintegrity") // App Check cho bản tải từ Play (chặn app giả gọi Gemini)
+    debugImplementation("com.google.firebase:firebase-appcheck-debug") // App Check cho bản debug (đăng ký debug token ở Firebase Console)
 
     // --- Sinh trắc học (Vân tay / Khuôn mặt phần cứng) ---
     implementation("androidx.biometric:biometric:1.2.0-alpha05")

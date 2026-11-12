@@ -82,7 +82,7 @@ Security Rules: `firestore.rules` (deploy thủ công qua Console — xem README
 - `domain/assistant/`: `AssistantAction` (13 nút), `AssistantReplyParser` (bỏ action lạ/trùng, tối đa 3, chịu được code fence), `FinanceSnapshot` (ngữ cảnh gửi kèm: số dư theo loại, tổng vào/ra + chi theo nhóm của tháng, hạn mức còn lại; không số TK/tên người nhận), `AssistantPrompt` (system instruction, số chính sách lấy từ hằng số), `AssistantFallback` ("Chế độ cơ bản": từ khoá bỏ dấu, so nguyên từ, nhắc khi gửi OTP).
 - `ui/customer/assistant/`: `AssistantViewModel` (10 tin gần nhất, bắt đầu bằng lượt khách; một hạn 20 s cho cả tải số liệu (tối đa 5 s) lẫn AI; lỗi → chế độ cơ bản, log tag `AssistantViewModel`; tin chứa OTP/mật khẩu trả lời trên máy, không gửi AI), `AssistantFragment` (tự xử lý inset thanh hệ thống + bàn phím), `ChatAdapter`, `AssistantActionUi` (action → `Utility`/màn riêng, nhãn, icon). Nút Chuyển tiền mở `TransferHubFragment` dạng màn phụ (không dùng `showTab`, vì sẽ xoá back stack và mất chat).
 - `domain/MonthSummary` + `HistoryFragment.forMonth(YearMonth)`: màn "Giao dịch tháng N" (header back + ô tổng vào/ra) mở từ nút của bot.
-- Console: AI Logic bật Gemini Developer API; App Check cho AI Logic đang **Unenforce** (bật lại khi lên Play).
+- Console: AI Logic bật Gemini Developer API. App Check: `installAppCheck(app)` trong `app/src/debug` (debug provider) và `app/src/release` (Play Integrity), gọi ở `FluxApp.onCreate`; chỉ Enforce cho AI Logic, theo các bước ở README mục 8.
 
 ## Giới hạn đã biết
 - Gói Spark: OTP và đối chiếu khuôn mặt được kiểm tra trên thiết bị; rules chỉ giới hạn field được sửa. Hướng nâng cấp: Cloud Functions phát/kiểm token.
