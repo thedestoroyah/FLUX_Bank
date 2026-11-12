@@ -8,15 +8,18 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.flux.bank.R
+import com.flux.bank.core.format.MoneyFormatter
 import com.flux.bank.data.model.BankAccount
 import com.flux.bank.data.model.Banks
 import com.flux.bank.data.model.Transaction
 import com.flux.bank.databinding.FragmentHistoryBinding
+import com.flux.bank.domain.MonthSummary
 import com.flux.bank.databinding.ItemFilterChipBinding
 import com.flux.bank.ui.common.screenHost
 import com.flux.bank.ui.customer.account.ReceiptFragment
 import com.flux.bank.ui.customer.home.HomeViewModel
 import java.text.SimpleDateFormat
+import java.time.YearMonth
 import java.util.Date
 import java.util.Locale
 
@@ -36,6 +39,7 @@ class HistoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.rvHistory.adapter = adapter
+        arguments?.getString(ARG_MONTH)?.let { showMonth(YearMonth.parse(it)) }
         binding.groupFilter.setOnCheckedStateChangeListener { group, ids ->
             val chip = group.findViewById<View>(ids.firstOrNull() ?: return@setOnCheckedStateChangeListener)
             viewModel.filter(chip?.tag as? String)
@@ -54,6 +58,25 @@ class HistoryFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.load()
+    }
+
+    /** Chế độ "Giao dịch tháng": header back + ô tổng vào/ra, chỉ giao dịch của [month]. */
+    private fun showMonth(month: YearMonth) {
+        binding.tvTitle.isVisible = false
+        binding.header.root.isVisible = true
+        binding.header.tvHeaderTitle.text = getString(R.string.history_month_title, month.monthValue, month.year)
+        binding.header.btnBack.setOnClickListener { parentFragmentManager.popBackStack() }
+        viewModel.restrictTo(month)
+        viewModel.monthTotals.observe(viewLifecycleOwner, ::renderTotals)
+    }
+
+    private fun renderTotals(summary: MonthSummary?) {
+        binding.cardMonth.isVisible = summary != null
+        summary ?: return
+        binding.tvMonthIn.text = MoneyFormatter.formatSignedVnd(summary.incoming) + " ₫"
+        binding.tvMonthOut.text = MoneyFormatter.formatSignedVnd(-summary.outgoing) + " ₫"
+        binding.tvMonthInCount.text = getString(R.string.history_month_count, summary.incomingCount)
+        binding.tvMonthOutCount.text = getString(R.string.history_month_count, summary.outgoingCount)
     }
 
     private fun renderChips(list: List<BankAccount>) {
@@ -91,7 +114,13 @@ class HistoryFragment : Fragment() {
         _binding = null
     }
 
-    private companion object {
-        val TIME_FORMAT = SimpleDateFormat("HH:mm", Locale("vi"))
+    companion object {
+        private const val ARG_MONTH = "month"
+        private val TIME_FORMAT = SimpleDateFormat("HH:mm", Locale("vi"))
+
+        /** Màn phụ "Giao dịch tháng [month]" (nút MONTH_HISTORY của Trợ lý). */
+        fun forMonth(month: YearMonth) = HistoryFragment().apply {
+            arguments = Bundle().apply { putString(ARG_MONTH, month.toString()) }
+        }
     }
 }
