@@ -7,6 +7,7 @@ import com.flux.bank.domain.utility.CatalogKind
 import com.flux.bank.ui.common.ComingSoonFragment
 import com.flux.bank.ui.customer.account.AccountDetailFragment
 import com.flux.bank.ui.customer.account.MoneyMoveFragment
+import com.flux.bank.ui.customer.assistant.AssistantFragment
 import com.flux.bank.ui.customer.branch.BranchMapFragment
 import com.flux.bank.ui.customer.utility.BillPayFragment
 import com.flux.bank.ui.customer.utility.CatalogFragment
@@ -31,6 +32,6 @@ object UtilityScreens {
             ?: ComingSoonFragment.newInstance(
                 utility.label, utility.icon, utility.tint, titleRes = R.string.saving_none_title, messageRes = R.string.saving_none
             )
-        Utility.TRO_LY_AI -> ComingSoonFragment.newInstance(utility.label, utility.icon, utility.tint)
+        Utility.TRO_LY_AI -> AssistantFragment()
     }
 }

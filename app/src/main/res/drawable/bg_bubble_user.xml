@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bong bóng tin của khách (Trợ lý F7): nền obsidian, góc dưới phải nhọn -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/flux_primary" />
+    <corners
+        android:bottomLeftRadius="@dimen/chat_bubble_radius"
+        android:bottomRightRadius="@dimen/chat_bubble_tail"
+        android:topLeftRadius="@dimen/chat_bubble_radius"
+        android:topRightRadius="@dimen/chat_bubble_radius" />
+</shape>
