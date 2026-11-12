@@ -15,7 +15,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 
 ## 2. Trạng thái hiện tại
 
-- Repo git ở `FLUX_Bank/`, remote `origin` = GitHub private `thedestoroyah/FLUX_Bank` (HTTPS, tạo 2026-11-12; SSH key chưa gắn với GitHub nên dùng HTTPS qua `gh`). **`main` có F1–F6** (F6 merge 2026-11-12, commit `ac3de12`, đã review toàn nhánh và chạy trên máy thật, mục 3) (F4 merge 2026-10-28, commit `9f6e5c3`; F5 merge 2026-11-12, commit `9c3a311`, đã review toàn nhánh và chạy trên máy thật với rules đã publish, mục 3).
+- Repo git ở `FLUX_Bank/`, remote `origin` = GitHub private `thedestoroyah/FLUX_Bank` (HTTPS, tạo 2026-11-12; SSH key chưa gắn với GitHub nên dùng HTTPS qua `gh`). **`main` có F1–F6**: F4 merge 2026-10-28 (`9f6e5c3`), F5 merge 2026-11-12 (`9c3a311`), F6 merge 2026-11-12 (`ac3de12`); cả ba đã review toàn nhánh và chạy trên máy thật (mục 3). **`main` ở máy đang đi trước `origin/main` (F6 chưa push)**: chạy `git push origin main` khi chủ dự án đồng ý.
 - **Unit test 340/340 pass**, rules test 49/49, `assembleDebug` + `lintDebug` pass (0 error). F6 review toàn nhánh (2026-11-12): 0 Critical, 6 Important đã sửa có test (chạm chi nhánh lúc đang định vị lại vẽ đường từ vị trí cũ, test cache yếu, ở xa > 20 km bị báo lỗi mạng, lỗi API vị trí làm crash, định vị lại không có khung chờ, "Thử lại" bật GPS lại; thêm chặn lỗi camera khi xoay ngang). F5 review toàn nhánh: 0 Critical, 3 Important đã sửa có test (chiếm id hoá đơn của người khác, mã biên lai hoá đơn trùng, lỗi hạn mức hiện muộn). F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test).
 - F1–F2 và F3 đều đã được reviewer độc lập review toàn nhánh, đã sửa hết lỗi Important; lỗi Minor còn lại ở mục 7. F3 đã chạy demo đạt trên máy thật (mục 3).
 
@@ -28,8 +28,8 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 | Feature 2 | eKYC (ML Kit + MobileFaceNet embedding), nhân viên duyệt / từ chối có lý do. Khoá app sinh trắc học (cold start, khi app bị khôi phục, sau ≥ 60 s ở nền). OTP 6 số / 120 s / dùng 1 lần / gắn với giao dịch / sai 5 lần thì khoá, gửi qua SMS giả lập kèm banner dự phòng. `TransactionAuthSheet` (bàn phím riêng + bước quét mặt khi giao dịch ≥ 10.000.000 ₫). Security Rules |
 | Feature 3 | Chi tiết riêng cho Checking/Saving/Mortgage, lãi suất chung + lãi dự kiến, tiền trả mỗi tháng / 2 tuần, nạp/rút qua OTP (+ mặt khi ≥ 10 tr) bằng Firestore transaction, biên lai, tab Lịch sử, tab Lãi suất và mở tài khoản cho nhân viên. Rules có test trên emulator (`rules-test/`, 20/20) |
 | Feature 4 | Tab Chuyển tiền: trong FLUX (tra tên theo số TK qua `accountIndex`), giữa tài khoản của tôi, liên ngân hàng giả lập (10 ngân hàng), người nhận gần đây. Kiểm tra trước khi ghi (`TransferPolicy`: 10k–100tr/lần, 200tr/ngày giờ VN). Rules: cộng tiền cho người khác phải có TRANSFER_OUT cặp đã trừ nguồn cùng lần ghi, thông tin người gửi trên TRANSFER_IN không giả được (40 ca test). Nạp tiền qua VNPay sandbox (WebView, kiểm HMAC-SHA512). Nút QR giữa: quét / "Mã của tôi" |
-| Feature 6 | Ô Chi nhánh: bản đồ OpenStreetMap (OSMDroid) + bottom sheet, vị trí qua Fused Location, gợi ý chi nhánh có **quãng đi bộ ngắn nhất** (OSRM công cộng, so 3 chi nhánh gần nhất theo đường thẳng, có dòng giải thích khi chi nhánh gần nhất phải đi vòng), danh sách, chọn chi nhánh khác, dự phòng đường thẳng khi mất mạng, xử lý từ chối quyền / tắt định vị / hết giờ chờ. 12 chi nhánh giả lập, cụm demo quanh TDTU |
 | Feature 5 | 7 ô tiện ích qua 3 kiểu màn: Hoá đơn (điện, nước; tra cứu giả lập, mỗi hoá đơn trả một lần, rules chặn trùng), Nạp ĐT (nhà mạng theo đầu số, 6 mệnh giá), Danh mục (vé máy bay, vé phim, khách sạn, mua sắm; mã đặt chỗ trên biên lai). Giao dịch loại `PAYMENT`, hạn mức ngày gộp với chuyển tiền. `DESIGN.md` rút từ code bằng skill impeccable |
+| Feature 6 | Ô Chi nhánh: bản đồ OpenStreetMap (OSMDroid) + bottom sheet, vị trí qua Fused Location, gợi ý chi nhánh có **quãng đi bộ ngắn nhất** (OSRM công cộng, so 3 chi nhánh gần nhất theo đường thẳng, có dòng giải thích khi chi nhánh gần nhất phải đi vòng), danh sách, chọn chi nhánh khác, dự phòng đường thẳng khi mất mạng, xử lý từ chối quyền / tắt định vị / hết giờ chờ. 12 chi nhánh giả lập, cụm demo quanh TDTU |
 
 ### Chưa làm (các feature tiếp theo)
 - **Feature 7** AI chatbot: trả lời kèm link tới các chức năng.
@@ -65,9 +65,15 @@ Cho Feature 5 (đã merge vào `main` 2026-11-12):
 - Mẹo adb cho F5: chạm vào ô mã khách hàng theo toạ độ của `etCode` (chạm theo chữ "Mã khách hàng" trúng nhãn, không mở bàn phím).
 
 Cho Feature 6 (đã merge vào `main` 2026-11-12):
-1. Không cần key hay billing (đã chuyển Google Maps → OpenStreetMap ngày 2026-11-12).
-2. Đã chạy trên Xiaomi 2026-11-12 (bản Google Maps chưa có key, nền bản đồ trống; logic giống hệt bản OSM) — đạt: hộp thoại quyền, từ chối → khối "Chưa biết bạn đang ở đâu", cấp quyền sau → tự gợi ý; gợi ý thật từ vị trí nhà chủ dự án (FLUX Lê Văn Lương 3,8 km, có dòng "FLUX Phú Mỹ Hưng gần hơn theo đường thẳng (2,8 km) nhưng phải đi vòng, đi bộ 4,1 km"); danh sách xếp theo quãng đi bộ; chọn chi nhánh khác + "Quay lại gợi ý"; tắt mạng → đường thẳng + "Thử lại", bật mạng → đường đi bộ. Bản OSM chạy trên Xiaomi 2026-11-12 — đạt: nền OSM giảm màu + ghi công, ghim, chấm vị trí, đường emerald theo phố thật, camera khung đủ người dùng và chi nhánh (trên sheet và nút vị trí), chạm ghim → chọn chi nhánh + vẽ lại đường, "Gọi chi nhánh" mở trình quay số với số đúng, ép xoay ngang → màn giữ chiều dọc (khoá khi màn đang hiện), không crash.
-- Mẹo adb cho F6: đừng `input swipe` từ mép dưới (trúng cử chỉ về màn hình chính của MIUI); kéo sheet từ giữa sheet. Đặt lại quyền vị trí: `pm revoke` + `pm clear-permission-flags … user-set user-fixed`.
+1. Không cần key hay billing: bản đồ OpenStreetMap (OSMDroid) + đường đi bộ OSRM công cộng. Đã thử Google Maps nhưng Google Cloud từ chối tạo tài khoản thanh toán (`OR_BACR2_59`), nên chuyển sang OSM cùng ngày.
+2. Chạy trên Xiaomi 2026-11-12 — đạt:
+   - Hộp thoại quyền; từ chối → khối "Chưa biết bạn đang ở đâu"; cấp quyền sau → tự gợi ý.
+   - Gợi ý từ vị trí nhà chủ dự án: FLUX Lê Văn Lương 3,8 km / 52 phút, kèm dòng "FLUX Phú Mỹ Hưng gần hơn theo đường thẳng (2,8 km) nhưng phải đi vòng, đi bộ 4,1 km".
+   - Nền OSM giảm màu + ghi công, ghim, chấm vị trí, đường emerald theo phố thật; camera khung đủ người dùng và chi nhánh, không bị sheet / nút vị trí che.
+   - Danh sách xếp theo quãng đi bộ; chạm ghim hoặc dòng → chọn chi nhánh, vẽ lại đường; "Quay lại gợi ý"; "Gọi chi nhánh" mở trình quay số với số đúng.
+   - Tắt mạng → đường thẳng nét đứt + "Thử lại"; bật mạng → đường đi bộ. Ép xoay ngang → màn giữ chiều dọc, không crash.
+   - **Chưa thử**: đứng ở TDTU để thấy ca demo "FLUX Tân Phong 393 m nhưng đi bộ 1,3 km" (chỉ đo bằng OSRM, bảng ở KDoc `Branches`); máy không có Play services.
+- Mẹo adb cho F6: đừng `input swipe` từ mép dưới (trúng cử chỉ về màn hình chính của MIUI); kéo sheet từ giữa sheet. Đặt lại quyền vị trí: `pm revoke` + `pm clear-permission-flags … user-set user-fixed`. Ép xoay: `settings put system accelerometer_rotation 0` + `user_rotation 1` (nhớ trả lại).
 
 ## 4. Những điều chủ dự án đã quyết định (đừng hỏi lại)
 
@@ -100,19 +106,20 @@ Cho Feature 6 (đã merge vào `main` 2026-11-12):
 | `docs/superpowers/specs/2026-11-12-utilities-f5-design.md`, `docs/superpowers/plans/2026-11-12-utilities-f5.md` | Spec + plan F5 (đã merge) |
 | `docs/superpowers/specs/2026-11-12-navigation-f6-design.md`, `docs/superpowers/plans/2026-11-12-navigation-f6.md` | Spec + plan F6 (đã merge) |
 | `DESIGN.md`, `.impeccable/design.json` | Design system "The Titanium Ledger" rút từ code (token, quy tắc, component) — đọc trước khi làm mockup/màn mới |
-| `docs/licenses/` | Giấy phép Inter (OFL), Phosphor (MIT), MobileFaceNet (MIT) |
+| `docs/licenses/` | Giấy phép Inter (OFL), Phosphor (MIT), MobileFaceNet (MIT), ZXing (Apache-2.0), OSMDroid (Apache-2.0) + dữ liệu OpenStreetMap (ODbL) |
 
 ### Bản đồ code (`app/src/main/java/com/flux/bank/`)
-- `FluxApp.kt`: service locator, giữ `authRepository`, `userRepository`, `kycRepository`, `accountRepository`, `transactionRepository`, `ratesRepository`, `payeeRepository`, `vnPay`, `otpManager`, `otpNotifier`, `sessionManager`, `lockPolicy`, `appLockObserver`, `onboardingService`.
-- `core/format/MoneyFormatter`, `core/validation/Validators`.
+- `FluxApp.kt`: service locator, giữ `authRepository`, `userRepository`, `kycRepository`, `accountRepository`, `transactionRepository`, `ratesRepository`, `payeeRepository`, `vnPay`, `otpManager`, `otpNotifier`, `sessionManager`, `lockPolicy`, `appLockObserver`, `onboardingService`, `walkingRouter`, `branchRecommender`, `locationSource` (F6).
+- `core/format/MoneyFormatter`, `DistanceFormatter` (F6), `core/validation/Validators`.
 - `core/security/`: `OtpManager`, `OtpNotifier` (+ `OtpAutofillActivity`), `LockPolicy`, `AppLockObserver`.
 - `data/model/`: `User`, `KycRecord`, `BankAccount` (+ `AccountType`), `Transaction` (+ `TransactionType`), `ServicePayment` (+ `DetailRow`), `Rates`, `Bank`, `Payee`.
 - `data/repository/`: mỗi repository là một interface kèm implementation Firestore (`Auth`, `User` có `phoneIndex`, `Kyc`, `Account`, `Transaction`, `Rates`, `Payee`).
-- `domain/`: `CustomerOnboardingService`, `FaceVerificationPolicy`, `InterestCalculator`, `TransferPolicy`, `QrPayload`. `domain/utility/` (F5): `Bills` (`BillLookup`), `Carriers`, `ServiceCatalog`, `BookingCode`, `ServicePayments`.
+- `domain/`: `CustomerOnboardingService`, `FaceVerificationPolicy`, `InterestCalculator`, `TransferPolicy`, `QrPayload`. `domain/utility/` (F5): `Bills` (`BillLookup`), `Carriers`, `ServiceCatalog`, `BookingCode`, `ServicePayments`. `domain/branch/` (F6): `Branch`/`GeoPoint`, `Branches` (12 chi nhánh giả lập), `GeoMath`, `OpeningHours`, `BranchRecommender`.
+- `data/routing/` (F6): `WalkingRouter`, `OsrmWalkingRouter`. `data/location/` (F6): `LocationSource`, `FusedLocationSource`.
 - `face/`: `FaceMatcher`, `BlinkDetector`, `FaceEmbedder` (LiteRT), `FaceDetectorHelper` (ML Kit). Model nằm ở `assets/mobilefacenet.tflite`.
 - `ui/auth/`: Login, Unlock, ChangePassword, `RoleRouter`. `ui/auth/sheet/`: `TransactionAuthSheet`, `TransactionAuthViewModel`, `FaceStepController`.
 - `ui/common/`: `ComingSoonFragment`, `ScreenHost`, `showKycPill`, `NumericKeypadView`, `OtpCellsView`, `SimulatedSmsBanner`, `Event`.
-- `ui/customer/`: `CustomerMainActivity`, `Utility` (enum 12 tiện ích), `home/`, `profile/`, `account/` (chi tiết, nạp/rút, `VnPayFragment`, biên lai), `history/`, `transfer/` (hub, form 3 chế độ, `BankPickerSheet`), `qr/`, `utility/` (F5: `ServicePaymentViewModel`, `PaymentUi`, `BillPay*`, `TopUp*`, `Catalog*`).
+- `ui/customer/`: `CustomerMainActivity`, `Utility` (enum 12 tiện ích), `home/`, `profile/`, `account/` (chi tiết, nạp/rút, `VnPayFragment`, biên lai), `history/`, `transfer/` (hub, form 3 chế độ, `BankPickerSheet`), `qr/`, `utility/` (F5: `ServicePaymentViewModel`, `PaymentUi`, `BillPay*`, `TopUp*`, `Catalog*`), `branch/` (F6: `BranchMapFragment` OSMDroid, `BranchMapViewModel`, `BranchAdapter`, `BranchMarkers`).
 - `payment/VnPay`, `core/format/TextNormalizer`. `ui/ekyc/`: `EkycCaptureFragment`. `ui/officer/`: `overview/`, `customers/`, `ekyc/`, `rates/`.
 - Test: `app/src/test/...`. Repository giả nằm ở `fakes/Fakes.kt`, `testutil/MainDispatcherRule`.
 
@@ -141,7 +148,8 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 - **Build**: daemon Gradle đã ghim JDK 21 (`gradle/gradle-daemon-jvm.properties`), không cần `JAVA_HOME`: `./gradlew testDebugUnitTest assembleDebug`. Android Studio: Gradle JDK = `/usr/lib/jvm/java-21-openjdk`.
 - **Test rules**: `rules-test/` (Node + Firestore emulator), xem README mục 5.
 - **Firestore Console**: gõ tay tên field khi tạo document (copy từ markdown có thể dính ký tự ẩn U+200B, app sẽ không đọc được field).
-- **Git/GitHub**: `git push origin main` (HTTPS qua `gh`, đã cấu hình). Không `--force`.
+- **Git/GitHub**: `git push origin main` (HTTPS qua `gh`, đã cấu hình; cần chạy ngoài sandbox). Không `--force`.
+- **adb phải chạy ngoài sandbox của Claude Code**: server adb khởi động trong sandbox không mở được USB nên `adb devices` trống dù máy đã cắm (`lsusb` vẫn thấy Xiaomi). Sửa: `adb kill-server && adb start-server` ngoài sandbox.
 - **Skill thiết kế**: `impeccable` cài ở `Final_Exam/.claude/skills/` nên phải mở Claude Code từ thư mục `Final_Exam` (không phải `FLUX_Bank`) thì mới có. Bộ `taste` chỉ dành cho video, không dùng cho app.
 - **Emulator** (chỉ khi không có điện thoại): AVD `Pixel_7` (Android 37, image production nên không có adb root). Chạy không cửa sổ ở chế độ background:
   ```bash
@@ -219,6 +227,6 @@ Mở Claude Code từ thư mục `Final_Exam/` (để có skill impeccable), c�
 Quy trình đã dùng và nên giữ: `superpowers:brainstorming` (hỏi từng câu, mockup HTML trên visual companion) → viết spec vào `docs/superpowers/specs/` → `superpowers:writing-plans` → `superpowers:executing-plans` (chủ dự án chọn chế độ **Native**) → review toàn nhánh → `finishing-a-development-branch`.
 
 Còn **19 ngày** (tính từ 2026-11-12; F1–F6 đã xong trên `main`). Lịch đề xuất:
-1. **Feature 7 Chatbot** (khoảng 3 ngày, tới ~19/11). Quyết định: LLM API (ví dụ gói miễn phí của Gemini; không để key trong APK nếu được) hay luật cố định theo ý định. Đề yêu cầu trả lời **kèm link mở chức năng**: nạp ĐT, trả hoá đơn, xem giao dịch trong tháng… — mở thẳng `TopUpFragment()`, `BillPayFragment.newInstance(kind)`, tab Lịch sử.
-2. **Play Store** — làm **sớm, song song**: tài khoản developer tốn 25 USD; tài khoản cá nhân mới thường phải chạy kiểm thử kín (closed testing) với nhiều người thử trong nhiều ngày trước khi được lên production, nên kiểm tra chính sách hiện hành ngay và tạo bản internal/closed testing sớm.
+1. **Feature 7 Chatbot** (khoảng 3 ngày, tới ~19/11). Quyết định: LLM API hay luật cố định theo ý định. **Ràng buộc**: Google Cloud đã từ chối tạo tài khoản thanh toán cho chủ dự án (`OR_BACR2_59`), nên chỉ dùng được gói **miễn phí không cần billing** (ví dụ key Gemini từ Google AI Studio ở free tier — kiểm lại chính sách hiện hành); key nằm trong APK là giới hạn phải ghi vào báo cáo (Spark không có server). Đề yêu cầu trả lời **kèm link mở chức năng**: nạp ĐT, trả hoá đơn, xem giao dịch trong tháng… — mở thẳng `TopUpFragment()`, `BillPayFragment.newInstance(kind)`, tab Lịch sử.
+2. **Play Store** — làm **sớm, song song**: tài khoản developer tốn 25 USD (thanh toán Google Play khác Google Cloud, nhưng có thể gặp lỗi thẻ tương tự — thử sớm); mục Data safety phải khai báo vị trí (gửi tới server chỉ đường bên thứ ba), ảnh eKYC, tài chính; tài khoản cá nhân mới thường phải chạy kiểm thử kín (closed testing) với nhiều người thử trong nhiều ngày trước khi được lên production, nên kiểm tra chính sách hiện hành ngay và tạo bản internal/closed testing sớm.
 3. **Báo cáo + video** (từ ~20/11): class diagram, ERD, use case, kiến trúc; trước khi quay chạy `/impeccable critique` hoặc `audit` trên các màn chính và sửa lỗi nhìn thấy (giới hạn 1 ngày). Chừa 5–7 ngày cuối.

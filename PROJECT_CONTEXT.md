@@ -18,7 +18,7 @@
 ## Khung điều hướng
 - Khách hàng: `CustomerMainActivity` — Trang chủ · Chuyển tiền · [Quét QR nổi] · Lịch sử · Cá nhân.
 - Nhân viên: `OfficerMainActivity` — Tổng quan · Khách hàng · eKYC · Lãi suất · Cá nhân.
-- Màn phụ mở bằng `ScreenHost.openScreen(fragment)` (back stack, ẩn thanh tab). Tính năng chưa làm dùng `ComingSoonFragment`.
+- Màn phụ mở bằng `ScreenHost.openScreen(fragment)` (back stack, ẩn thanh tab). Tính năng chưa làm dùng `ComingSoonFragment` (hiện chỉ còn ô Trợ lý AI — Feature 7).
 
 ## Dữ liệu Firestore
 | Collection | Ghi chú |
@@ -85,4 +85,4 @@ Security Rules: `firestore.rules` (deploy thủ công qua Console — xem README
 - Feature 6: chi nhánh giả lập trong app; OSRM công cộng không cam kết luôn chạy (lỗi thì gợi ý theo đường thẳng); chỉ so 3 chi nhánh gần nhất theo đường thẳng; toạ độ người dùng gửi tới server chỉ đường bên thứ ba (khai báo Data safety khi lên Play).
 
 ## Kiểm thử
-`./gradlew testDebugUnitTest` — 335 unit test cho validator, định dạng tiền, OTP, lock policy, face matcher/blink, onboarding service, hạn mức, VNPay, dữ liệu tiện ích (hoá đơn, nhà mạng, danh mục), chi nhánh (khoảng cách, giờ mở cửa, gợi ý đường đi bộ, parse OSRM) và các ViewModel (repository giả trong `src/test/.../fakes`). Rules: 49 ca trong `rules-test/` (README mục 5).
+`./gradlew testDebugUnitTest` — 340 unit test cho validator, định dạng tiền, OTP, lock policy, face matcher/blink, onboarding service, hạn mức, VNPay, dữ liệu tiện ích (hoá đơn, nhà mạng, danh mục), chi nhánh (khoảng cách, giờ mở cửa, gợi ý đường đi bộ, parse OSRM) và các ViewModel (repository giả trong `src/test/.../fakes`). Rules: 49 ca trong `rules-test/` (README mục 5).

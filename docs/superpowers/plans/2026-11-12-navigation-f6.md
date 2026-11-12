@@ -8,6 +8,8 @@
 
 **Tech Stack:** Kotlin, XML + ViewBinding, `play-services-maps` 19.2.0, `play-services-location` 21.3.0, `HttpURLConnection` + `org.json` (test: `org.json:json:20240303`), coroutines.
 
+> **Ghi chú sau khi thực hiện (2026-11-12):** Google Cloud từ chối tạo tài khoản thanh toán (`OR_BACR2_59`) nên bản đồ đã chuyển từ Google Maps SDK sang **OSMDroid / OpenStreetMap** (spec §4). Các bước về key Maps, `SupportMapFragment`, `MapStyleOptions` ở Task 4 và Task 6 dưới đây là lịch sử; code thật dùng `org.osmdroid.views.MapView`.
+
 **Spec:** `docs/superpowers/specs/2026-11-12-navigation-f6-design.md` (đã duyệt 2026-11-12). Mockup: `docs/superpowers/specs/mockups/2026-11-12-f6-navigation.html` (đã duyệt). Design system: `DESIGN.md`.
 
 ## Global Constraints
