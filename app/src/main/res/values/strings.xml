@@ -442,4 +442,28 @@
     <string name="topup_denomination">Mệnh giá</string>
     <string name="topup_action">Nạp tiền</string>
     <string name="topup_action_amount">Nạp %1$s</string>
+    <string name="catalog_title_flight">Vé máy bay</string>
+    <string name="catalog_title_movie">Vé xem phim</string>
+    <string name="catalog_title_hotel">Đặt khách sạn</string>
+    <string name="catalog_title_shop">Mua sắm</string>
+    <string name="catalog_date_flight">Ngày bay</string>
+    <string name="catalog_date_hotel">Nhận phòng</string>
+    <string name="catalog_checkout">Trả phòng %1$s</string>
+    <string name="catalog_showtimes">Suất chiếu hôm nay</string>
+    <string name="catalog_qty_flight">Hành khách</string>
+    <string name="catalog_qty_movie">Số vé</string>
+    <string name="catalog_qty_hotel">Số đêm</string>
+    <string name="catalog_qty_shop">Số lượng</string>
+    <string name="catalog_total_flight">Tổng · %1$d khách</string>
+    <string name="catalog_total_movie">Tổng · %1$d vé</string>
+    <string name="catalog_total_hotel">Tổng · %1$d đêm</string>
+    <string name="catalog_total_shop">Tổng · %1$d sản phẩm</string>
+    <string name="catalog_per_flight">/khách</string>
+    <string name="catalog_per_movie">/vé</string>
+    <string name="catalog_per_hotel">/đêm</string>
+    <string name="catalog_minus" translatable="false">−</string>
+    <string name="catalog_plus" translatable="false">+</string>
+    <string name="catalog_decrease">Giảm</string>
+    <string name="catalog_increase">Tăng</string>
+    <string name="catalog_stars">%1$s · %2$s</string>
 </resources>
