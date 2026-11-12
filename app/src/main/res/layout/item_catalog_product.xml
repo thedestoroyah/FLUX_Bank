@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Một sản phẩm FLUX Shop trong lưới 2 cột (mockup F5 màn 7) -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/space_4"
+    android:checkable="true"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@color/flux_surface"
+    app:cardCornerRadius="@dimen/radius_tile"
+    app:cardElevation="0dp"
+    app:cardForegroundColor="@android:color/transparent"
+    app:checkedIcon="@null"
+    app:strokeColor="@color/selector_denomination_stroke"
+    app:strokeWidth="@dimen/stroke_hairline">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/space_12">
+
+        <ImageView
+            android:id="@+id/ivArt"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:background="@drawable/bg_icon_tile"
+            android:importantForAccessibility="no"
+            android:scaleType="center" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_8"
+            android:maxLines="2"
+            android:minLines="2"
+            android:textAppearance="@style/TextAppearance.Flux.Label" />
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_4"
+            android:textAppearance="@style/TextAppearance.Flux.AmountSmall" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
