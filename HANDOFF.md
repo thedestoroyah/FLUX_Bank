@@ -16,7 +16,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 ## 2. Trạng thái hiện tại
 
 - Repo git ở `FLUX_Bank/`, remote `origin` = GitHub private `thedestoroyah/FLUX_Bank` (HTTPS, tạo 2026-11-12; SSH key chưa gắn với GitHub nên dùng HTTPS qua `gh`). **`main` có F1–F4** (F4 merge 2026-10-28, commit `9f6e5c3`, đã chạy end-to-end đạt trên máy thật, mục 3). **F5 nằm trên nhánh `feature/f5-utilities`** (chưa merge, chờ review toàn nhánh và chủ dự án publish rules).
-- F5: **unit test 285/285 pass**, rules test 47/47, `assembleDebug` + `lintDebug` pass (0 error). (Trên `main`: unit 216/216, rules 40/40.) F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test).
+- F5: **unit test 292/292 pass**, rules test 49/49, `assembleDebug` + `lintDebug` pass (0 error). (Trên `main`: unit 216/216, rules 40/40.) F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test).
 - F1–F2 và F3 đều đã được reviewer độc lập review toàn nhánh, đã sửa hết lỗi Important; lỗi Minor còn lại ở mục 7. F3 đã chạy demo đạt trên máy thật (mục 3).
 
 ### Đã hoàn thành
@@ -61,8 +61,8 @@ Cho Feature 4 (đã merge vào `main` 2026-10-28):
 - Mẹo adb cho F4: bàn phím Telex đổi "ff"→"f" và "us"→"ú" (gõ thiếu rồi đưa con trỏ về chèn chữ còn thiếu); chỉ bấm BACK để ẩn bàn phím khi `dumpsys input_method` báo `mInputShown=true`, nếu không BACK sẽ đóng màn (đóng WebView VNPay = huỷ). Phím số của sheet OTP là view tự vẽ, phải chạm theo toạ độ.
 
 Cho Feature 5 (nhánh `feature/f5-utilities`):
-1. **Publish lại `firestore.rules`** (thêm `PAYMENT` ở `ownerMoneyMoveAllowed` và `txCreateAllowed`). Chưa publish thì mọi lần thanh toán tiện ích bị từ chối.
-2. Chạy kịch bản demo F5 ở README trên máy thật. Ngày 2026-11-12 đã kiểm trên Xiaomi (chưa publish rules): mọi màn hiện đúng mockup, tra cứu hoá đơn + kiểm "đã trả" trên Firestore thật chạy được, sheet OTP hiện đủ dòng tóm tắt. **Chưa thử**: ghi tiền thật, biên lai mã đặt chỗ, dòng Lịch sử có icon dịch vụ, bước quét mặt khi ≥ 10 tr.
+1. Đã publish rules có `PAYMENT` ngày 2026-11-12. **Publish lại lần nữa** sau review: rules mới chỉ cho id `bill_<uid>_…` dùng cho `PAYMENT` của chính uid đó (chặn khách khác chiếm trước hoá đơn).
+2. Chạy trên Xiaomi 2026-11-12 với rules thật — đạt: Mua sắm 1.490.000 ₫ (biên lai mã đặt chỗ), Tiền điện `PE01000123456` 2.434.700 ₫ qua OTP, tra lại thấy "đã thanh toán" + Xem biên lai, Lịch sử có icon dịch vụ, số dư khớp; lỗi số dư hiện ngay ở thanh đáy và khoá nút. **Chưa thử**: bước quét mặt khi ≥ 10 tr (thiếu số dư), hai máy trả cùng một hoá đơn cùng lúc.
 - Mẹo adb cho F5: chạm vào ô mã khách hàng theo toạ độ của `etCode` (chạm theo chữ "Mã khách hàng" trúng nhãn, không mở bàn phím).
 
 ## 4. Những điều chủ dự án đã quyết định (đừng hỏi lại)
@@ -163,6 +163,14 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 17. Vài kích thước `dp` cứng trong layout mới (96dp, 64dp, 36dp, 56dp).
 
 **Feature 4** đã đổi nạp tiền sang VNPay; rules vẫn không biết VNPay đã thu tiền (giới hạn Spark, ghi ở README).
+
+### Lỗi nhỏ của Feature 5 (review 2026-11-12, để lại sau)
+21. Process death ở các màn tiện ích: `load()` bị bỏ qua khi có `savedInstanceState` (giống #11).
+22. Chạm lại suất chiếu đang chọn thì chip bỏ check nhưng ViewModel vẫn giữ suất đó (thiếu `selectionRequired`).
+23. Không kiểm lại suất chiếu / ngày bay lúc bấm thanh toán nếu để màn mở qua giờ.
+24. Chạm đúp ô ngày có thể mở hai date picker (`show` → `showNow`).
+25. Giờ "đã thanh toán lúc" theo múi giờ máy, không cố định giờ VN.
+26. Chưa có test cho nhánh đọc lại sau lỗi của `FirestoreAccountRepository.pay` (đã thử bằng tay trên máy).
 
 ### Lỗi nhỏ của Feature 4 (review 2026-10-28, để lại sau)
 18. VNPay chuyển về khi app đang ở nền: `VnPayFragment` gọi `popBackStack()` sau `onSaveInstanceState` có thể crash (hiếm, chỉ khi redirect lúc app không ở trước).
