@@ -7,7 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -15,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.flux.bank.R
 import com.flux.bank.databinding.FragmentAssistantBinding
 import com.flux.bank.domain.assistant.AssistantAction
-import com.flux.bank.ui.common.padAboveKeyboard
 import com.flux.bank.ui.common.screenHost
 import com.flux.bank.ui.customer.UtilityScreens
 import com.flux.bank.ui.customer.history.HistoryFragment
@@ -36,7 +38,7 @@ class AssistantFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.root.padAboveKeyboard()
+        applyInsets()
         binding.header.tvHeaderTitle.setText(R.string.assistant_title)
         binding.header.btnBack.setOnClickListener { parentFragmentManager.popBackStack() }
         binding.rvChat.layoutManager = LinearLayoutManager(requireContext()).apply { stackFromEnd = true }
@@ -52,6 +54,16 @@ class AssistantFragment : Fragment() {
             if (items.isNotEmpty()) binding.rvChat.scrollToPosition(items.lastIndex)
         }
         viewModel.busy.observe(viewLifecycleOwner) { renderSendState() }
+    }
+
+    // Cửa sổ edge-to-edge: tự cộng thanh hệ thống, và đẩy thanh nhập lên trên bàn phím (lấy cái lớn hơn ở đáy)
+    private fun applyInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            v.updatePadding(left = bars.left, top = bars.top, right = bars.right, bottom = maxOf(bars.bottom, ime.bottom))
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     private fun bindSuggestions() {
