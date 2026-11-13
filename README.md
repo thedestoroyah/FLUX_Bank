@@ -91,8 +91,26 @@ Không cần cấu hình gì: bản đồ là OpenStreetMap qua OSMDroid, đư�
 
 ### 8. Trợ lý AI (Feature 7)
 Firebase Console → **AI Logic** → Get started → chọn **Gemini Developer API** (miễn phí, không cần thẻ, vẫn ở gói Spark; không có API key Gemini trong APK).
-Luồng bật mới tự **bắt buộc App Check** cho AI Logic: tạm tắt ở Console → App Check → tab APIs → Firebase AI Logic → Unenforce (có thể mất tới 15 phút mới có hiệu lực). Bật lại kèm Play Integrity khi đưa lên Play.
+App Check (chặn app giả dùng quota Gemini): bản debug dùng debug provider, bản release dùng Play Integrity (`app/src/{debug,release}/.../AppCheckSetup.kt`). Bật theo đúng thứ tự, nếu không Trợ lý của mọi người rơi về chế độ cơ bản: (1) tải AAB lên Play, lấy **SHA-256 khoá ký app** ở Play Console → App integrity; (2) Firebase Console → App Check → app Android → **Play Integrity** → dán SHA-256 đó (thêm SHA-256 khoá upload nếu muốn thử bản release cài tay); (3) chạy bản debug, lấy debug token trong Logcat (`adb logcat | grep DebugAppCheckProvider`) → App Check → Manage debug tokens; (4) thử Trợ lý bản debug vẫn trả lời bằng AI → **Enforce** App Check cho Firebase AI Logic (có thể mất tới 15 phút). Không Enforce cho Firestore/Auth.
 Chưa bật (hoặc mất mạng, hết lượt miễn phí) thì màn chat vẫn chạy ở "Chế độ cơ bản" (trả lời theo từ khoá trên máy); lý do lỗi ghi ở Logcat, tag `AssistantViewModel`.
+
+### 9. Ký bản phát hành (Google Play)
+Google Play giữ khoá ký app (Play App Signing); mình chỉ cần **khoá upload**. Tạo một lần, lưu **ngoài repo**:
+```bash
+mkdir -p ~/keystores
+keytool -genkeypair -storetype PKCS12 -keystore ~/keystores/flux-upload.jks -alias upload \
+  -keyalg RSA -keysize 2048 -validity 9125 -dname "CN=<Họ tên>, O=TDTU, C=VN"
+```
+`keytool` sẽ hỏi mật khẩu (tự đặt, đừng ghi vào repo). Thêm vào `local.properties` (file này đã gitignore):
+```properties
+release.store.file=/home/<user>/keystores/flux-upload.jks
+release.store.password=<mật khẩu keystore>
+release.key.alias=upload
+release.key.password=<mật khẩu khoá, PKCS12 thì trùng mật khẩu keystore>
+```
+Build: `./gradlew bundleRelease` → `app/build/outputs/bundle/release/app-release.aab`. Thiếu dòng nào thì lệnh báo lỗi nêu tên dòng đó; bản debug và unit test không cần các dòng này.
+- **Sao lưu `flux-upload.jks` và mật khẩu ra nơi khác** (Drive riêng, USB). Mất khoá upload thì phải xin Google đặt lại, mất vài ngày.
+- Mỗi lần tải bản mới lên Play phải tăng `versionCode` trong `app/build.gradle.kts`.
 
 ## Luồng demo
 Nhân viên đăng nhập → tạo khách hàng (mật khẩu tạm) → khách đăng nhập, bắt buộc đổi mật khẩu → khách nộp eKYC → nhân viên duyệt → khách bật sinh trắc học, khoá/mở khoá app → đổi SĐT qua OTP → kiểm tra xác thực khuôn mặt.

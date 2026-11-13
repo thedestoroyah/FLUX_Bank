@@ -23,6 +23,7 @@
     <string name="login_submit">Đăng nhập</string>
     <string name="login_biometric">Đăng nhập bằng sinh trắc học</string>
     <string name="login_secure_note">Phiên đăng nhập được mã hoá</string>
+    <string name="login_demo_note">Ứng dụng demo cho đồ án môn học · tiền và giao dịch đều là giả lập</string>
     <string name="err_email_required">Vui lòng nhập email.</string>
     <string name="err_email_invalid">Email không hợp lệ.</string>
     <string name="err_password_required">Vui lòng nhập mật khẩu.</string>
