@@ -82,10 +82,10 @@ Security Rules: `firestore.rules` (deploy thủ công qua Console — xem README
 - `domain/assistant/`: `AssistantAction` (13 nút), `AssistantReplyParser` (bỏ action lạ/trùng, tối đa 3, chịu được code fence), `FinanceSnapshot` (ngữ cảnh gửi kèm: số dư theo loại, tổng vào/ra + chi theo nhóm của tháng, hạn mức còn lại; không số TK/tên người nhận), `AssistantPrompt` (system instruction, số chính sách lấy từ hằng số), `AssistantFallback` ("Chế độ cơ bản": từ khoá bỏ dấu, so nguyên từ, nhắc khi gửi OTP).
 - `ui/customer/assistant/`: `AssistantViewModel` (10 tin gần nhất, bắt đầu bằng lượt khách; một hạn 20 s cho cả tải số liệu (tối đa 5 s) lẫn AI; lỗi → chế độ cơ bản, log tag `AssistantViewModel`; tin chứa OTP/mật khẩu trả lời trên máy, không gửi AI), `AssistantFragment` (tự xử lý inset thanh hệ thống + bàn phím), `ChatAdapter`, `AssistantActionUi` (action → `Utility`/màn riêng, nhãn, icon). Nút Chuyển tiền mở `TransferHubFragment` dạng màn phụ (không dùng `showTab`, vì sẽ xoá back stack và mất chat).
 - `domain/MonthSummary` + `HistoryFragment.forMonth(YearMonth)`: màn "Giao dịch tháng N" (header back + ô tổng vào/ra) mở từ nút của bot.
-- Console: AI Logic bật Gemini Developer API. App Check: `installAppCheck(app)` trong `app/src/debug` (debug provider) và `app/src/release` (Play Integrity), gọi ở `FluxApp.onCreate`; chỉ Enforce cho AI Logic, theo các bước ở README mục 8.
+- Console: AI Logic bật Gemini Developer API. App Check: `installAppCheck(app)` trong `app/src/debug` (debug provider) và `app/src/release` (Play Integrity), gọi ở `FluxApp.onCreate`; hiện **chưa Enforce** (AI Logic Unenforce, phạm vi Play thu gọn); nếu lên production thì chỉ Enforce cho AI Logic theo README mục 8.
 
-### Phát hành Google Play (đang làm, nhánh `chore/play-release`)
-- Spec/plan: `docs/superpowers/specs/2026-11-13-play-release-design.md`, `docs/superpowers/plans/2026-11-13-play-release.md`. Tài liệu và hình ảnh cho Play Console trong `docs/play/`.
+### Phát hành Google Play (đã merge vào `main` 2026-11-13; tuỳ chọn, chỉ cộng điểm)
+- Spec/plan: `docs/superpowers/specs/2026-11-13-play-release-design.md`, `docs/superpowers/plans/2026-11-13-play-release.md`. Tài liệu và hình ảnh cho Play Console trong `docs/play/` (chính sách song ngữ trên Gist, câu trả lời Console theo thứ tự, 6 ảnh chụp 1268×2536, icon 512, ảnh nổi bật 1024×500, `make_graphics.py`).
 - Ký: `signingConfigs.release` từ `local.properties` (`release.store.file`, `release.store.password`, `release.key.alias`, `release.key.password`), keystore ngoài repo `~/keystores/flux-upload.jks`; thiếu thì chỉ task đóng gói release báo lỗi (README mục 9). Play App Signing giữ khoá ký app.
 - Tên trên Play "FLUX Bank (Demo)"; màn đăng nhập có dòng chú thích demo (`login_demo_note`).
 
@@ -95,7 +95,7 @@ Security Rules: `firestore.rules` (deploy thủ công qua Console — xem README
 - Feature 4: hạn mức ngày chỉ kiểm ở app; chữ ký VNPay kiểm trên máy (khoá sandbox nằm trong APK) và rules không biết VNPay đã thu tiền; số TK chỉ tra được sau khi chủ đăng nhập lần đầu; chuyển liên ngân hàng là giả lập.
 - Feature 5: dữ liệu tiện ích là giả lập trong app; rules không biết số tiền hoá đơn/giá vé đúng bao nhiêu (chỉ kiểm một lần trừ tiền hợp lệ ≤ 100 tr).
 - Feature 3: lãi chỉ là dự kiến (không cộng vào số dư); nguồn tiền nạp giả lập nên khách tự nạp được, nhưng mỗi lần có bản ghi và tối đa 100 triệu; lịch sử lọc ở client trên 100 giao dịch mới nhất.
-- Feature 7: free tier Gemini có giới hạn lượt (hết thì chế độ cơ bản); chưa bật App Check; câu hỏi + số liệu tóm tắt gửi tới Google (không định danh tài khoản); bot chỉ mở màn, không điền form; chat không lưu.
+- Feature 7: free tier Gemini có giới hạn lượt (hết thì chế độ cơ bản); App Check có code nhưng chưa Enforce; câu hỏi, tên gọi + số liệu tóm tắt gửi tới Google, gói miễn phí Google có thể dùng để cải thiện sản phẩm (không gửi số TK/SĐT/CCCD); bot chỉ mở màn, không điền form; chat không lưu.
 - Feature 6: chi nhánh giả lập trong app; OSRM công cộng không cam kết luôn chạy (lỗi thì gợi ý theo đường thẳng); chỉ so 3 chi nhánh gần nhất theo đường thẳng; toạ độ người dùng gửi tới server chỉ đường bên thứ ba (khai báo Data safety khi lên Play).
 
 ## Kiểm thử
