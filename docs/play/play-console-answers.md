@@ -50,20 +50,20 @@ Tổng quan:
 - Which methods of account creation does your app support? **Other** (tài khoản do nhân viên tạo trong app). Delete account URL: `https://gist.github.com/thedestoroyah/a48a98939a1fc13b32d8913c0d8711df` (mục "Quyền của bạn" trong chính sách) — người dùng gửi email để xoá.
 - Can users request that data be deleted? **Yes**.
 
-Từng loại dữ liệu (Collected = thu thập; Shared = chuyển cho bên thứ ba **không phải** nhà cung cấp dịch vụ xử lý thay mình — Firebase và Gemini là nhà cung cấp dịch vụ nên không tính "Shared"):
+Từng loại dữ liệu (Collected = thu thập; Shared = chuyển cho bên thứ ba **không phải** nhà cung cấp dịch vụ xử lý thay mình — Firebase là nhà cung cấp dịch vụ nên không tính "Shared"; Gemini gói miễn phí được Google dùng để cải thiện sản phẩm nên **tính "Shared"** cho dữ liệu gửi lên Trợ lý: tên gọi, số liệu tài chính tóm tắt, câu hỏi):
 
 | Nhóm Play | Loại | Collected | Shared | Ephemeral | Bắt buộc | Mục đích |
 |---|---|---|---|---|---|---|
-| Personal info | Name | Yes | No | No | Required | App functionality, Account management |
+| Personal info | Name | Yes | **Yes** (Google Gemini, chỉ tên gọi) | No | Required | App functionality, Account management |
 | Personal info | Email address | Yes | No | No | Required | App functionality, Account management |
 | Personal info | Phone number | Yes | No | No | Required | App functionality, Account management, Fraud prevention/security (OTP) |
 | Personal info | Address | Yes | No | No | Required | Account management |
 | Personal info | Other info (số CCCD) | Yes | No | No | Required | Account management, Fraud prevention/security |
 | Financial info | Purchase history (hoá đơn, vé đã trả) | Yes | No | No | Required | App functionality |
-| Financial info | Other financial info (số dư, giao dịch giả lập) | Yes | No | No | Required | App functionality |
+| Financial info | Other financial info (số dư, giao dịch giả lập) | Yes | **Yes** (Google Gemini, số liệu tóm tắt) | No | Required | App functionality |
 | Photos and videos | Photos (ảnh CCCD, selfie eKYC) | Yes | No | No | Required | Account management, Fraud prevention/security |
 | Location | Precise location | Yes | **Yes** (server chỉ đường OSRM/FOSSGIS) | **Yes** | Optional | App functionality |
-| Messages | Other in-app messages (câu hỏi Trợ lý AI) | Yes | No | No | Optional | App functionality |
+| Messages | Other in-app messages (câu hỏi Trợ lý AI) | Yes | **Yes** (Google Gemini) | No | Optional | App functionality |
 | Device or other IDs | Device or other IDs (Firebase, App Check) | Yes | No | No | Required | App functionality, Fraud prevention/security |
 
 Không khai: Contacts, Calendar, Audio, Health, App activity, App info and performance (app không có Analytics/Crashlytics), Web browsing.
