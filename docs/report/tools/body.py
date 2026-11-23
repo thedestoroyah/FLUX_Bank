@@ -17,6 +17,7 @@ MAX_W = int(15.5 * EMU_PER_CM)
 MAX_H = int(22 * EMU_PER_CM)
 BODY_STYLE = "Nội dung văn bản"
 TABLE_CELL_STYLE = "Bảng biểu - nội dung"
+TABLE_FONT_PT = 11
 PANDOC_BODY_STYLES = {"Body Text", "First Paragraph", "Compact", "BodyText", "FirstParagraph"}
 # pandoc ghi style theo id và không khai báo một số style (FirstParagraph, TableCaption),
 # nên so cả id lẫn tên.
@@ -73,23 +74,49 @@ def _rebuild_caption(p, caption_style) -> None:
     p.style = caption_style
 
 
-def _set_borders(tbl, val: str) -> None:
+TBLPR_ORDER = ["tblStyle", "tblpPr", "tblOverlap", "bidiVisual", "tblStyleRowBandSize", "tblStyleColBandSize",
+               "tblW", "jc", "tblCellSpacing", "tblInd", "tblBorders", "shd", "tblLayout", "tblCellMar",
+               "tblLook", "tblCaption", "tblDescription"]
+
+
+def _put_tbl_pr(tbl, element) -> None:
+    """Đặt `element` vào `w:tblPr` đúng thứ tự schema OOXML, thay phần tử cùng tên nếu có."""
     tbl_pr = tbl.find(qn("w:tblPr"))
-    old = tbl_pr.find(qn("w:tblBorders"))
+    name = element.tag.split("}")[1]
+    old = tbl_pr.find(element.tag)
     if old is not None:
         tbl_pr.remove(old)
+    later = TBLPR_ORDER[TBLPR_ORDER.index(name) + 1:]
+    for child in tbl_pr:
+        if child.tag.split("}")[1] in later:
+            child.addprevious(element)
+            return
+    tbl_pr.append(element)
+
+
+def _set_borders(tbl, val: str) -> None:
     sides = "".join(f'<w:{s} w:val="{val}" w:sz="4" w:space="0" w:color="auto"/>'
                     for s in ("top", "left", "bottom", "right", "insideH", "insideV"))
-    tbl_pr.append(parse_xml(f'<w:tblBorders {nsdecls("w")}>{sides}</w:tblBorders>'))
+    _put_tbl_pr(tbl, parse_xml(f'<w:tblBorders {nsdecls("w")}>{sides}</w:tblBorders>'))
+
+
+def _plain_cells(table) -> None:
+    """Ô bảng căn trái, không thụt đầu dòng; hàng không bị cắt đôi giữa hai trang."""
+    for c in table._cells:
+        for p in c.paragraphs:
+            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            p.paragraph_format.first_line_indent = 0
+            for r in p.runs:
+                r.font.size = Pt(TABLE_FONT_PT)
+    for row in table.rows:
+        trpr = row._tr.get_or_add_trPr()
+        if trpr.find(qn("w:cantSplit")) is None:
+            trpr.insert(0, parse_xml(f'<w:cantSplit {nsdecls("w")}/>'))
 
 
 def _full_width(tbl) -> None:
     """Bảng thường giãn hết khổ chữ (kiểu pct, 5000 = 100%)."""
-    tbl_pr = tbl.find(qn("w:tblPr"))
-    old = tbl_pr.find(qn("w:tblW"))
-    if old is not None:
-        tbl_pr.remove(old)
-    tbl_pr.append(parse_xml(f'<w:tblW {nsdecls("w")} w:type="pct" w:w="5000"/>'))
+    _put_tbl_pr(tbl, parse_xml(f'<w:tblW {nsdecls("w")} w:type="pct" w:w="5000"/>'))
 
 
 def _fit_images(root) -> None:
@@ -121,12 +148,9 @@ def _mark_unnumbered(doc) -> None:
         elif el.tag == qn("w:p"):
             names = [b.get(qn("w:name")) or "" for b in el.iter(qn("w:bookmarkStart"))]
             if pending or any(n.startswith("unnumbered-") for n in names):
-                ppr = el.get_or_add_pPr()
-                old = ppr.find(qn("w:numPr"))
-                if old is not None:
-                    ppr.remove(old)
-                ppr.insert(1, parse_xml(
-                    f'<w:numPr {nsdecls("w")}><w:ilvl w:val="0"/><w:numId w:val="0"/></w:numPr>'))
+                num_pr = el.get_or_add_pPr().get_or_add_numPr()
+                num_pr.get_or_add_ilvl().val = 0
+                num_pr.get_or_add_numId().val = 0
             pending = False
 
 
@@ -170,9 +194,15 @@ def postprocess(docx: Path) -> None:
             for c in table._cells:
                 for p in c.paragraphs:
                     p.style = cell_style
+            _plain_cells(table)
     if "Verbatim Char" in [s.name for s in doc.styles]:
         font = _style(doc, "Verbatim Char").font
         font.name, font.size = "Courier New", Pt(10)
+    for p in doc.paragraphs:
+        if p.style.name.startswith("Heading"):
+            p.paragraph_format.keep_with_next = True  # tiêu đề không bị bỏ lẻ cuối trang
+        if p.style.name == "Heading 1":  # mẫu Khoa: mỗi chương bắt đầu ở trang mới
+            p.paragraph_format.page_break_before = True
     _mark_unnumbered(doc)
     _fit_images(doc.element.body)
     doc.save(str(docx))

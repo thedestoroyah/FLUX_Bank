@@ -1,0 +1,28 @@
+@startuml
+!include _style.iuml
+skinparam rectangle {
+  RoundCorner 6
+}
+rectangle "Tầng giao diện (ui/)" as UI {
+  rectangle "Activity: Login, Unlock, CustomerMain, OfficerMain\nFragment: màn hình trong từng tab, màn phụ\nScreenHost.openScreen()" as Screens
+}
+rectangle "Tầng trình bày" as VM {
+  rectangle "ViewModel: giữ trạng thái màn hình,\ngọi repository bằng coroutine" as ViewModels
+}
+rectangle "Tầng nghiệp vụ (domain/, core/)" as Domain {
+  rectangle "TransferPolicy, InterestCalculator, BranchRecommender\nOtpManager, LockPolicy, FaceMatcher, AssistantReplyParser\nKhông phụ thuộc Android → kiểm thử đơn vị trực tiếp" as Rules
+}
+rectangle "Tầng dữ liệu (data/)" as Data {
+  rectangle "Interface: AccountRepository, UserRepository, ...\nCài đặt Firestore: FirestoreAccountRepository, ...\nOsrmWalkingRouter, FusedLocationSource, GeminiAssistantClient" as Repos
+}
+rectangle "FluxApp\n(service locator)" as Locator
+cloud "Firebase, OSRM, VNPay" as Remote
+
+Screens --> ViewModels
+ViewModels --> Rules
+ViewModels --> Repos
+Rules ..> Repos : chỉ qua interface
+Repos --> Remote
+Locator ..> Repos : khởi tạo lười (lazy)
+Locator ..> ViewModels : cấp repository
+@enduml

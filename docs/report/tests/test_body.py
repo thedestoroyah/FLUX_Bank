@@ -181,3 +181,65 @@ def test_tables_span_text_width(body):
     table = next(t for t in body.tables if t.rows[0].cells[0].text == "Cột A")
     tbl_w = table._tbl.find(qn("w:tblPr")).find(qn("w:tblW"))
     assert tbl_w.get(qn("w:type")) == "pct" and tbl_w.get(qn("w:w")) == "5000"
+
+
+def test_chapters_start_on_new_page(body):
+    heads = [p for p in body.paragraphs if p.style.name == "Heading 1"]
+    assert len(heads) == 3
+    for h in heads:
+        assert h._p.pPr.find(qn("w:pageBreakBefore")) is not None, h.text
+
+
+def test_table_cells_left_aligned_without_indent(body):
+    table = next(t for t in body.tables if t.rows[0].cells[0].text == "Cột A")
+    for c in table._cells:
+        for p in c.paragraphs:
+            ppr = p._p.pPr
+            assert ppr.find(qn("w:jc")).get(qn("w:val")) == "left"
+            assert ppr.find(qn("w:ind")).get(qn("w:firstLine")) == "0"
+
+
+def test_table_rows_do_not_split_across_pages(body):
+    table = next(t for t in body.tables if t.rows[0].cells[0].text == "Cột A")
+    for row in table.rows:
+        assert row._tr.trPr.find(qn("w:cantSplit")) is not None
+
+
+PPR_ORDER = ["pStyle", "keepNext", "keepLines", "pageBreakBefore", "framePr", "widowControl", "numPr",
+             "suppressLineNumbers", "pBdr", "shd", "tabs", "suppressAutoHyphens", "kinsoku", "wordWrap",
+             "overflowPunct", "topLinePunct", "autoSpaceDE", "autoSpaceDN", "bidi", "adjustRightInd",
+             "snapToGrid", "spacing", "ind", "contextualSpacing", "mirrorIndents", "suppressOverlap", "jc",
+             "textDirection", "textAlignment", "textboxTightWrap", "outlineLvl", "divId", "cnfStyle",
+             "rPr", "sectPr", "pPrChange"]
+
+
+def test_paragraph_properties_follow_schema_order(body):
+    ppr_tag = qn("w:pPr")
+    for ppr in body.element.body.iter(ppr_tag):
+        names = [c.tag.split("}")[1] for c in ppr]
+        idx = [PPR_ORDER.index(n) for n in names]
+        assert idx == sorted(idx), names
+
+
+TBLPR_ORDER = ["tblStyle", "tblpPr", "tblOverlap", "bidiVisual", "tblStyleRowBandSize", "tblStyleColBandSize",
+               "tblW", "jc", "tblCellSpacing", "tblInd", "tblBorders", "shd", "tblLayout", "tblCellMar",
+               "tblLook", "tblCaption", "tblDescription"]
+
+
+def test_table_properties_follow_schema_order(body):
+    for tbl_pr in body.element.body.iter(qn("w:tblPr")):
+        idx = [TBLPR_ORDER.index(c.tag.split("}")[1]) for c in tbl_pr]
+        assert idx == sorted(idx), [c.tag.split("}")[1] for c in tbl_pr]
+
+
+def test_table_text_is_11pt(body):
+    from docx.shared import Pt
+
+    table = next(t for t in body.tables if t.rows[0].cells[0].text == "Cột A")
+    runs = [r for c in table._cells for p in c.paragraphs for r in p.runs]
+    assert runs and all(r.font.size == Pt(11) for r in runs)
+
+
+def test_headings_keep_with_next(body):
+    heads = [p for p in body.paragraphs if p.style.name.startswith("Heading")]
+    assert heads and all(p.paragraph_format.keep_with_next for p in heads)
