@@ -1,8 +1,0 @@
-@startuml
-!include _style.iuml
-class FluxApp
-interface AccountRepository
-class FirestoreAccountRepository
-AccountRepository <|.. FirestoreAccountRepository
-FluxApp --> AccountRepository
-@enduml

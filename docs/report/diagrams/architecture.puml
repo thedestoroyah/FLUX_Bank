@@ -1,0 +1,37 @@
+@startuml
+!include _style.iuml
+left to right direction
+skinparam nodesep 12
+skinparam ranksep 30
+
+package "Điện thoại Android" as Device {
+  [Giao diện\nActivity, Fragment,\nViewModel] as UI
+  [Repository\nvà domain\n(Kotlin thuần)] as Core
+  [ML Kit, LiteRT,\nMobileFaceNet,\nBiometricPrompt] as OnDevice
+  [OSMDroid\n(vẽ bản đồ)] as Map
+}
+
+cloud "Firebase (Spark)" as Firebase {
+  [Authentication] as Auth
+  database "Firestore +\nSecurity Rules" as FS
+  [AI Logic\n(Gemini)] as AI
+  [App Check] as AC
+}
+
+cloud "Bên thứ ba" as Ext {
+  [VNPay\nsandbox] as VNP
+  [Tile\nOpenStreetMap] as Tile
+  [OSRM\n(đi bộ)] as OSRM
+}
+
+UI --> Core
+UI --> OnDevice : quét mặt
+UI --> Map
+UI --> VNP : WebView
+Core --> Auth : đăng nhập
+Core --> FS : transaction
+Core --> AI : câu hỏi
+AI ..> AC
+Map --> Tile
+Core --> OSRM
+@enduml

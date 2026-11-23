@@ -189,8 +189,10 @@ def spell(report: Path) -> list[str]:
              if w.strip() and not w.startswith("#")}
     out = []
     for ch in _chapters(report):
+        if ch.name == REFS_FILE:
+            continue  # danh sách tài liệu toàn tiếng Anh, không soát bằng từ điển Việt
         for lineno, line in enumerate(_read(ch).splitlines(), 1):
-            clean = re.sub(r"`[^`]*`|\(https?://[^)]*\)|https?://\S+|\{[^}]*\}|!\[[^\]]*\]\([^)]*\)", " ", line)
+            clean = re.sub(r"@(?:fig|tbl):[\w-]+|`[^`]*`|\(https?://[^)]*\)|https?://\S+|\{[^}]*\}|!\[[^\]]*\]\([^)]*\)", " ", line)
             # Bỏ token ASCII là tên code/viết tắt (có chữ hoa giữa từ, số, _ . /); không đụng chữ có dấu.
             tokens = [t.strip(".,;:!?()\"'") for t in clean.split()]
             clean = " ".join(t for t in tokens if t and not (t.isascii() and re.search(r"[A-Z0-9_./]", t[1:])))

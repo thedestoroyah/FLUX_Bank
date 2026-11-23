@@ -124,3 +124,9 @@ def test_spell_keeps_capitalized_vietnamese_words(report):
     (rep / "src" / "03-x.md").write_text("# X\n\nBảng Điểm Một `FluxApp` MoneyFormatter.\n", encoding="utf-8")
     flagged = check.spell(rep)
     assert not any(w.endswith((": ản", ": ểm", ": ột", ": ảng")) for w in flagged), flagged
+
+
+def test_spell_skips_reference_list(report):
+    rep, _ = report
+    flagged = check.spell(rep)
+    assert not any(w.startswith("08-tai-lieu.md") for w in flagged), flagged

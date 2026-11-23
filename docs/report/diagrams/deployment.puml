@@ -1,0 +1,37 @@
+@startuml
+!include _style.iuml
+left to right direction
+skinparam nodesep 12
+skinparam ranksep 30
+
+node "Máy phát triển" as Dev {
+  artifact "Mã nguồn\nGradle 9.6, JDK 21" as Src
+  artifact "rules-test\nFirestore Emulator" as RulesTest
+}
+node "Xiaomi, Android 16" as Phone {
+  artifact "app-debug.apk" as Apk
+}
+node "Google Play\n(tuỳ chọn)" as Play {
+  artifact "app-release.aab" as Aab
+}
+cloud "Firebase" as FB {
+  database "Firestore\n+ rules" as FS
+  node "Auth" as Auth
+  node "AI Logic\n+ App Check" as AI
+}
+cloud "Dịch vụ ngoài" as Ext {
+  node "VNPay sandbox" as VNP
+  node "OSM + OSRM" as OSM
+}
+
+Src --> Apk : adb
+Src --> Aab : bundleRelease
+Src --> FS : dán rules
+RulesTest ..> FS : kiểm thử
+Aab ..> Phone : chưa tải lên
+Apk --> FS
+Apk --> Auth
+Apk --> AI
+Apk --> VNP
+Apk --> OSM
+@enduml
