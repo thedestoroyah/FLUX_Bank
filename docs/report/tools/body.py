@@ -10,6 +10,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
 from docx.shared import Pt
+from docx.text.paragraph import Paragraph
 
 FILTER = Path(__file__).with_name("figures.lua")
 EMU_PER_CM = 360000
@@ -92,6 +93,34 @@ def _put_tbl_pr(tbl, element) -> None:
             child.addprevious(element)
             return
     tbl_pr.append(element)
+
+
+SHORT_TABLE_ROWS = 5
+
+
+def _keep_together(doc) -> None:
+    """Giữ caption bảng với bảng, bảng ngắn trên một trang, ảnh với caption bên dưới."""
+    for p in doc.paragraphs:
+        if p.style.name == "Caption" and p.text.startswith("Bảng "):
+            p.paragraph_format.keep_with_next = True
+        nxt = p._p.getnext()
+        is_figure_caption = p.style.name == "Caption" and p.text.startswith("Hình ")
+        prev = p._p.getprevious()
+        if is_figure_caption and prev is not None and prev.tag == qn("w:p") \
+                and prev.find(f".//{WP}inline") is not None:
+            Paragraph(prev, p._parent).paragraph_format.keep_with_next = True
+    for table in doc.tables:
+        if _is_phone_grid(table):  # lưới ảnh dính với caption ngay sau nó
+            for c in table._cells:
+                for p in c.paragraphs:
+                    p.paragraph_format.keep_with_next = True
+            continue
+        if len(table.rows) > SHORT_TABLE_ROWS:
+            continue
+        for row in table.rows[:-1]:
+            for c in row.cells:
+                for p in c.paragraphs:
+                    p.paragraph_format.keep_with_next = True
 
 
 def _set_borders(tbl, val: str) -> None:
@@ -203,6 +232,7 @@ def postprocess(docx: Path) -> None:
             p.paragraph_format.keep_with_next = True  # tiêu đề không bị bỏ lẻ cuối trang
         if p.style.name == "Heading 1":  # mẫu Khoa: mỗi chương bắt đầu ở trang mới
             p.paragraph_format.page_break_before = True
+    _keep_together(doc)
     _mark_unnumbered(doc)
     _fit_images(doc.element.body)
     doc.save(str(docx))

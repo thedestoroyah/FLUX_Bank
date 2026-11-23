@@ -1,0 +1,35 @@
+@startuml
+!include _style.iuml
+left to right direction
+skinparam nodesep 14
+skinparam ranksep 40
+skinparam classAttributeIconSize 0
+
+interface DefaultLifecycleObserver <<AndroidX>>
+class AppLockObserver {
+  onAppBackground()
+  onAppForeground()
+  onUnlocked()
+  markColdStartHandled()
+}
+class LockPolicy {
+  timeoutMs = 60.000
+  onColdStart(hasSession, biometricEnabled, biometricAvailable)
+  onForeground(backgroundedAtMs, nowMs, ...)
+}
+class UnlockActivity
+class LoginActivity
+class BiometricHelper <<object>> {
+  canAuthenticate(context)
+}
+class FluxApp <<Application>>
+interface AuthRepository
+
+AppLockObserver ..|> DefaultLifecycleObserver
+AppLockObserver --> LockPolicy
+AppLockObserver ..> AuthRepository
+FluxApp *-- AppLockObserver : startUnlock = mở UnlockActivity
+UnlockActivity --> AppLockObserver : onUnlocked()
+LoginActivity --> AppLockObserver : markColdStartHandled()
+UnlockActivity ..> BiometricHelper
+@enduml

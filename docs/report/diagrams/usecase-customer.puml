@@ -1,0 +1,48 @@
+@startuml
+!include _style.iuml
+left to right direction
+skinparam nodesep 10
+skinparam ranksep 30
+
+actor "Khách hàng" as C
+actor "VNPay" as VNPay <<hệ thống ngoài>>
+actor "Gemini" as Gemini <<hệ thống ngoài>>
+actor "OSRM" as OSRM <<hệ thống ngoài>>
+
+rectangle "Ứng dụng khách hàng" {
+  usecase "Xem tài khoản\nChecking, Saving, Mortgage" as A1
+  usecase "Xem lịch sử giao dịch" as A2
+  usecase "Nạp tiền" as A3
+  usecase "Rút tiền" as A4
+  usecase "Chuyển tiền" as A5
+  usecase "Quét mã QR\nnhận tiền" as A6
+  usecase "Thanh toán\nhoá đơn, nạp ĐT,\nmua vé, đặt phòng" as A7
+  usecase "Tìm chi nhánh\ngần nhất" as A8
+  usecase "Hỏi trợ lý AI" as A9
+  usecase "Nộp eKYC" as A10
+  usecase "Sửa hồ sơ\n(SĐT qua OTP)" as A11
+  usecase "Xác thực giao dịch\n(OTP)" as V1
+  usecase "Quét mặt" as V2
+}
+
+C --> A1
+C --> A2
+C --> A3
+C --> A4
+C --> A5
+C --> A7
+C --> A8
+C --> A9
+C --> A10
+C --> A11
+A3 ..> V1 : <<include>>
+A4 ..> V1 : <<include>>
+A5 ..> V1 : <<include>>
+A7 ..> V1 : <<include>>
+A11 ..> V1 : <<include>>
+V2 ..> V1 : <<extend>>\nsố tiền ≥ 10 triệu
+A6 ..> A5 : <<extend>>
+A3 --> VNPay
+A9 --> Gemini
+A8 --> OSRM
+@enduml

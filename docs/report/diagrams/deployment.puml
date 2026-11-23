@@ -9,7 +9,7 @@ node "Máy phát triển" as Dev {
   artifact "rules-test\nFirestore Emulator" as RulesTest
 }
 node "Xiaomi, Android 16" as Phone {
-  artifact "app-debug.apk" as Apk
+  artifact "app-debug.apk\n(cài bằng adb)" as Apk
 }
 node "Google Play\n(tuỳ chọn)" as Play {
   artifact "app-release.aab" as Aab
@@ -24,7 +24,7 @@ cloud "Dịch vụ ngoài" as Ext {
   node "OSM + OSRM" as OSM
 }
 
-Src --> Apk : adb
+Src --> Apk
 Src --> Aab : bundleRelease
 Src --> FS : dán rules
 RulesTest ..> FS : kiểm thử

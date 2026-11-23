@@ -1,0 +1,44 @@
+@startuml
+!include _style.iuml
+left to right direction
+skinparam nodesep 14
+skinparam ranksep 40
+
+actor "Người dùng" as User
+actor "Khách hàng" as Customer
+actor "Nhân viên\nngân hàng" as Officer
+User <|-- Customer
+User <|-- Officer
+
+rectangle "FLUX Bank" {
+  usecase "Đăng nhập,\nđổi mật khẩu,\nmở khoá sinh trắc" as UC1
+  usecase "Quản lý hồ sơ\nkhách hàng" as UC2
+  usecase "Nộp và duyệt eKYC" as UC3
+  usecase "Quản lý tài khoản" as UC4
+  usecase "Giao dịch\n(nạp, rút, chuyển)" as UC5
+  usecase "Thanh toán tiện ích" as UC6
+  usecase "Tìm chi nhánh\nđi bộ gần nhất" as UC7
+  usecase "Hỏi trợ lý AI" as UC8
+  usecase "Chỉnh lãi suất" as UC9
+}
+
+actor "VNPay" as VNPay <<hệ thống ngoài>>
+actor "Gemini" as Gemini <<hệ thống ngoài>>
+actor "OSRM" as OSRM <<hệ thống ngoài>>
+
+User --> UC1
+Customer --> UC2
+Customer --> UC3
+Customer --> UC4
+Customer --> UC5
+Customer --> UC6
+Customer --> UC7
+Customer --> UC8
+Officer --> UC2
+Officer --> UC3
+Officer --> UC4
+Officer --> UC9
+UC5 --> VNPay
+UC8 --> Gemini
+UC7 --> OSRM
+@enduml

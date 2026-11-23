@@ -1,0 +1,49 @@
+@startuml
+!include _style.iuml
+left to right direction
+skinparam nodesep 6
+skinparam ranksep 60
+skinparam classAttributeIconSize 0
+
+class FluxApp <<Application>> {
+  instance: FluxApp
+  onCreate()
+}
+interface AuthRepository
+interface UserRepository
+interface KycRepository
+interface AccountRepository
+interface TransactionRepository
+interface RatesRepository
+interface PayeeRepository
+interface WalkingRouter
+interface LocationSource
+interface AssistantClient
+class OtpManager
+class OtpNotifier
+class SessionManager
+class LockPolicy
+class AppLockObserver
+class CustomerOnboardingService
+class BranchRecommender
+class VnPay
+
+FluxApp *-- AuthRepository
+FluxApp *-- UserRepository
+FluxApp *-- KycRepository
+FluxApp *-- AccountRepository
+FluxApp *-- TransactionRepository
+FluxApp *-- RatesRepository
+FluxApp *-- PayeeRepository
+FluxApp *-- WalkingRouter
+FluxApp *-- LocationSource
+FluxApp *-- AssistantClient
+FluxApp *-- OtpManager
+FluxApp *-- OtpNotifier
+FluxApp *-- SessionManager
+FluxApp *-- LockPolicy
+FluxApp *-- AppLockObserver
+FluxApp *-- CustomerOnboardingService
+FluxApp *-- BranchRecommender
+FluxApp *-- "0..1" VnPay
+@enduml

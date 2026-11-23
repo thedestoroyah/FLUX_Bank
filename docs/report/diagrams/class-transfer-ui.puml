@@ -1,0 +1,53 @@
+@startuml
+!include _style.iuml
+skinparam nodesep 18
+skinparam ranksep 40
+skinparam classAttributeIconSize 0
+
+interface ScreenHost {
+  openScreen(fragment)
+}
+class CustomerMainActivity
+class TransferHubFragment
+class TransferHubViewModel
+class TransferFragment
+class TransferViewModel {
+  load(prefill)
+  selectSource(accountId)
+  setAccountNumber(input)
+  setAmount(input)
+  confirm()
+  onAuthResult(verified)
+}
+class TransferState <<data>> {
+  mode: TransferMode
+  sources: List<BankAccount>
+  payee: Payee?
+  bank: Bank?
+  amount: Long
+  remainingToday: Long
+}
+enum TransferMode {
+  INTERNAL
+  OWN
+  EXTERNAL
+}
+class TransactionAuthSheet <<BottomSheet>>
+class TransferPolicy <<object>>
+
+CustomerMainActivity ..|> ScreenHost
+TransferHubFragment --> TransferHubViewModel
+TransferHubFragment ..> ScreenHost : mở màn chuyển
+TransferFragment --> TransferViewModel
+TransferFragment ..> TransactionAuthSheet : hiện sheet,\nnhận kết quả
+TransferViewModel *-- TransferState
+TransferViewModel --> TransferMode
+TransferViewModel ..> TransferPolicy
+TransferViewModel --> AccountRepository
+TransferViewModel --> PayeeRepository
+TransferViewModel --> TransactionRepository
+TransferViewModel --> UserRepository
+TransferViewModel --> AuthRepository
+TransferState --> TransferMode
+TransferHubFragment ..> TransferFragment : tạo
+@enduml

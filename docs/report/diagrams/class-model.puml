@@ -1,0 +1,103 @@
+@startuml
+!include _style.iuml
+skinparam nodesep 25
+skinparam ranksep 40
+skinparam classAttributeIconSize 0
+
+enum UserRole {
+  CUSTOMER
+  BANK_OFFICER
+}
+class User {
+  uid: String
+  email: String
+  fullName: String
+  phoneNumber: String
+  nationalId: String
+  role: UserRole
+  kycStatus: String
+  biometricEnabled: Boolean
+  mustChangePassword: Boolean
+}
+class KycRecord {
+  uid: String
+  faceEmbedding: List<Double>
+  submittedBy: String
+  reviewedBy: String?
+}
+enum AccountType {
+  CHECKING
+  SAVING
+  MORTGAGE
+}
+class BankAccount {
+  accountId: String
+  ownerUid: String
+  type: AccountType
+  accountNumber: String
+  balance: Long
+  lastTxId: String?
+  loanAmount: Long
+  annualRate: Double
+  termMonths: Int
+  startDate: Long
+}
+enum TransactionType {
+  DEPOSIT
+  WITHDRAW
+  TRANSFER_OUT
+  TRANSFER_IN
+  PAYMENT
+}
+class Transaction {
+  id: String
+  accountId: String
+  ownerUid: String
+  type: TransactionType
+  amount: Long
+  balanceAfter: Long?
+  counterpartyBank: String
+  pairTxId: String?
+  paymentRef: String?
+  service: String?
+  createdAt: Long
+}
+class DetailRow {
+  label: String
+  value: String
+}
+class ServicePayment {
+  service: String
+  amount: Long
+  merchant: String
+  reference: String
+  paymentRef: String?
+}
+class Payee {
+  accountId: String
+  accountNumber: String
+  holderName: String
+}
+class Bank {
+  code: String
+  shortName: String
+}
+class Rates {
+  savingRate: Double
+  mortgageRate: Double
+  updatedBy: String
+}
+
+User --> UserRole
+BankAccount --> AccountType
+Transaction --> TransactionType
+User "1" -- "0..1" KycRecord : kyc/{uid}
+User "1" -- "1..*" BankAccount : ownerUid
+BankAccount "1" -- "0..*" Transaction : accountId
+Transaction "0..1" -- "0..1" Transaction : pairTxId\n(OUT ↔ IN)
+Transaction *-- "0..*" DetailRow : details
+ServicePayment *-- "0..*" DetailRow : details
+ServicePayment ..> Transaction : ghi thành\nPAYMENT
+Payee "0..*" ..> "1" BankAccount : accountIndex
+Transaction ..> Bank : counterpartyBank
+@enduml
