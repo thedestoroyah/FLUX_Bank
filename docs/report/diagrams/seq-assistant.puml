@@ -1,0 +1,32 @@
+@startuml
+!include _style.iuml
+skinparam sequenceMessageAlign center
+autonumber
+
+actor "Khách hàng" as U
+participant "Màn trợ lý\n(Fragment + ViewModel)" as VM
+participant "AssistantFallback" as FB
+participant "GeminiAssistantClient" as AI
+participant "UtilityScreens" as Nav
+
+U -> VM : nhập câu hỏi
+VM -> FB : secretWarning(question)
+alt chứa mã OTP hoặc mật khẩu
+  FB --> VM : lời nhắc
+  VM --> U : trả lời ngay trên máy, không gửi đi
+else câu hỏi bình thường
+  VM -> VM : tải số liệu (tối đa 5 giây),\ndựng FinanceSnapshot và chỉ dẫn hệ thống
+  VM -> AI : ask(systemPrompt, 10 lượt gần nhất)
+  alt AI lỗi, hết lượt hoặc quá 20 giây
+    VM -> FB : reply(question, snapshot)
+    FB --> VM : "Chế độ cơ bản"
+  else AI trả lời
+    AI --> VM : JSON {reply, actions}
+    VM -> VM : AssistantReplyParser.parse\n(tối đa 3 nút)
+  end
+  VM --> U : câu trả lời và các nút
+end
+U -> VM : chạm một nút
+VM -> Nav : screenFor(utility, savingAccountId)
+Nav --> U : mở màn qua openScreen\n(back vẫn còn chat)
+@enduml

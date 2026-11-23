@@ -1,0 +1,33 @@
+@startuml
+!include _style.iuml
+skinparam sequenceMessageAlign center
+autonumber
+
+actor "Khách hàng" as U
+participant "Màn nạp tiền\n(ViewModel + WebView)" as VM
+participant "VnPay" as VP
+participant "VNPay sandbox" as Ext
+participant "AccountRepository" as Repo
+database "Firestore" as FS
+
+U -> VM : nhập số tiền, xác thực OTP\n(thêm quét mặt nếu ≥ 10 triệu)
+VM -> Repo : newTransactionId()
+VM -> VP : paymentUrl(txId, amount)
+VP --> VM : URL có chữ ký HMAC-SHA512
+VM -> Ext : mở WebView, người dùng thanh toán
+Ext --> VM : chuyển hướng returnUrl\nkèm kết quả và chữ ký
+VM -> VP : parseReturn(query, txId, amount)
+alt chữ ký sai, txId hoặc số tiền không khớp
+  VP --> VM : BadSignature / Mismatch
+  VM --> U : báo kết quả không hợp lệ
+else huỷ hoặc thanh toán lỗi
+  VP --> VM : Cancelled / Failed
+  VM --> U : báo đã huỷ hoặc lỗi
+else thành công
+  VP --> VM : Success(transactionNo)
+  VM -> Repo : deposit(accountId, amount, txId)
+  Repo -> FS : runTransaction: cộng số dư,\nghi DEPOSIT có id = txId
+  FS --> Repo : commit (ghi lần hai bị rules chặn)
+  VM --> U : biên lai
+end
+@enduml

@@ -1,0 +1,29 @@
+@startuml
+!include _style.iuml
+skinparam sequenceMessageAlign center
+autonumber
+
+actor "Khách hàng\nhoặc nhân viên" as U
+participant "EkycViewModel" as VM
+participant "KycRepository" as Repo
+database "Firestore\n+ Rules" as FS
+actor "Nhân viên\nduyệt" as O
+
+U -> VM : chụp ảnh căn cước và khuôn mặt,\nsubmit()
+VM -> VM : ML Kit đếm khuôn mặt,\nMobileFaceNet tính vector 192 chiều
+alt không có hoặc nhiều hơn một khuôn mặt
+  VM --> U : yêu cầu chụp lại
+else đúng một khuôn mặt
+  VM -> VM : nén ảnh Base64, kiểm tra ≤ 1 MiB
+  VM -> Repo : submit(KycRecord)
+  Repo -> FS : batch: set kyc/{uid}\n+ users/{uid}.kycStatus = PENDING
+  FS --> FS : rules: chỉ nộp khi NOT_SUBMITTED\nhoặc REJECTED, cùng batch phải\nchuyển sang PENDING
+  FS --> Repo : commit
+  VM --> U : đã nộp, chờ duyệt
+end
+O -> Repo : pendingQueue()
+Repo --> O : danh sách hồ sơ PENDING
+O -> Repo : review(uid, approve, reason, officerUid)
+Repo -> FS : batch: kycStatus = VERIFIED hoặc REJECTED,\nreviewedBy, reviewedAt
+FS --> Repo : commit
+@enduml

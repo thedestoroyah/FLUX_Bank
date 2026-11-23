@@ -1,0 +1,93 @@
+@startuml
+!include _style.iuml
+skinparam linetype ortho
+skinparam nodesep 25
+skinparam ranksep 45
+hide empty members
+
+entity "users" as users {
+  * uid : String <<doc id>>
+  --
+  email
+  fullName
+  phoneNumber
+  nationalId
+  address
+  avatarBase64
+  role
+  kycStatus
+  kycRejectReason
+  biometricEnabled
+  mustChangePassword
+  createdAt, createdBy
+}
+entity "phoneIndex" as phone {
+  * phone : String <<doc id>>
+  --
+  uid <<FK users>>
+}
+entity "kyc" as kyc {
+  * uid : String <<doc id, FK users>>
+  --
+  idCardBase64
+  faceImageBase64
+  faceEmbedding : 192 số
+  submittedBy, submittedAt
+  reviewedBy, reviewedAt
+}
+entity "accounts" as acc {
+  * accountId : String <<doc id>>
+  --
+  ownerUid <<FK users>>
+  type
+  accountNumber
+  balance : Long
+  lastTxId <<FK transactions>>
+  loanAmount, annualRate
+  termMonths, startDate
+  createdAt
+}
+entity "transactions" as tx {
+  * id : String <<doc id>>
+  --
+  accountId <<FK accounts>>
+  ownerUid <<FK users>>
+  accountNumber
+  type
+  amount : Long
+  balanceAfter : Long?
+  description
+  counterpartyName, counterpartyAccount,
+  counterpartyBank
+  pairTxId <<FK transactions>>
+  paymentRef, service
+  details : danh sách dòng
+  createdAt
+}
+entity "accountIndex" as idx {
+  * accountNumber : String <<doc id>>
+  --
+  accountId <<FK accounts>>
+  ownerUid <<FK users>>
+  type
+  holderName
+}
+entity "config/rates" as rates {
+  * rates : String <<doc id cố định>>
+  --
+  savingRate
+  mortgageRate
+  updatedAt
+  updatedBy <<FK users>>
+  updatedByName
+}
+
+users ||--o| phone : "SĐT duy nhất"
+users ||--o| kyc : "hồ sơ eKYC"
+users ||--|{ acc : "sở hữu"
+acc ||--o{ tx : "ghi nhận"
+users ||--o{ tx : "ownerUid"
+tx |o--o| tx : "pairTxId (OUT ↔ IN)"
+acc |o--o| idx : "tra theo số TK\n(Checking, Saving)"
+users |o..o| rates : "updatedBy\n(nhân viên sửa)"
+@enduml

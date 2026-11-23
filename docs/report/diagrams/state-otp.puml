@@ -1,0 +1,24 @@
+@startuml
+!include _style.iuml
+skinparam state {
+  BackgroundColor white
+  BorderColor #1F2937
+}
+
+[*] --> KhongCoMa
+state "Không có mã" as KhongCoMa
+state "Có mã hiệu lực\n(120 giây, 0 lần sai)" as CoMa
+state "Đã nhập sai\n(1 đến 4 lần)" as Sai
+state "Bị khoá\n(5 lần sai)" as Khoa
+
+KhongCoMa --> CoMa : issue(transactionId)
+CoMa --> KhongCoMa : verify đúng\n→ VALID, mã bị huỷ
+CoMa --> Sai : verify sai → WRONG
+Sai --> Sai : verify sai → WRONG
+Sai --> Khoa : lần sai thứ 5
+Sai --> KhongCoMa : verify đúng → VALID
+CoMa --> KhongCoMa : quá 120 giây\n→ EXPIRED
+Sai --> KhongCoMa : quá 120 giây\n→ EXPIRED
+Khoa --> CoMa : issue (gửi lại mã)
+Sai --> CoMa : issue (gửi lại mã)
+@enduml

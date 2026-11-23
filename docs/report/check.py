@@ -192,6 +192,8 @@ def spell(report: Path) -> list[str]:
         if ch.name == REFS_FILE:
             continue  # danh sách tài liệu toàn tiếng Anh, không soát bằng từ điển Việt
         for lineno, line in enumerate(_read(ch).splitlines(), 1):
+            if line.startswith("|"):  # hàng bảng: chỉ ô cuối (mô tả) là văn xuôi, các ô trước là tên trường, kiểu
+                line = line.strip().strip("|").split("|")[-1]
             clean = re.sub(r"@(?:fig|tbl):[\w-]+|`[^`]*`|\(https?://[^)]*\)|https?://\S+|\{[^}]*\}|!\[[^\]]*\]\([^)]*\)", " ", line)
             # Bỏ token ASCII là tên code/viết tắt (có chữ hoa giữa từ, số, _ . /); không đụng chữ có dấu.
             tokens = [t.strip(".,;:!?()\"'") for t in clean.split()]

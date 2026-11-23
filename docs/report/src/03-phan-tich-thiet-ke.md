@@ -26,7 +26,7 @@ Trong @fig:uc-customer, mọi thao tác làm đổi tiền (nạp, rút, chuyể
 
 ### Đặc tả các use case chính
 
-Sáu use case sau là những luồng barem đòi hỏi, và cũng là những luồng nhiều ràng buộc nhất. Mỗi bảng ghi tên, tác nhân, điều kiện trước, luồng chính, luồng phụ và kết quả.
+Sáu use case sau là những luồng barem đòi hỏi và cũng nhiều ràng buộc nhất. Mỗi bảng ghi tên, tác nhân, điều kiện trước, luồng chính, luồng phụ và kết quả.
 
 Table: Đặc tả use case "Đăng nhập và mở khoá sinh trắc" {#tbl:uc-login}
 
@@ -150,7 +150,7 @@ Tầng trên (ViewModel, dịch vụ nghiệp vụ) chỉ biết interface, nên
 
 ![Class diagram khoá ứng dụng](diagrams/class-lock.png){#fig:class-lock width=15.5cm}
 
-`AppLockObserver` là một `DefaultLifecycleObserver` gắn vào vòng đời của cả tiến trình. Nó nhờ `LockPolicy` quyết định có khoá hay không: khoá khi mở app lần đầu, hoặc khi quay lại sau từ 60 giây ở nền, và chỉ khi người dùng đã bật sinh trắc học và máy hỗ trợ. Khi cần khoá, `AppLockObserver` gọi hàm `startUnlock` mà `FluxApp` truyền vào để mở `UnlockActivity`. `UnlockActivity` dùng `BiometricHelper` rồi báo lại `onUnlocked()`. `LoginActivity` và `UnlockActivity` cũng báo cho `AppLockObserver` biết khi chính chúng đã quyết định khoá lúc mở app (`markColdStartHandled()`), để lần mở đó không bị khoá hai lần.
+`AppLockObserver` là một `DefaultLifecycleObserver` gắn vào vòng đời của cả tiến trình. `AppLockObserver` nhờ `LockPolicy` quyết định có khoá hay không: khoá khi mở app lần đầu, hoặc khi quay lại sau từ 60 giây ở nền, và chỉ khi người dùng đã bật sinh trắc học và máy hỗ trợ. Khi cần khoá, `AppLockObserver` gọi hàm `startUnlock` mà `FluxApp` truyền vào để mở `UnlockActivity`. `UnlockActivity` dùng `BiometricHelper` rồi báo lại `onUnlocked()`. `LoginActivity` và `UnlockActivity` cũng báo cho `AppLockObserver` biết khi chính chúng đã quyết định khoá lúc mở app (`markColdStartHandled()`), để lần mở đó không bị khoá hai lần.
 
 ### Xác thực giao dịch
 
@@ -191,3 +191,170 @@ Bảy ô tiện ích (điện, nước, nạp điện thoại, vé máy bay, vé
 ![Class diagram FluxApp](diagrams/class-fluxapp.png){#fig:class-fluxapp width=8cm}
 
 @fig:class-fluxapp cho thấy `FluxApp` giữ tham chiếu tới mọi dịch vụ dùng chung, dạng thuộc tính khởi tạo lười. Đây là nơi duy nhất biết lớp cụ thể nào đứng sau mỗi interface: `FluxApp` tạo `FirestoreAccountRepository` cho `AccountRepository`, `OsrmWalkingRouter` cho `WalkingRouter`, `GeminiAssistantClient` cho `AssistantClient`. `VnPay` có bản số 0..1 vì nó là `null` khi `local.properties` chưa có khoá VNPay; khi đó màn nạp tiền báo "chưa cấu hình VNPay" thay vì làm ứng dụng lỗi.
+
+
+## Sơ đồ tuần tự
+
+Bốn luồng dưới đây có nhiều bên tham gia nhất. Mỗi sơ đồ gộp các lớp cùng vai trò thành một đối tượng (ví dụ "Màn chuyển tiền" gồm Fragment và ViewModel) để vừa một trang; tên lớp cụ thể đã có ở mục 3.2.
+
+### Chuyển tiền trong FLUX
+
+@fig:seq-transfer là luồng đầy đủ nhất, vì nó đi qua cả ba lớp bảo vệ: kiểm tra nghiệp vụ trên máy, xác thực hai yếu tố và Security Rules.
+
+![Sơ đồ tuần tự chuyển tiền trong FLUX](diagrams/seq-transfer.png){#fig:seq-transfer width=15.5cm}
+
+Các lỗi hạn mức và số dư bị chặn ngay ở form (bước 3) nên chưa có mã OTP nào được phát. Chỉ khi hợp lệ, `TransactionAuthSheet` mới phát mã qua thông báo SMS giả lập. Với số tiền từ 10.000.000 ₫, sheet thêm bước chớp mắt và so khuôn mặt trước khi báo "đã xác thực". Chỉ sau tín hiệu đó `AccountRepository.transfer` mới ghi. Phần ghi là một Firestore transaction duy nhất gồm bốn thao tác: tạo giao dịch `TRANSFER_OUT`, trừ số dư tài khoản nguồn, cộng số dư tài khoản đích bằng `FieldValue.increment` (nên không cần đọc tài khoản của người khác), và tạo giao dịch `TRANSFER_IN`. Security Rules chạy trên toàn bộ bốn thao tác này và chỉ chấp nhận khi chúng khớp nhau; nếu một thao tác bị từ chối thì cả transaction bị huỷ.
+
+### Nộp và duyệt eKYC
+
+@fig:seq-ekyc có hai nửa: khách (hoặc nhân viên chụp hộ) nộp hồ sơ, rồi nhân viên duyệt.
+
+![Sơ đồ tuần tự nộp và duyệt eKYC](diagrams/seq-ekyc.png){#fig:seq-ekyc width=15.5cm}
+
+Vector đặc trưng được tính ngay trước khi gửi, để lần quét mặt khi giao dịch sau này chỉ cần so, không phải xử lý lại ảnh gốc. Ảnh căn cước và ảnh khuôn mặt nằm cùng document `kyc/{uid}` dưới dạng Base64, nên ứng dụng kiểm tra tổng kích thước trước khi gửi vì Firestore giới hạn 1 MiB cho mỗi document. Việc nộp hồ sơ và đổi `kycStatus` sang PENDING nằm trong cùng một batch; Security Rules kiểm tra điều đó để khách không thể thay ảnh sau khi đã được duyệt. Khi duyệt, nhân viên cập nhật `kycStatus` và ghi dấu vết duyệt (`reviewedBy`, `reviewedAt`) cũng trong một batch.
+
+### Nạp tiền qua VNPay
+
+@fig:seq-vnpay cho thấy cách ứng dụng kiểm tra kết quả do VNPay trả về trước khi cộng tiền.
+
+![Sơ đồ tuần tự nạp tiền qua VNPay](diagrams/seq-vnpay.png){#fig:seq-vnpay width=15.5cm}
+
+Mã giao dịch `txId` được tạo trước khi mở WebView và đóng vai trò `vnp_TxnRef`. Khi VNPay chuyển hướng về, `VnPay.parseReturn` kiểm ba điều: chữ ký HMAC-SHA512 đúng, mã giao dịch khớp, số tiền khớp. Chỉ khi cả ba đúng và mã phản hồi là thành công thì `deposit` mới chạy, và nó dùng lại chính `txId` làm id của giao dịch `DEPOSIT`. Vì id cố định nên nếu kết quả bị xử lý hai lần (ví dụ mạng lỗi rồi thử ghi lại), lần ghi thứ hai bị Security Rules từ chối, tiền không bị cộng hai lần. Khoá bí mật của cổng thanh toán nằm trong `local.properties` và được đưa vào `BuildConfig` khi build, nên chữ ký được kiểm trên máy; đây là giới hạn của gói Spark, ghi ở chương 6.
+
+### Hỏi trợ lý AI
+
+@fig:seq-assistant mô tả đường đi của một câu hỏi, gồm cả hai đường dự phòng.
+
+![Sơ đồ tuần tự hỏi trợ lý AI](diagrams/seq-assistant.png){#fig:seq-assistant width=15.5cm}
+
+Hai việc xảy ra trước khi gọi AI: kiểm tra câu hỏi có chứa mã OTP hoặc mật khẩu không (nếu có thì trả lời ngay trên máy), rồi tải số liệu tài khoản tối đa 5 giây. Nếu tải số liệu chậm hơn mức đó, câu hỏi vẫn được gửi nhưng không kèm số liệu. Toàn bộ thời gian chờ, kể cả tải số liệu và gọi AI, bị chặn ở 20 giây; quá hạn hoặc AI báo lỗi thì `AssistantFallback` trả lời theo từ khoá và gắn nhãn "Chế độ cơ bản". Các nút ở cuối câu trả lời mở màn qua `UtilityScreens`, cùng cơ chế với ô tiện ích trên trang chủ, và mở bằng `openScreen` nên quay lại vẫn còn cuộc trò chuyện.
+
+### Vòng đời mã OTP
+
+@fig:state-otp là máy trạng thái của `OtpManager`. Tôi vẽ riêng vì các quy tắc OTP rải ở nhiều nơi trong yêu cầu của đề (hết hạn, dùng một lần, giới hạn số lần thử) và máy trạng thái là cách ngắn nhất để thấy chúng khớp nhau.
+
+![Máy trạng thái mã OTP](diagrams/state-otp.png){#fig:state-otp width=12cm}
+
+Mỗi lần `issue` thay mã cũ bằng mã mới và đặt lại bộ đếm sai, nên "gửi lại mã" cũng là cách thoát khỏi trạng thái bị khoá. Mã gắn với một `transactionId`: nhập đúng mã nhưng cho giao dịch khác cũng tính là một lần sai. Mã đúng bị huỷ ngay, nên không dùng được lần hai. Hết 120 giây thì mã bị xoá và các lần `verify` sau trả về `NO_ACTIVE`.
+
+## Thiết kế cơ sở dữ liệu
+
+### Cách đọc thiết kế
+
+Firestore [3] là cơ sở dữ liệu document. Dữ liệu nằm trong các collection, mỗi collection chứa nhiều document có id riêng, và không có khoá ngoại, không có phép nối. Vì vậy tôi dùng sơ đồ ER theo cách đọc sau: mỗi collection là một thực thể, id của document là khoá chính, và một trường chứa id của document khác là khoá ngoại logic. Bản số của quan hệ do code và Security Rules [4] giữ, không do cơ sở dữ liệu ép.
+
+Vì không có phép nối, một số thông tin được lưu lặp lại để đọc nhanh: tên và số tài khoản đối tác nằm ngay trong giao dịch, tên chủ tài khoản nằm trong `accountIndex`. Đổi lại, các bản sao này có thể lệch khi dữ liệu gốc đổi. Thiết kế chấp nhận điều đó ở những chỗ bản sao là lịch sử bất biến (giao dịch không bao giờ sửa), và dùng Security Rules bắt bản sao phải khớp dữ liệu gốc tại thời điểm ghi (xem bảng bất biến bên dưới).
+
+### Sơ đồ ER
+
+@fig:erd có bảy collection.
+
+![Sơ đồ thực thể quan hệ của cơ sở dữ liệu Firestore](diagrams/erd.png){#fig:erd width=15.5cm}
+
+Một người dùng (`users`) có tối đa một hồ sơ `kyc` và một mục `phoneIndex`, và có ít nhất một tài khoản trong `accounts` (nhân viên cấp sẵn một tài khoản Checking khi tạo khách). Mỗi tài khoản có nhiều giao dịch trong `transactions`; hai giao dịch của một lần chuyển nội bộ trỏ nhau qua `pairTxId`. `accountIndex` là danh bạ tra người nhận theo số tài khoản và chỉ có mục cho tài khoản Checking và Saving. `config/rates` là một document duy nhất chứa lãi suất chung. Document `accounts` còn giữ `lastTxId`, trỏ tới giao dịch gần nhất đã đổi số dư, và Security Rules dùng trường này để buộc mỗi lần đổi số dư phải có một giao dịch mới đi kèm.
+
+### Mô tả các collection
+
+Các bảng sau liệt kê trường của từng collection. Dấu `?` sau kiểu nghĩa là trường có thể rỗng. Số tiền luôn là số nguyên `Long` tính bằng đồng, không dùng số thực để tránh sai số làm tròn.
+
+Table: Collection `users` (id document là `uid` của Firebase Authentication) {#tbl:db-users}
+
+| Trường | Kiểu | Mô tả |
+|-----------|---------|-----------------------------------|
+| email | String | Email đăng nhập |
+| fullName | String | Họ tên |
+| phoneNumber | String | Số điện thoại, duy nhất (giữ bởi `phoneIndex`) |
+| nationalId | String | Số căn cước |
+| address | String | Địa chỉ |
+| avatarBase64 | String? | Ảnh đại diện |
+| role | String | `CUSTOMER` hoặc `BANK_OFFICER` |
+| kycStatus | String | `NOT_SUBMITTED`, `PENDING`, `VERIFIED`, `REJECTED` |
+| kycRejectReason | String? | Lý do nhân viên từ chối |
+| biometricEnabled | Boolean | Đã bật khoá sinh trắc học |
+| mustChangePassword | Boolean | Phải đổi mật khẩu ở lần đăng nhập đầu |
+| createdAt, createdBy | Long, String? | Thời điểm tạo, `uid` nhân viên tạo |
+
+Table: Collection `phoneIndex` (id document là số điện thoại) {#tbl:db-phone}
+
+| Trường | Kiểu | Mô tả |
+|-----------|---------|-----------------------------------|
+| uid | String | Người dùng sở hữu số này. Tạo document thứ hai cùng số bị Security Rules từ chối, nên số điện thoại duy nhất |
+
+Table: Collection `kyc` (id document là `uid` của khách) {#tbl:db-kyc}
+
+| Trường | Kiểu | Mô tả |
+|-----------|---------|-----------------------------------|
+| idCardBase64 | String | Ảnh căn cước, cạnh dài tối đa 1024 px |
+| faceImageBase64 | String | Ảnh khuôn mặt |
+| faceEmbedding | List<Double> | Vector đặc trưng 192 chiều từ MobileFaceNet |
+| submittedBy, submittedAt | String, Long | Người nộp (khách hoặc nhân viên), thời điểm |
+| reviewedBy, reviewedAt | String?, Long? | Nhân viên duyệt, thời điểm |
+
+Table: Collection `accounts` {#tbl:db-accounts}
+
+| Trường | Kiểu | Mô tả |
+|-----------|---------|-----------------------------------|
+| ownerUid | String | Chủ tài khoản (khoá ngoại tới `users`) |
+| type | String | `CHECKING`, `SAVING`, `MORTGAGE` |
+| accountNumber | String | Số tài khoản dạng `8868xxxxxxxx` |
+| balance | Long | Số dư; với `MORTGAGE` là dư nợ |
+| lastTxId | String? | Giao dịch gần nhất làm đổi số dư |
+| loanAmount, annualRate | Long, Double | Chỉ `MORTGAGE`: số tiền vay, lãi suất %/năm cố định |
+| termMonths, startDate | Int, Long | Chỉ `MORTGAGE`: kỳ hạn tháng, ngày bắt đầu |
+| createdAt | Long | Thời điểm mở |
+
+Table: Collection `transactions` (chỉ tạo, không sửa, không xoá) {#tbl:db-transactions}
+
+| Trường | Kiểu | Mô tả |
+|-----------|---------|-----------------------------------|
+| accountId, ownerUid | String | Tài khoản và chủ của giao dịch |
+| accountNumber | String | Bản sao số tài khoản để hiển thị |
+| type | String | `DEPOSIT`, `WITHDRAW`, `TRANSFER_OUT`, `TRANSFER_IN`, `PAYMENT` |
+| amount | Long | Số tiền, lớn hơn 0 (Security Rules yêu cầu tối thiểu 10.000 ₫) |
+| balanceAfter | Long? | Số dư sau giao dịch; rỗng ở `TRANSFER_IN` vì người gửi không biết số dư người nhận |
+| description | String | Nội dung |
+| counterpartyName, counterpartyAccount, counterpartyBank | String | Đối tác; ngân hàng là `FLUX` nếu cùng ngân hàng |
+| pairTxId | String? | Nối `TRANSFER_OUT` với `TRANSFER_IN` |
+| paymentRef | String? | Mã giao dịch VNPay; với `PAYMENT` là khoá hoá đơn hoặc mã đặt chỗ |
+| service | String? | Chỉ `PAYMENT`: loại dịch vụ |
+| details | List | Chỉ `PAYMENT`: các dòng của biên lai (nhãn, giá trị) |
+| createdAt | Long | Thời điểm tạo |
+
+Table: Collection `accountIndex` (id document là số tài khoản) {#tbl:db-index}
+
+| Trường | Kiểu | Mô tả |
+|-----------|---------|-----------------------------------|
+| accountId, ownerUid | String | Tài khoản và chủ tài khoản |
+| type | String | `CHECKING` hoặc `SAVING` |
+| holderName | String | Tên chủ tài khoản, phải trùng `users.fullName` khi ghi. Chỉ đọc được từng mục (`get`), không liệt kê (`list`) |
+
+Table: Document `config/rates` {#tbl:db-rates}
+
+| Trường | Kiểu | Mô tả |
+|-----------|---------|-----------------------------------|
+| savingRate | Double | Lãi suất tiết kiệm, %/năm, trong khoảng (0, 30] |
+| mortgageRate | Double | Lãi suất vay, %/năm, trong khoảng (0, 30] |
+| updatedAt, updatedBy, updatedByName | Long, String, String | Lần sửa gần nhất: thời điểm, `uid` và tên nhân viên |
+
+### Chỉ mục
+
+Các truy vấn theo một trường hoặc tra theo id dùng chỉ mục tự động của Firestore. Có một truy vấn cần chỉ mục ghép: danh sách giao dịch của một khách, lọc theo `ownerUid` và sắp xếp theo `createdAt` giảm dần. Chỉ mục này (`ownerUid` tăng, `createdAt` giảm) được tạo thủ công trong Firebase Console và ghi lại trong `README.md`. Lịch sử giao dịch chỉ đọc 100 giao dịch mới nhất rồi lọc theo tài khoản hoặc theo tháng ở phía máy, đủ cho quy mô đồ án và tránh phải tạo thêm chỉ mục. `phoneIndex` và `accountIndex` luôn được tra bằng id nên không cần chỉ mục nào.
+
+### Bất biến mà Security Rules bảo vệ
+
+Thiết kế dữ liệu chỉ có ý nghĩa khi các quan hệ giữa các collection không bị phá. Vì không có máy chủ riêng, việc giữ quan hệ do Security Rules [4] đảm nhiệm. @tbl:db-invariants liệt kê các bất biến chính, quy tắc tương ứng trong `firestore.rules` và ca kiểm tra trong `rules-test/rules.test.mjs` (chạy trên Firestore Emulator).
+
+Table: Bất biến dữ liệu và ca kiểm tra Security Rules {#tbl:db-invariants}
+
+| Bất biến | Quy tắc trong `firestore.rules` | Ca kiểm tra |
+|------------------|--------------------------|---------------------|
+| Không đổi số dư mà không có giao dịch kèm theo | `ownerMoneyMoveAllowed`: `lastTxId` trỏ tới giao dịch mới, khớp tài khoản, `balanceAfter` bằng số dư mới | `balance-only update denied`, `tx alone (lastTxId not pointing to it) denied` |
+| Số học của số dư đúng, không âm | Cộng với `DEPOSIT`, trừ với `WITHDRAW`, `TRANSFER_OUT`, `PAYMENT`, kết quả ≥ 0 | `deposit with wrong arithmetic denied`, `withdraw to -1 denied` |
+| Giao dịch không bị ghi đè hay dùng lại id | `!exists(txPath)`; `transactions` không cho `update`, `delete` | `reusing existing tx id denied` |
+| Chỉ chủ tài khoản mới rút hoặc chuyển đi | `resource.data.ownerUid == request.auth.uid` | `moving another customers account denied` |
+| Cộng tiền cho người khác phải có lệnh trừ nguồn | `transferCreditAllowed`: có `TRANSFER_OUT` cặp, cùng số tiền, nguồn đã bị trừ | `credit without debit denied`, `credit amount differs from OUT denied` |
+| Thông tin người gửi trên biên lai người nhận không giả được | `transferInBacked`: tên, số tài khoản, ngân hàng phải khớp hồ sơ; `balanceAfter` rỗng | `fake sender name denied`, `TRANSFER_IN with forged source account denied` |
+| Mỗi hoá đơn chỉ trả một lần, không chiếm id hoá đơn của người khác | id `bill_<uid>_…` chỉ dành cho `PAYMENT` của chính `uid` đó | `second payment of same bill id denied`, `paying into another customers bill id denied` |
+| Số tiền mỗi lần nạp, chuyển, thanh toán trong khoảng cho phép | `amount >= 10000` và `<= 100000000` (trừ rút) | `deposit over 100M denied`, `deposit under 10k denied` |
+| Danh bạ tra người nhận không giả tên | `indexEntryValid`: tên phải bằng `users.fullName`, số tài khoản phải trùng | `index entry with fake name denied`, `index list denied` |
+| Chỉ nhân viên mở tài khoản và sửa lãi suất, lãi suất hợp lý | `isOfficer()`; mỗi mức trong (0, 30]; kỳ hạn vay 1 đến 360 tháng | `customer writes rates denied`, `officer writes rate above 30 denied`, `officer mortgage term 0 denied` |
