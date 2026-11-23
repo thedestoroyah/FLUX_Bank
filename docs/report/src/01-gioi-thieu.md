@@ -33,7 +33,7 @@ Table: Đối chiếu yêu cầu của đề với ứng dụng {#tbl:requiremen
 ## Phạm vi và ràng buộc
 
 - Đề nêu nhóm từ 2 đến 3 người, còn đồ án này do một mình tôi thực hiện.
-- Chi phí bằng không, nên mọi thứ chạy trên Firebase Spark: không Cloud Functions, không Storage, không SMS thật. Hệ quả của điều này xuất hiện ở hầu hết các chương, nhất là ở mục 2.3 và 6.5.
+- Chi phí bằng không, nên mọi thứ chạy trên Firebase Spark: không Cloud Functions, không Storage, không SMS thật. Hệ quả của điều này xuất hiện ở hầu hết các chương, nhất là ở mục 2.3 và 6.6.
 - Mọi giao dịch dùng tiền giả lập. Chuyển liên ngân hàng, dữ liệu hoá đơn, giá vé và 12 chi nhánh được giả lập trong ứng dụng; riêng nạp tiền đi qua cổng VNPay sandbox thật, và bản đồ, đường đi dùng OpenStreetMap và OSRM thật.
 - Giảng viên đã xác nhận ngày 13/11/2026 rằng việc đưa ứng dụng lên Google Play là tuỳ chọn, nên tôi dành thời gian chính cho ứng dụng và báo cáo.
 - Chữ hiển thị trong ứng dụng là tiếng Việt, tiền tệ là đồng (VND) và được lưu dạng số nguyên.
