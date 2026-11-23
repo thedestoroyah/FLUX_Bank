@@ -19,7 +19,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 - **Chuẩn bị phát hành Google Play đã merge vào `main`** (2026-11-13, `694a74f`): ký app bằng khoá upload, App Check (AI Logic vẫn Unenforce), dòng chú thích demo ở màn đăng nhập, tài liệu + hình ảnh Play ở `docs/play/`. Review toàn nhánh bởi reviewer độc lập (0 Critical; 2 Important đã sửa), bản release cài tay chạy đạt trên Xiaomi. Chi tiết mục 3, "Cho bản phát hành Google Play".
 - **F7 (Trợ lý AI) đã merge vào `main`** (2026-11-13): review toàn nhánh bởi reviewer độc lập (0 Critical, 4 Important + 2 Minor nâng lên Important, đã sửa hết có test), chạy trên Xiaomi với Gemini thật. Xem mục 3 và 7.
 - **Unit test 391/391 pass** (sau merge Play, 2026-11-13), rules test 49/49 (F7 không đổi rules), `assembleDebug` + `lintDebug` pass (0 error). F6 review toàn nhánh (2026-11-12): 0 Critical, 6 Important đã sửa có test (chạm chi nhánh lúc đang định vị lại vẽ đường từ vị trí cũ, test cache yếu, ở xa > 20 km bị báo lỗi mạng, lỗi API vị trí làm crash, định vị lại không có khung chờ, "Thử lại" bật GPS lại; thêm chặn lỗi camera khi xoay ngang). F5 review toàn nhánh: 0 Critical, 3 Important đã sửa có test (chiếm id hoá đơn của người khác, mã biên lai hoá đơn trùng, lỗi hạn mức hiện muộn). F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test).
-- **Báo cáo cuối kỳ** (nhánh `docs/report`, merge vào `main` ngày 2026-11-24, 15 commit): bản nháp 116 trang đã dựng, 57/57 test công cụ dựng đạt, review toàn nhánh bởi reviewer độc lập (0 Critical, 7 Important đã sửa). **`main` đi trước `origin/main`, chưa push** — push khi chủ dự án đồng ý. Chi tiết mục 10.
+- **Báo cáo cuối kỳ** (làm trên nhánh `docs/report`, đã merge vào `main` ngày 2026-11-24 rồi xoá nhánh; 15 commit): bản nháp 116 trang đã dựng, 66/66 test công cụ dựng đạt, review toàn nhánh bởi reviewer độc lập (0 Critical, 7 Important đã sửa). **`main` đi trước `origin/main`, chưa push** — push khi chủ dự án đồng ý. Chi tiết mục 10.
 - F1–F2 và F3 đều đã được reviewer độc lập review toàn nhánh, đã sửa hết lỗi Important; lỗi Minor còn lại ở mục 7. F3 đã chạy demo đạt trên máy thật (mục 3).
 
 ### Đã hoàn thành
@@ -124,7 +124,7 @@ Cho bản phát hành Google Play (đã merge vào `main` 2026-11-13, `694a74f`)
 - F7 (chủ dự án bỏ qua hỏi đáp, duyệt spec + mockup + plan 2026-11-12, chọn thực thi native): Gemini qua Firebase AI Logic (gói Spark), bot chỉ mở màn (không tự giao dịch, không điền form), không lưu chat, chế độ cơ bản trên máy; App Check tạm Unenforce, chỉ bật lại nếu lên production.
 - Phát hành Play (chủ dự án bỏ qua hỏi đáp, duyệt spec + plan 2026-11-13, chọn native): tên trên Play **"FLUX Bank (Demo)"**, dòng chú thích demo ở màn đăng nhập, Play App Signing + khoá upload ngoài repo, App Check chỉ cho AI Logic, chính sách bảo mật song ngữ trên Gist công khai, Financial features khai *Money transfer* + *Mobile payments* (giả lập), đối tượng 18+, không quảng cáo, dùng lại tài khoản thử sẵn có.
 - **Google Play là tuỳ chọn** (thầy trả lời 2026-11-13: không làm không bị trừ, làm được thì cộng điểm). Chủ dự án chọn **thu gọn**: không gom 12 người thử, không Enforce App Check; chỉ tự tải Closed testing nếu kịp. Ưu tiên báo cáo + video.
-- **Việc báo cáo chỉ bắt đầu khi chủ dự án nói** (2026-11-13: "chưa tới lúc làm"); câu mở đầu ở mục 9 chính là lệnh bắt đầu.
+- **Báo cáo đã bắt đầu ngày 2026-11-23** (chủ dự án chọn: Claude viết trọn văn bản, dựng bằng Markdown + script, công cụ AI nói thẳng ở mục 1.6, không phụ lục cài đặt/tài khoản demo). Video demo làm sau khi xong báo cáo.
 - **Chạy thử trên điện thoại thật của chủ dự án** (Xiaomi cắm adb), không dùng emulator. Nếu máy đang khoá (`isKeyguardShowing=true`) thì nhờ chủ dự án mở khoá.
 
 ## 5. Tài liệu & file quan trọng
@@ -186,6 +186,7 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 
 ## 6. Môi trường & mẹo (quan trọng)
 
+- **graphify**: đồ thị tri thức của dự án đặt ở `Final_Exam/graphify-out/` (ngoài thư mục `FLUX_Bank/`, theo yêu cầu chủ dự án; đừng tạo `graphify-out/` bên trong `FLUX_Bank/`).
 - **Máy 2026-11-23**: không có Node (chạy test rules bằng `bun`: `cd rules-test && JAVA_HOME=/usr/lib/jvm/java-21-openjdk bun node_modules/firebase-tools/lib/bin/firebase.js emulators:exec --only firestore --project demo-flux "bun test rules.test.mjs"`, ngoài sandbox); có pandoc, graphviz, ffmpeg, obs, ONLYOFFICE; không có LibreOffice, scrcpy. `java-21-openjdk` và `java-25-openjdk` cùng cài (25 là mặc định); khi build báo thiếu toolchain 21 thì đó là JDK 21 bị gỡ.
 - **Build**: daemon Gradle đã ghim JDK 21 (`gradle/gradle-daemon-jvm.properties`), không cần `JAVA_HOME`: `./gradlew testDebugUnitTest assembleDebug`. Android Studio: Gradle JDK = `/usr/lib/jvm/java-21-openjdk`.
 - **Test rules**: `rules-test/` (Node + Firestore emulator), xem README mục 5.
