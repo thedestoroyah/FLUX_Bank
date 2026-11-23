@@ -1,0 +1,77 @@
+@startuml
+!include _style.iuml
+top to bottom direction
+skinparam nodesep 14
+skinparam ranksep 40
+skinparam classAttributeIconSize 0
+
+class AssistantFragment
+class AssistantViewModel {
+  send(text: String)
+}
+note right of AssistantViewModel
+  Đọc số liệu qua AccountRepository,
+  TransactionRepository, RatesRepository
+end note
+interface AssistantClient {
+  ask(systemPrompt, turns): String
+}
+class GeminiAssistantClient
+class AssistantPrompt <<object>> {
+  system(snapshot): String
+}
+class FinanceSnapshot {
+  accounts: List<BankAccount>
+  rates: Rates?
+  month: MonthSummary
+  remainingToday: Long
+  toPromptText(): String
+}
+class AssistantReplyParser <<object>> {
+  MAX_ACTIONS = 3
+  parse(raw): AssistantReply
+}
+class AssistantReply {
+  text: String
+  actions: List<AssistantAction>
+  basicMode: Boolean
+}
+class AssistantFallback <<object>> {
+  reply(question, snapshot): AssistantReply
+  secretWarning(question): AssistantReply?
+}
+enum AssistantAction {
+  TOPUP
+  BILL_ELECTRICITY
+  BILL_WATER
+  MONTH_HISTORY
+  TRANSFER
+  DEPOSIT
+  WITHDRAW
+  SAVING
+  FLIGHT
+  MOVIE
+  HOTEL
+  SHOP
+  BRANCH
+}
+class AssistantActionUi <<object>>
+class UtilityScreens <<object>> {
+  screenFor(utility, savingAccountId)
+}
+
+AssistantFragment --> AssistantViewModel
+AssistantFragment --> AssistantActionUi
+AssistantViewModel --> AssistantClient
+AssistantViewModel ..> AssistantPrompt
+AssistantViewModel ..> FinanceSnapshot
+AssistantViewModel ..> AssistantReplyParser
+AssistantViewModel ..> AssistantFallback
+AssistantClient <|.. GeminiAssistantClient
+AssistantPrompt ..> FinanceSnapshot
+AssistantReplyParser ..> AssistantReply
+AssistantFallback ..> AssistantReply
+AssistantReply o-- "0..3" AssistantAction
+AssistantFragment ..> UtilityScreens : mở màn
+AssistantActionUi ..> AssistantAction : nhãn, icon
+@enduml

@@ -1,0 +1,76 @@
+@startuml
+!include _style.iuml
+top to bottom direction
+skinparam nodesep 14
+skinparam ranksep 40
+skinparam classAttributeIconSize 0
+
+class BranchMapFragment
+class BranchMapViewModel
+class BranchRecommender {
+  recommend(user: GeoPoint): Recommendation
+  routeTo(user, branch): WalkingRoute
+}
+class Recommendation {
+  ranked: List<RankedBranch>
+  pick: RankedBranch
+  straightNearest: RankedBranch
+  routed: Boolean
+  tooFar: Boolean
+}
+class RankedBranch {
+  branch: Branch
+  straightMeters: Double
+  walk: WalkingRoute?
+}
+class Branch {
+  id: String
+  name: String
+  address: String
+  location: GeoPoint
+  phone: String
+}
+class GeoPoint {
+  lat: Double
+  lng: Double
+}
+class WalkingRoute {
+  distanceMeters: Double
+  durationSeconds: Double
+  path: List<GeoPoint>
+}
+interface WalkingRouter {
+  route(from, to): WalkingRoute
+}
+class OsrmWalkingRouter
+interface LocationSource {
+  current(): LocationResult
+}
+class FusedLocationSource
+class GeoMath <<object>> {
+  distanceMeters(a, b)
+}
+class OpeningHours <<object>> {
+  status(nowMillis): OpenStatus
+}
+class Branches <<object>> {
+  ALL: List<Branch>
+}
+
+BranchMapFragment --> BranchMapViewModel
+BranchMapFragment ..> OpeningHours
+BranchMapViewModel --> BranchRecommender
+BranchMapViewModel --> LocationSource
+BranchRecommender --> WalkingRouter
+BranchRecommender --> "12" Branch : Branches.ALL
+BranchRecommender ..> GeoMath
+BranchRecommender ..> Recommendation : tạo
+Recommendation *-- "1..*" RankedBranch
+RankedBranch --> Branch
+RankedBranch --> "0..1" WalkingRoute
+Branch --> GeoPoint
+WalkingRoute --> "0..*" GeoPoint
+WalkingRouter <|.. OsrmWalkingRouter
+LocationSource <|.. FusedLocationSource
+Branches o-- "12" Branch
+@enduml

@@ -1,0 +1,83 @@
+@startuml
+!include _style.iuml
+left to right direction
+skinparam nodesep 18
+skinparam ranksep 40
+skinparam classAttributeIconSize 0
+
+class CustomerOnboardingService {
+  create(input: NewCustomerInput): Result<User>
+  validateEdit(uid, phone, nationalId)
+  validatePhoneChange(uid, phone)
+}
+class NewCustomerInput {
+  fullName
+  email
+  phone
+  nationalId
+  address
+  tempPassword
+}
+class OnboardingError <<sealed>> {
+  InvalidEmail, InvalidPhone, InvalidNationalId
+  WeakPassword, EmptyName
+  PhoneTaken, NationalIdTaken, Failed
+}
+class TransferPolicy <<object>> {
+  MAX_PER_TRANSFER = 100.000.000
+  DAILY_LIMIT = 200.000.000
+  sentToday(history, now)
+  remainingToday(history, now)
+  checkAmount(amount, balance, remainingToday)
+}
+enum TransferError {
+  BELOW_MIN
+  ABOVE_MAX
+  INSUFFICIENT_FUNDS
+  DAILY_LIMIT
+  ...
+}
+class InterestCalculator <<object>> {
+  monthlySavingInterest(balance, annualRatePercent)
+  installment(principal, rate, termMonths, frequency)
+  totalInterest(principal, rate, termMonths, frequency)
+  nextDueDate(startDate, frequency, today)
+}
+enum PaymentFrequency {
+  MONTHLY
+  BIWEEKLY
+}
+class FaceVerificationPolicy <<object>> {
+  HIGH_VALUE_THRESHOLD = 10.000.000
+  requiresFace(amount)
+  precheck(user, kyc)
+}
+enum FacePrecheck {
+  OK
+  NOT_VERIFIED
+  NO_EMBEDDING
+}
+class QrPayload <<object>> {
+  PREFIX = "fluxbank:"
+  encode(accountNumber)
+  decode(text)
+}
+class MonthSummary {
+  month: YearMonth
+  incoming: Long
+  outgoing: Long
+}
+
+CustomerOnboardingService ..> NewCustomerInput
+CustomerOnboardingService ..> OnboardingError
+CustomerOnboardingService ..> AuthRepository
+CustomerOnboardingService ..> UserRepository
+CustomerOnboardingService ..> AccountRepository
+TransferPolicy ..> TransferError
+TransferPolicy ..> Transaction
+InterestCalculator ..> PaymentFrequency
+FaceVerificationPolicy ..> FacePrecheck
+FaceVerificationPolicy ..> User
+FaceVerificationPolicy ..> KycRecord
+MonthSummary o-- "0..*" Transaction
+@enduml

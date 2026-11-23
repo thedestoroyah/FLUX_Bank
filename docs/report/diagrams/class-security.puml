@@ -1,0 +1,72 @@
+@startuml
+!include _style.iuml
+left to right direction
+skinparam nodesep 15
+skinparam ranksep 40
+skinparam classAttributeIconSize 0
+
+class OtpManager {
+  VALIDITY_MS = 120.000
+  MAX_ATTEMPTS = 5
+  issue(transactionId): String
+  verify(transactionId, code): OtpResult
+  remainingSeconds()
+  attemptsLeft()
+}
+enum OtpResult {
+  VALID
+  WRONG
+  EXPIRED
+  LOCKED
+  NO_ACTIVE
+}
+class OtpNotifier {
+  deliver(code)
+  requestAutofill(code)
+}
+class FaceMatcher <<object>> {
+  MATCH_THRESHOLD = 0.6
+  cosine(a, b)
+  isMatch(a, b)
+}
+class FaceEmbedder {
+  embed(face: Bitmap): FloatArray
+}
+class FaceDetectorHelper {
+  detect(bitmap)
+  analyzer(...)
+}
+class BlinkDetector {
+  onFrame(leftOpen, rightOpen): Boolean
+  reset()
+}
+class FaceStepController {
+  start()
+  retry()
+  stop()
+}
+class TransactionAuthSheet <<BottomSheet>>
+class TransactionAuthViewModel {
+  state: LiveData<AuthSheetState>
+  start(amount)
+  onDigit(digit)
+  fill(code)
+}
+class AuthSheetState <<sealed>> {
+  EnteringOtp, FaceStep
+  Failed, Verified, Locked
+}
+class FaceVerificationPolicy <<object>>
+
+TransactionAuthSheet --> TransactionAuthViewModel
+TransactionAuthSheet --> FaceStepController
+TransactionAuthViewModel --> OtpManager
+TransactionAuthViewModel --> OtpNotifier
+TransactionAuthViewModel --> AuthSheetState
+TransactionAuthViewModel ..> FaceVerificationPolicy
+OtpManager ..> OtpResult
+FaceStepController --> FaceDetectorHelper
+FaceStepController --> FaceEmbedder
+FaceStepController --> BlinkDetector
+TransactionAuthViewModel ..> FaceMatcher
+@enduml

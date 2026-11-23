@@ -1,0 +1,75 @@
+@startuml
+!include _style.iuml
+left to right direction
+skinparam nodesep 12
+skinparam ranksep 45
+skinparam classAttributeIconSize 0
+
+interface AuthRepository {
+  login(email, password)
+  currentUid()
+  changePassword(newPassword)
+  createAuthUser(email, tempPassword)
+}
+interface UserRepository {
+  getUser(uid)
+  createProfile(user)
+  updateFields(uid, fields)
+  changePhone(uid, oldPhone, newPhone)
+  listCustomers()
+  findUidByPhone(phone)
+}
+interface KycRepository {
+  submit(record)
+  get(uid)
+  pendingQueue()
+  review(uid, approve, reason, officerUid)
+}
+interface AccountRepository {
+  createChecking(ownerUid)
+  openSaving(ownerUid)
+  openMortgage(ownerUid, loanAmount, termMonths, annualRate)
+  deposit(accountId, amount)
+  withdraw(accountId, amount)
+  transfer(fromId, payee, amount, description, senderName)
+  transferExternal(...)
+  pay(fromId, payment, txId)
+}
+interface TransactionRepository {
+  listRecent(ownerUid, limit)
+  findByPaymentRef(ownerUid, paymentRef)
+}
+interface RatesRepository {
+  get()
+  save(rates)
+}
+interface PayeeRepository {
+  find(accountNumber)
+  ensureIndexed(accounts, fullName)
+}
+
+class FirebaseAuthRepository
+class FirestoreUserRepository
+class FirestoreKycRepository
+class FirestoreAccountRepository
+class FirestoreTransactionRepository
+class FirestoreRatesRepository
+class FirestorePayeeRepository
+
+AuthRepository <|.. FirebaseAuthRepository
+UserRepository <|.. FirestoreUserRepository
+KycRepository <|.. FirestoreKycRepository
+AccountRepository <|.. FirestoreAccountRepository
+TransactionRepository <|.. FirestoreTransactionRepository
+RatesRepository <|.. FirestoreRatesRepository
+PayeeRepository <|.. FirestorePayeeRepository
+
+UserRepository ..> User
+KycRepository ..> KycRecord
+AccountRepository ..> BankAccount
+AccountRepository ..> Transaction
+AccountRepository ..> ServicePayment
+TransactionRepository ..> Transaction
+RatesRepository ..> Rates
+PayeeRepository ..> Payee
+@enduml

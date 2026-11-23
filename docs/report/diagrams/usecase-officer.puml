@@ -1,0 +1,31 @@
+@startuml
+!include _style.iuml
+left to right direction
+skinparam nodesep 10
+skinparam ranksep 30
+
+actor "Nhân viên\nngân hàng" as O
+
+rectangle "Ứng dụng nhân viên" {
+  usecase "Tạo khách hàng\n(kèm tài khoản Checking)" as B1
+  usecase "Tìm, xem khách hàng" as B2
+  usecase "Sửa thông tin khách" as B3
+  usecase "Gửi email\nđặt lại mật khẩu" as B4
+  usecase "Chụp eKYC hộ khách" as B5
+  usecase "Duyệt hoặc từ chối eKYC" as B6
+  usecase "Mở tài khoản\nSaving hoặc Mortgage" as B7
+  usecase "Chỉnh lãi suất" as B8
+  usecase "Xem tổng quan" as B9
+}
+
+O --> B9
+O --> B2
+O --> B1
+O --> B5
+O --> B6
+O --> B7
+O --> B8
+B3 ..> B2 : <<extend>>
+B4 ..> B2 : <<extend>>
+B7 ..> B2 : <<extend>>
+@enduml

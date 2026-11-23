@@ -243,3 +243,38 @@ def test_table_text_is_11pt(body):
 def test_headings_keep_with_next(body):
     heads = [p for p in body.paragraphs if p.style.name.startswith("Heading")]
     assert heads and all(p.paragraph_format.keep_with_next for p in heads)
+
+
+def test_table_caption_stays_with_table(body):
+    cap = next(p for p in body.paragraphs if p.text.startswith("Bảng 1.1"))
+    assert cap.paragraph_format.keep_with_next
+
+
+def test_short_table_stays_on_one_page(body):
+    table = next(t for t in body.tables if t.rows[0].cells[0].text == "Cột A")
+    first_rows = table.rows[:-1]
+    assert all(p.paragraph_format.keep_with_next for r in first_rows for c in r.cells for p in c.paragraphs)
+    last = table.rows[-1]
+    assert not any(p.paragraph_format.keep_with_next for c in last.cells for p in c.paragraphs)
+
+
+def test_figure_stays_with_its_caption(body):
+    for cap in (p for p in body.paragraphs if p.text.startswith("Hình ")):
+        prev = cap._p.getprevious()
+        if prev is not None and prev.tag == qn("w:p") and prev.find(".//" + WP_INLINE) is not None:
+            from docx.text.paragraph import Paragraph
+            assert Paragraph(prev, cap._parent).paragraph_format.keep_with_next, cap.text
+
+
+WP_INLINE = "{http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing}inline"
+
+
+def test_phone_grid_stays_with_caption(body):
+    grid = next(t for t in body.tables if len(t.rows) == 1 and len(t.columns) == 3)
+    assert all(p.paragraph_format.keep_with_next for c in grid._cells for p in c.paragraphs)
+
+
+def test_table_with_many_rows_is_allowed_to_split(body):
+    # Chỉ bảng ngắn (≤ 5 hàng) được giữ nguyên khối; test này khoá ngưỡng đó.
+    from tools.body import SHORT_TABLE_ROWS
+    assert SHORT_TABLE_ROWS == 5

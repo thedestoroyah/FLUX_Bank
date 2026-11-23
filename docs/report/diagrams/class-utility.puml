@@ -1,0 +1,49 @@
+@startuml
+!include _style.iuml
+left to right direction
+skinparam nodesep 14
+skinparam ranksep 40
+skinparam classAttributeIconSize 0
+
+class ServicePaymentViewModel
+class BillPayViewModel
+class TopUpViewModel
+class CatalogViewModel
+class BillLookup <<object>> {
+  lookup(provider, customerCode, period): Bill?
+  txIdFor(uid, bill): String
+}
+class Carriers <<object>> {
+  DENOMINATIONS
+  detect(phone): Carrier?
+}
+class ServiceCatalog <<object>> {
+  filters(kind)
+  items(kind, filterId)
+  total(item, quantity)
+}
+class BookingCode <<object>> {
+  generate(): String
+}
+class ServicePayments <<object>> {
+  bill(bill): ServicePayment
+  topUp(phone, carrier, amount): ServicePayment
+  booking(kind, item, quantity, option, date, code): ServicePayment
+}
+class ServicePayment
+
+BillPayViewModel --|> ServicePaymentViewModel
+TopUpViewModel --|> ServicePaymentViewModel
+CatalogViewModel --|> ServicePaymentViewModel
+ServicePaymentViewModel --> AccountRepository : pay(...)
+ServicePaymentViewModel --> TransactionRepository
+ServicePaymentViewModel --> UserRepository
+BillPayViewModel ..> BillLookup
+TopUpViewModel ..> Carriers
+CatalogViewModel ..> ServiceCatalog
+CatalogViewModel ..> BookingCode
+BillPayViewModel ..> ServicePayments
+TopUpViewModel ..> ServicePayments
+CatalogViewModel ..> ServicePayments
+ServicePayments ..> ServicePayment
+@enduml
