@@ -278,3 +278,17 @@ def test_table_with_many_rows_is_allowed_to_split(body):
     # Chỉ bảng ngắn (≤ 5 hàng) được giữ nguyên khối; test này khoá ngưỡng đó.
     from tools.body import SHORT_TABLE_ROWS
     assert SHORT_TABLE_ROWS == 5
+
+
+def test_code_blocks_use_monospace_10pt(tmp_path):
+    from docx.shared import Pt
+    from tools.body import pandoc_body, postprocess
+
+    (tmp_path / "c.md").write_text("# CHƯƠNG\n\n```kotlin\nval x = 1\nfun f() = x\n```\n", encoding="utf-8")
+    out = pandoc_body([tmp_path / "c.md"], TEMPLATE, [tmp_path], tmp_path / "c.docx")
+    postprocess(out)
+    doc = Document(str(out))
+    code_styles = [s for s in doc.styles if s.name == "Source Code" or s.name == "Verbatim Char" or s.name.endswith("Tok")]
+    assert code_styles
+    for s in code_styles:
+        assert s.font.name == "Courier New" and s.font.size == Pt(10), s.name

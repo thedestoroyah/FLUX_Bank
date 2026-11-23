@@ -224,9 +224,9 @@ def postprocess(docx: Path) -> None:
                 for p in c.paragraphs:
                     p.style = cell_style
             _plain_cells(table)
-    if "Verbatim Char" in [s.name for s in doc.styles]:
-        font = _style(doc, "Verbatim Char").font
-        font.name, font.size = "Courier New", Pt(10)
+    for style in doc.styles:  # khối code: font đơn cách 10 pt, gồm cả các style tô màu cú pháp (…Tok)
+        if style.name in ("Source Code", "Verbatim Char") or style.name.endswith("Tok"):
+            style.font.name, style.font.size = "Courier New", Pt(10)
     for p in doc.paragraphs:
         if p.style.name.startswith("Heading"):
             p.paragraph_format.keep_with_next = True  # tiêu đề không bị bỏ lẻ cuối trang
