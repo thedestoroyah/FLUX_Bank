@@ -1,4 +1,4 @@
-# FLUX Bank — Handoff (cập nhật 2026-11-13, F1–F7 + chuẩn bị Play đã xong; tiếp theo: báo cáo + video)
+# FLUX Bank — Handoff (cập nhật 2026-11-24, F1–F7 + chuẩn bị Play xong, bản nháp báo cáo xong; tiếp theo: ảnh UI, hoàn thiện báo cáo, video nếu cần)
 
 Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc file này trước, sau đó đọc `PROJECT_CONTEXT.md` (kiến trúc, design system, dữ liệu).
 
@@ -35,7 +35,8 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 | Feature 7 | Ô Trợ lý AI: màn chat, Gemini qua Firebase AI Logic (gói Spark; model `gemini-3.5-flash-lite`, không gửi `thinkingConfig`), câu trả lời kèm 0–3 nút mở đúng màn F3–F6, số liệu chi tiêu thật của tháng, "Chế độ cơ bản" theo từ khoá khi mất mạng / hết lượt / quá 20 s, tin chứa OTP trả lời ngay trên máy (không gửi Google). Màn "Giao dịch tháng N" (Lịch sử lọc theo tháng, giờ VN) |
 
 ### Chưa làm
-- **Viết báo cáo, quay video demo** (việc chính còn lại; chủ dự án sẽ báo khi bắt đầu).
+- **Báo cáo**: bản nháp đầy đủ đã dựng (mục 10); còn chụp ảnh UI thật, cập nhật trường mục lục trong ONLYOFFICE, soát và xuất PDF.
+- **Video demo**: đề không có yêu cầu riêng; chủ dự án tính sau khi xong báo cáo.
 - (Tuỳ chọn, cộng điểm) Tải AAB lên Closed testing trên Play Console — chủ dự án tự làm, đang chờ Google xác minh danh tính (mục 3).
 
 ## 3. Việc chủ dự án cần làm
@@ -280,3 +281,12 @@ Còn **18 ngày** (tính từ 2026-11-13; F1–F7 và chuẩn bị Play đã xon
 2. **Video demo**: chừa 5–7 ngày cuối. Quota Gemini miễn phí có hạn: trước ngày quay hạn chế gọi thử Trợ lý; nếu hết lượt, Trợ lý vẫn chạy chế độ cơ bản.
 3. (Tuỳ chọn) Play Closed testing do chủ dự án tự làm (mục 3).
 4. Push `main` lên `origin` khi chủ dự án đồng ý.
+
+## 10. Báo cáo cuối kỳ (trạng thái 2026-11-24, nhánh `docs/report`)
+
+- **Spec/plan**: `docs/superpowers/specs/2026-11-23-final-report-design.md`, `docs/superpowers/plans/2026-11-23-final-report.md`. Mẫu Khoa: `docs/report/template/BAO_CAO.template-goc.docx` (bìa: một sinh viên 52300098, người hướng dẫn ThS. Võ Văn Thành — thầy, nam).
+- **Nguồn**: `docs/report/src/` (`front.md` + `01…07-*.md` + `08-tai-lieu.md`), sơ đồ PlantUML `docs/report/diagrams/*.puml`, danh sách ảnh UI `docs/report/ui-shots.md`.
+- **Dựng** (từ `FLUX_Bank/`, cần JDK, graphviz, pandoc): `uv run --with python-docx==1.1.2 --with docxcompose==1.4.0 --with "setuptools<80" --with pillow python docs/report/build.py --pdf` → `docs/report/out/FLUX_Bank_BaoCao.docx` (+ `.pdf` xuất bằng ONLYOFFICE `x2t`, chỉ để soát trang, **chưa cập nhật mục lục**). Soát nội dung/chính tả: `docs/report/check.py --spell`. Test công cụ: `cd docs/report && uv run --with python-docx==1.1.2 --with docxcompose==1.4.0 --with "setuptools<80" --with pillow --with pytest python -m pytest tests`.
+- **Ảnh UI**: `docs/report/images/ui/<id>.png` (id trong `ui-shots.md`, 43 ảnh). Chưa có ảnh thật nên build tự tạo ảnh giữ chỗ (không ghi đè ảnh đã có). Chụp bằng `adb exec-out screencap -p` sau khi dọn máy: tắt nút trợ năng nổi, bật Không làm phiền, đổi tên khách thử "Customer", ảnh bản đồ không lộ vị trí nhà. File ảnh thật cần `git add -f` (thư mục `images/ui/` bị gitignore vì chứa ảnh sinh tự động).
+- **Việc còn lại cho báo cáo**: (1) chụp 43 ảnh, dựng lại; (2) mở `.docx` trong ONLYOFFICE → cập nhật toàn bộ trường (mục lục, danh mục hình, bảng) → soát → xuất PDF; (3) đọc lại toàn bộ (chương 1 ghi "tôi đọc và kiểm chứng nội dung báo cáo"); (4) cập nhật mục "Trạng thái Google Play" ở chương 6 nếu có thay đổi sau 13/11; (5) điền ngày ký ở trang cảm ơn và cam đoan; (6) xem lại bảng tự chấm điểm (mục 6.8) và dòng video ở bảng 1.1.
+- **JDK 21** phải còn trên máy để build app (dự án ghim toolchain 21); chỉ gỡ sau khi nộp xong.

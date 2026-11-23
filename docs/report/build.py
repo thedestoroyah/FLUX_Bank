@@ -17,6 +17,7 @@ sys.path.insert(0, str(REPORT))
 import check  # noqa: E402
 from tools.body import pandoc_body, postprocess  # noqa: E402
 from tools.compose import compose  # noqa: E402
+from tools.design_images import make_design_images  # noqa: E402
 from tools.diagrams import render_all  # noqa: E402
 from tools.front import fill_front, load_front  # noqa: E402
 from tools.pdf import to_pdf  # noqa: E402
@@ -28,6 +29,8 @@ OUT = REPORT / "out"
 IMAGES = REPORT / "images"
 DIAGRAMS = REPORT / "diagrams"
 SHOTS = REPORT / "ui-shots.md"
+DESIGN_MD = REPORT.parents[1] / "DESIGN.md"
+APP_FONTS = REPORT.parents[1] / "app" / "src" / "main" / "res" / "font"
 OUTPUT_NAME = "FLUX_Bank_BaoCao"
 
 
@@ -39,12 +42,14 @@ def chapter_files() -> list[Path]:
 def build(pdf: bool) -> Path:
     """Dựng toàn bộ báo cáo; trả về đường dẫn file .docx."""
     OUT.mkdir(exist_ok=True)
+    # Sinh ảnh và sơ đồ trước để bước soát nội dung thấy đủ file.
+    make_design_images(DESIGN_MD, APP_FONTS, IMAGES / "ui")
+    make_placeholders(SHOTS, IMAGES / "ui")
+    render_all(DIAGRAMS, OUT / "diagrams")
     errors = check.run(REPORT, REPORT.parents[1])
     if errors:
         raise SystemExit("Soát nội dung thất bại:\n  " + "\n  ".join(errors))
     front = fill_front(TEMPLATE, load_front(SRC / "front.md"), OUT / "front.docx")
-    make_placeholders(SHOTS, IMAGES / "ui")
-    render_all(DIAGRAMS, OUT / "diagrams")
     body = pandoc_body(chapter_files(), TEMPLATE, [OUT, IMAGES], OUT / "body.docx")
     postprocess(body)
     docx = compose(front, body, OUT / f"{OUTPUT_NAME}.docx")
