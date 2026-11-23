@@ -1,0 +1,6 @@
+# Từ cho phép khi soát chính tả (tên riêng, thuật ngữ giữ tiếng Anh), mỗi dòng một từ.
+flux
+firebase
+firestore
+kotlin
+android
