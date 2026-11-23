@@ -26,7 +26,7 @@ Màu được dùng theo quy tắc chặt. Nền cửa sổ là xám nhạt `#F5
 
 Khoảng cách chỉ lấy từ sáu mức 4, 8, 12, 16, 24 và 32 dp, và lề ngang của màn hình là 16 dp. Góc bo tăng dần theo kích thước vật thể: ô OTP 12 dp, nút và ô nhập 14 dp, tile 20 dp, thẻ và đỉnh bottom sheet 24 dp. Card và tile phẳng, với viền mảnh 1 dp. Bóng đổ chỉ dành cho hai vật thể nổi là thẻ tài khoản và nút QR. Vùng chạm tối thiểu là 48 dp và nút cao 52 dp.
 
-Icon lấy từ bộ Phosphor Icons [17] giấy phép MIT, hai kiểu: duotone (hai tông) cho tính năng và tiện ích, regular (nét mảnh) cho các phần khung như nút back. Font Inter [18] có giấy phép OFL. Mọi giá trị màu, khoảng cách, kiểu chữ đều lấy từ `colors.xml`, `dimens.xml` và các style `TextAppearance.Flux.*`, `Widget.Flux.*`; không có mã màu hay kích thước viết cứng trong layout.
+Icon lấy từ bộ Phosphor Icons [17] giấy phép MIT, hai kiểu: duotone (hai tông) cho tính năng và tiện ích, regular (nét mảnh) cho các phần khung như nút back. Font Inter [18] có giấy phép OFL. Mọi giá trị màu, khoảng cách, kiểu chữ đều lấy từ `colors.xml`, `dimens.xml` và các style `TextAppearance.Flux.*`, `Widget.Flux.*`; không có mã màu viết cứng trong layout. Một số kích thước dp vẫn viết cứng; đây là lỗi nhỏ đã ghi nhận.
 
 ## Khung điều hướng
 

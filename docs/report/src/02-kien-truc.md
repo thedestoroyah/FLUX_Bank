@@ -24,7 +24,7 @@ Vì không có máy chủ riêng nên mọi quy tắc nghiệp vụ phải nằm
 
 ![Các tầng của ứng dụng và chiều phụ thuộc](diagrams/layers.png){#fig:layers width=13cm}
 
-- Tầng giao diện (`ui/`) gồm Activity và Fragment, chỉ vẽ màn hình và nhận thao tác. Không Activity hay Fragment nào gọi repository trực tiếp.
+- Tầng giao diện (`ui/`) gồm Activity và Fragment, chỉ vẽ màn hình và nhận thao tác. Hầu hết màn hình đi qua ViewModel; vài chỗ nhỏ như màn quét QR hoặc việc đọc `uid` đang đăng nhập vẫn gọi repository trực tiếp.
 - Tầng trình bày là các ViewModel. Chúng giữ trạng thái màn hình, gọi repository bằng coroutine và đẩy trạng thái ra giao diện qua LiveData.
 - Tầng nghiệp vụ (`domain/`, `core/`) chứa các quy tắc không cần Android, ví dụ `TransferPolicy` (hạn mức chuyển tiền), `InterestCalculator` (lãi tiết kiệm và tiền trả khoản vay), `OtpManager`, `LockPolicy`, `FaceMatcher`, `BranchRecommender`. Vì là Kotlin thuần nên kiểm thử đơn vị trực tiếp được.
 - Ở tầng dữ liệu (`data/`), mỗi nguồn dữ liệu là một interface kèm một cài đặt. `AccountRepository` có `FirestoreAccountRepository`, `WalkingRouter` có `OsrmWalkingRouter`, `AssistantClient` có `GeminiAssistantClient`.
@@ -51,7 +51,7 @@ Table: Nơi kiểm tra các quy tắc quan trọng {#tbl:verify-where}
 | Số điện thoại duy nhất | báo lỗi sớm | tạo `phoneIndex/{sđt}` thất bại nếu đã có |
 | Mỗi lần đổi số dư phải kèm một giao dịch mới khớp | Firestore transaction ghi hai document | so `lastTxId`, `balanceAfter`, phép cộng/trừ |
 | Cộng tiền cho người khác phải có lệnh trừ nguồn đi kèm | transaction ghi 4 document | `TRANSFER_IN` phải có `TRANSFER_OUT` cặp |
-| Mỗi hoá đơn chỉ trả một lần | tra trạng thái "đã thanh toán" | id giao dịch cố định theo hoá đơn, tạo lần hai bị từ chối |
+| Mỗi khách chỉ trả một hoá đơn một lần | tra trạng thái "đã thanh toán" | id giao dịch cố định theo người trả và hoá đơn, tạo lần hai bị từ chối |
 | Mã OTP đúng, còn hạn, dùng một lần | `OtpManager` | không kiểm được |
 | Khuôn mặt khớp ảnh eKYC (giao dịch ≥ 10.000.000 ₫) | `FaceMatcher` | không kiểm được |
 | Hạn mức 100 triệu mỗi lần, 200 triệu mỗi ngày | `TransferPolicy` | chỉ chặn mỗi lần nạp, chuyển, thanh toán quá 100 triệu; hạn mức ngày không kiểm được |
@@ -103,7 +103,7 @@ Quyết định thứ ba là xử lý dữ liệu nhạy cảm ngay trên máy. 
 
 ## Trợ lý AI và App Check
 
-Trợ lý AI là chức năng duy nhất gửi dữ liệu người dùng ra ngoài hệ Firebase. Mỗi câu hỏi đi kèm một bản tóm tắt: số dư theo loại tài khoản, tổng thu chi và chi theo nhóm của tháng, hạn mức còn lại. Số tài khoản, số điện thoại, căn cước và tên người nhận không được gửi. Tin nhắn có chứa mã OTP hoặc mật khẩu được trả lời ngay trên máy, không gửi đi.
+Trợ lý AI gửi dữ liệu tài chính của khách tới Google; ngoài ra chỉ có toạ độ vị trí gửi tới máy chủ OSRM. Mỗi câu hỏi đi kèm một bản tóm tắt: số dư theo loại tài khoản, tổng thu chi và chi theo nhóm của tháng, hạn mức còn lại. Tên gọi của khách (từ cuối trong họ tên) và 10 lượt trò chuyện gần nhất cũng được gửi; số tài khoản, số điện thoại, căn cước và tên người nhận thì không. Tin nhắn có chứa mã OTP hoặc mật khẩu được trả lời ngay trên máy, không gửi đi.
 
 Ứng dụng gọi Gemini qua Firebase AI Logic, nên APK không chứa API key. Để ngăn người ngoài dùng dự án của tôi làm đường gọi AI miễn phí, App Check dùng Play Integrity cho bản phát hành. Hiện App Check ở chế độ không bắt buộc cho AI Logic vì phạm vi phát hành Google Play đã được thu gọn; ứng dụng vẫn chạy bình thường, chỉ là chưa có lớp chặn này. Nếu đưa lên production, App Check phải bật bắt buộc theo thứ tự đã ghi trong `README.md`.
 
@@ -117,7 +117,7 @@ Có sáu thực hành tôi giữ xuyên suốt, vì chúng ảnh hưởng trực
 2. Số dư chỉ đổi qua Firestore transaction. Mọi thao tác nạp, rút, chuyển, thanh toán đều đi qua một `runTransaction` ghi đồng thời số dư và bản ghi giao dịch mới; Security Rules đối chiếu hai document với nhau. Không có đường nào cập nhật số dư mà không để lại giao dịch.
 3. Viết kiểm thử trước. Bộ kiểm thử gồm 391 ca đơn vị và 49 ca cho Security Rules (chạy trên Firestore Emulator). Trước khi sửa rules tôi thêm ca kiểm tra, rồi mới sửa.
 4. Viết spec và kế hoạch trước khi code. Mỗi tính năng có một tài liệu thiết kế (mục tiêu, việc không làm, phản mục tiêu, ràng buộc) và một kế hoạch từng bước, lưu trong `docs/superpowers/`.
-5. Duyệt mockup trước khi làm giao diện. Mọi màn mới được dựng thử bằng HTML để tôi xem và duyệt, sau đó mới viết XML. Giao diện chỉ dùng token của design system (màu, khoảng cách, kiểu chữ), không viết cứng.
+5. Duyệt mockup trước khi làm giao diện. Mọi màn mới được dựng thử bằng HTML để tôi xem và duyệt, sau đó mới viết XML. Giao diện dùng token của design system cho màu, khoảng cách và kiểu chữ; không có mã màu viết cứng, còn một số kích thước dp viết cứng trong layout (lỗi nhỏ đã ghi nhận).
 6. Review toàn nhánh bởi một agent AI độc lập sau khi xong mỗi tính năng. Agent này đọc toàn bộ thay đổi với ngữ cảnh mới, không biết tôi đã nghĩ gì khi viết. Nhiều lỗi quan trọng (chiếm id hoá đơn của người khác, chạm chi nhánh lúc đang định vị lại thì vẽ đường từ vị trí cũ...) được tìm ra ở bước này và sửa kèm test. Người review ở đây là máy; chương 1 nói rõ phần việc nào do công cụ AI làm.
 
 ## Triển khai và hạ tầng
@@ -126,4 +126,4 @@ Có sáu thực hành tôi giữ xuyên suốt, vì chúng ảnh hưởng trực
 
 ![Sơ đồ triển khai](diagrams/deployment.png){#fig:deployment width=15.5cm}
 
-Máy phát triển build APK bằng Gradle và cài lên điện thoại qua adb. Security Rules được dán thủ công vào Firebase Console mỗi khi sửa, vì gói Spark không có triển khai tự động. Để không chỉ tin vào lần dán thủ công, thư mục `rules-test/` chạy bản sao rules trên Firestore Emulator và kiểm tra 49 tình huống, gồm cả các tình huống phải bị từ chối. Bản phát hành đóng gói thành file AAB, ký bằng khoá upload lưu ngoài repository (cấu hình trong `local.properties`, không có trong git); Play App Signing giữ khoá ký chính nếu tôi tải lên Google Play. Việc tải lên là tuỳ chọn theo thông báo của giảng viên, nên tôi ghi trạng thái thật ở chương 6.
+Máy phát triển build APK bằng Gradle và cài lên điện thoại qua adb. Security Rules được dán thủ công vào Firebase Console mỗi khi sửa; Firebase CLI cũng triển khai được rules trên gói Spark, nhưng tôi chưa dùng. Để không chỉ tin vào lần dán thủ công, thư mục `rules-test/` chạy bản sao rules trên Firestore Emulator và kiểm tra 49 tình huống, gồm cả các tình huống phải bị từ chối. Bản phát hành đóng gói thành file AAB, ký bằng khoá upload lưu ngoài repository (cấu hình trong `local.properties`, không có trong git); Play App Signing giữ khoá ký chính nếu tôi tải lên Google Play. Việc tải lên là tuỳ chọn theo thông báo của giảng viên, nên tôi ghi trạng thái thật ở chương 6.

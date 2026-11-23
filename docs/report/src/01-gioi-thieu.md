@@ -46,11 +46,11 @@ Table: Đối chiếu yêu cầu của đề với ứng dụng {#tbl:requiremen
 
 Tôi dùng công cụ AI ở nhiều khâu của đồ án, và cần nói rõ việc nào do công cụ làm, việc nào do tôi làm.
 
-- Google Antigravity viết bản code ban đầu cho Feature 1 và 2 (hồ sơ người dùng, bảo mật). Bản này chạy được nhưng chưa đủ so với đề (nhân viên chưa tạo và sửa được khách, OTP chưa gắn với giao dịch, chưa có xác thực khuôn mặt cho giao dịch lớn) và giao diện không đồng bộ, nên tôi đã làm lại toàn bộ giao diện và hoàn thiện hai tính năng này.
+- Google Antigravity viết bản code ban đầu cho Feature 1 và 2 (hồ sơ người dùng, bảo mật). Bản này chạy được nhưng chưa đủ so với đề (nhân viên chưa tạo và sửa được khách, OTP chưa gắn với giao dịch, chưa có xác thực khuôn mặt cho giao dịch lớn) và giao diện không đồng bộ, nên toàn bộ giao diện phải được làm lại và hai tính năng này phải được hoàn thiện; phần việc đó do Claude Code thực hiện theo yêu cầu và sự duyệt của tôi.
 - Claude Code (của Anthropic) hỗ trợ viết tài liệu thiết kế và kế hoạch cho từng tính năng, viết code Feature 3 đến 7 cùng phần làm lại của Feature 1 và 2, viết bộ kiểm thử, và làm các agent review toàn nhánh độc lập (mục 2.6). Claude Code cũng soạn phần văn bản của báo cáo này từ mã nguồn và tài liệu thiết kế của dự án.
 - Gemini nằm trong sản phẩm, không dùng để làm ra nó: trợ lý AI trong ứng dụng (mục 4.9) gọi Gemini lúc chạy.
 
-Phần việc tôi tự quyết định và tự làm gồm chọn phạm vi và công nghệ, ví dụ chuyển từ Google Maps sang OpenStreetMap khi Google Cloud từ chối lập tài khoản thanh toán. Tôi duyệt từng tài liệu thiết kế, mockup và kế hoạch trước khi cho viết code, cấu hình Firebase, VNPay và Play Console, và tạo khoá ký ứng dụng. Tôi chạy thử mọi tính năng trên điện thoại thật, quyết định cách sửa mỗi lỗi tìm ra, và đọc, kiểm chứng nội dung báo cáo. Code và văn bản đều có công cụ AI tham gia, nên các lần review nhắc trong báo cáo đều là review bằng máy, người review không phải người khác.
+Phần việc tôi tự quyết định và tự làm gồm chọn phạm vi và công nghệ, ví dụ chuyển từ Google Maps sang OpenStreetMap khi Google Cloud từ chối lập tài khoản thanh toán. Tôi duyệt từng tài liệu thiết kế, mockup và kế hoạch trước khi cho viết code, cấu hình Firebase, VNPay và Play Console, và tạo khoá ký ứng dụng. Các tính năng được chạy thử trên điện thoại thật, phần lớn qua adb do Claude Code điều khiển, còn tôi mở khoá máy và thao tác ở những bước cần khuôn mặt; tôi quyết định cách sửa mỗi lỗi tìm ra, và đọc, kiểm chứng nội dung báo cáo. Code và văn bản đều có công cụ AI tham gia, nên các lần review nhắc trong báo cáo đều là review bằng máy, người review không phải người khác.
 
 ## Bố cục báo cáo
 

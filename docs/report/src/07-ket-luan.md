@@ -4,7 +4,7 @@
 
 FLUX Bank là một ứng dụng ngân hàng di động Android hoàn chỉnh về mặt chức năng. Ứng dụng có hai giao diện cho hai loại người dùng, xác thực bằng mật khẩu, sinh trắc học, OTP và khuôn mặt, ba loại tài khoản, chuyển tiền trong và ngoài ngân hàng, nạp tiền qua VNPay sandbox, bảy tiện ích, bản đồ chi nhánh với đường đi bộ ngắn nhất và một trợ lý AI có chế độ dự phòng. Dữ liệu nằm trên Cloud Firestore, được bảo vệ bằng Security Rules đã kiểm thử. Ứng dụng có 391 ca kiểm thử đơn vị và 49 ca kiểm thử Security Rules, đều đạt, và được tôi chạy thử từng tính năng trên điện thoại thật.
 
-Về báo cáo, tôi đã trình bày kiến trúc cùng lý do chọn công nghệ, mười một class diagram, sơ đồ use case, sơ đồ tuần tự và sơ đồ ER, cùng mô tả hiện thực và giao diện. Chương 6 ghi rõ những gì chưa làm được hoặc làm ở mức giả lập để người đọc không phải đoán.
+Về báo cáo, tôi đã trình bày kiến trúc cùng lý do chọn công nghệ, mười class diagram, sơ đồ use case, sơ đồ tuần tự và sơ đồ ER, cùng mô tả hiện thực và giao diện. Chương 6 ghi rõ những gì chưa làm được hoặc làm ở mức giả lập để người đọc không phải đoán.
 
 ## Bài học
 
