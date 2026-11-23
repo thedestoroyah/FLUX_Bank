@@ -29,7 +29,7 @@
 **Không làm** **[Claude]**
 - Không sửa code app (lỗi nhỏ trong HANDOFF §7 chỉ ghi vào phần hạn chế nếu đáng kể).
 - Không làm slide thuyết trình (đề không yêu cầu).
-- Không viết kịch bản video trong đợt này: đề không đặt yêu cầu riêng cho video, chủ dự án tính sau khi báo cáo xong **[Chủ dự án]**; danh sách màn hình ở §6.4 dùng lại được.
+- Không viết kịch bản video trong đợt này: đề (Technical Requirements mục 5) yêu cầu video demo, chủ dự án chọn làm sau khi báo cáo xong **[Chủ dự án]**; danh sách màn hình ở §6.4 dùng lại được.
 - Không chụp ảnh UI trong đợt viết: ảnh chụp sau khi chủ dự án dọn máy (tắt nút trợ năng nổi, bật Không làm phiền, đổi tên khách thử). Trong lúc chờ, báo cáo dùng **ảnh giữ chỗ** có ghi rõ tên màn cần chụp.
 
 **Phản mục tiêu**

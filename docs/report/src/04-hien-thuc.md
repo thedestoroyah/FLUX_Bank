@@ -82,7 +82,7 @@ fun onForeground(
 
 ### eKYC
 
-Khách (hoặc nhân viên chụp hộ) chụp căn cước và ảnh khuôn mặt bằng CameraX. `EkycViewModel` yêu cầu ảnh khuôn mặt có đúng một khuôn mặt (ML Kit) rồi tính vector 192 chiều bằng `FaceEmbedder`. Hồ sơ gồm hai ảnh Base64 và vector, ghi vào `kyc/{uid}` cùng lúc với việc chuyển `kycStatus` sang PENDING. Nhân viên xem hồ sơ ở `EkycReviewDetailFragment` và duyệt hoặc từ chối kèm lý do; chỉ hồ sơ VERIFIED mới được giao dịch.
+Khách (hoặc nhân viên chụp hộ) chụp căn cước và ảnh khuôn mặt bằng CameraX. `EkycViewModel` yêu cầu ảnh khuôn mặt có đúng một khuôn mặt (ML Kit) rồi tính vector 192 chiều bằng `FaceEmbedder`. Hồ sơ gồm hai ảnh Base64 và vector, ghi vào `kyc/{uid}` cùng lúc với việc chuyển `kycStatus` sang PENDING. Nhân viên xem hồ sơ ở `EkycReviewDetailFragment` và duyệt hoặc từ chối kèm lý do; ứng dụng chỉ cho giao dịch khi hồ sơ là VERIFIED (Security Rules chưa kiểm điều này).
 
 ### OTP
 
@@ -244,7 +244,7 @@ return try {
 
 `GeminiAssistantClient` gọi Gemini qua Firebase AI Logic với `responseMimeType` là JSON và một `responseSchema` buộc câu trả lời có dạng `{reply, actions}`, nên `AssistantReplyParser` đọc được chắc chắn và bỏ các nút lạ hoặc trùng. Model là `gemini-3.5-flash-lite`: tôi thử `gemini-3.5-flash` nhưng gói miễn phí chỉ cho 20 lượt mỗi ngày cho cả dự án, còn `gemini-3.8-flash` hay báo quá tải. `AssistantPrompt` đặt các quy tắc cho bot: chỉ nói về FLUX, không bịa số liệu, không hỏi mật khẩu hay OTP, và không tự thực hiện giao dịch. Các con số hạn mức trong lời bot lấy từ hằng số trong code nên khi hằng số đổi thì lời bot đổi theo. Giờ mở cửa chi nhánh thì hiện viết thẳng trong prompt, chưa lấy từ `OpeningHours`; đây là một lỗi nhỏ đã ghi nhận.
 
-Dữ liệu gửi cho AI là bản tóm tắt `FinanceSnapshot`: số dư theo loại tài khoản, tổng thu chi và chi theo nhóm của tháng, hạn mức còn lại. Số tài khoản, số điện thoại, căn cước và tên người nhận không nằm trong đó. Chế độ cơ bản (`AssistantFallback`) so từ khoá sau khi bỏ dấu và vẫn mở được đúng màn khi không có mạng hay hết lượt miễn phí. Vì gói miễn phí của Google có thể dùng dữ liệu để cải thiện sản phẩm, điều này được ghi trong chính sách bảo mật (`docs/play/privacy-policy.md`).
+Dữ liệu gửi cho AI là bản tóm tắt `FinanceSnapshot`: số dư theo loại tài khoản, tổng thu chi và chi theo nhóm của tháng, hạn mức còn lại. Tên gọi của khách (từ cuối trong họ tên) có nằm trong đó, kèm 10 lượt trò chuyện gần nhất; số tài khoản, số điện thoại, căn cước và tên người nhận thì không. Chế độ cơ bản (`AssistantFallback`) so từ khoá sau khi bỏ dấu và vẫn mở được đúng màn khi không có mạng hay hết lượt miễn phí. Vì gói miễn phí của Google có thể dùng dữ liệu để cải thiện sản phẩm, điều này được ghi trong chính sách bảo mật (`docs/play/privacy-policy.md`).
 
 ## Bảo mật tổng hợp
 

@@ -46,7 +46,7 @@ Các rules của `users`, `phoneIndex` và `kyc` (Feature 1 và 2) chưa có ca 
 
 ## Kiểm thử chức năng trên điện thoại thật
 
-Sau mỗi tính năng tôi chạy luồng chính trên điện thoại thật với rules thật trên Firebase. @tbl:device-tests tóm tắt những gì đã chạy đạt và những gì chưa thử, theo đúng ghi chép lúc đó.
+Sau mỗi tính năng, luồng chính được chạy trên điện thoại thật với rules thật trên Firebase (phần lớn qua adb do Claude Code điều khiển, tôi mở khoá máy và thao tác ở bước cần khuôn mặt). @tbl:device-tests tóm tắt những gì đã chạy đạt và những gì chưa thử, theo đúng ghi chép lúc đó.
 
 Table: Kết quả chạy thử trên điện thoại thật {#tbl:device-tests}
 
@@ -82,13 +82,14 @@ Feature 1, 2 và 3 cũng đã qua review toàn nhánh và các lỗi quan trọn
 Các hạn chế sau là hệ quả của việc chọn gói Spark miễn phí và làm một mình. Chúng cho thấy ứng dụng này là bản demo của một ngân hàng.
 
 - OTP và so khớp khuôn mặt chỉ kiểm tra trên điện thoại; người sửa APK có thể bỏ qua. Hướng khắc phục: Cloud Functions phát và kiểm token.
+- Security Rules chưa kiểm vài điều mà ứng dụng đang kiểm: hồ sơ phải ở trạng thái VERIFIED mới được nạp, rút, chuyển; khách có thể tự sửa trường số điện thoại mà không đổi `phoneIndex`; thời điểm `createdAt` của giao dịch do máy khách đặt nên có thể giả.
 - Hạn mức 200.000.000 ₫ mỗi ngày chỉ kiểm ở ứng dụng. Security Rules chỉ chặn từng lần nạp, chuyển, thanh toán quá 100.000.000 ₫.
 - Chữ ký VNPay được kiểm trên máy vì khoá sandbox nằm trong APK, và Security Rules không biết VNPay đã thu tiền hay chưa. Một khách rành kỹ thuật có thể tự "nạp" tiền giả; mỗi lần vẫn để lại một bản ghi và tối đa 100.000.000 ₫.
 - Chuyển liên ngân hàng, dữ liệu hoá đơn, giá vé, danh mục tiện ích và 12 chi nhánh đều giả lập trong ứng dụng.
 - Lãi tiết kiệm chỉ là lãi dự kiến, không được cộng vào số dư.
 - Số tài khoản chỉ tra được sau khi chủ tài khoản đăng nhập ít nhất một lần, vì `accountIndex` do chính chủ ghi.
 - Danh sách khách được tải hết rồi lọc ở máy; lịch sử lọc trên 100 giao dịch mới nhất. Đủ cho quy mô đồ án, không đủ cho hàng triệu bản ghi.
-- Trợ lý AI phụ thuộc gói miễn phí của Gemini (có giới hạn lượt, hết thì dùng chế độ cơ bản). Câu hỏi và bản tóm tắt số liệu được gửi tới Google, và gói miễn phí có thể dùng dữ liệu để cải thiện sản phẩm; số tài khoản, số điện thoại, căn cước không được gửi.
+- Trợ lý AI phụ thuộc gói miễn phí của Gemini (có giới hạn lượt, hết thì dùng chế độ cơ bản). Câu hỏi, tên gọi của khách và bản tóm tắt số liệu được gửi tới Google, và gói miễn phí có thể dùng dữ liệu để cải thiện sản phẩm; số tài khoản, số điện thoại, căn cước không được gửi.
 - OSRM và tile OpenStreetMap là dịch vụ công cộng không cam kết luôn chạy. Toạ độ người dùng gửi tới máy chủ OSRM.
 - App Check có mã nhưng chưa bật bắt buộc cho AI Logic.
 
@@ -105,7 +106,7 @@ Table: Tự đánh giá theo barem {#tbl:self-assessment}
 | Tiêu chí | Tối đa | Trình bày ở | Tự chấm | Lý do |
 |--------------|------|--------------|------|-----------------------------|
 | Architecture | 1 | Chương 2 | 1,0 | Có sơ đồ kiến trúc, triển khai, bảng công nghệ kèm lý do chọn và phương án thay thế |
-| Class diagrams | 1 | Mục 3.2 | 1,0 | Mười một sơ đồ theo tầng và tính năng, có đủ các loại quan hệ |
+| Class diagrams | 1 | Mục 3.2 | 1,0 | Mười sơ đồ theo tầng và tính năng, có đủ các loại quan hệ |
 | UI | 1 | Chương 5 | 0,9 | Design system thống nhất; chưa qua đánh giá của người dùng ngoài |
 | Database design | 1 | Mục 3.4 | 1,0 | Sơ đồ ER, mô tả từng collection, chỉ mục, bất biến kèm ca kiểm thử |
 | User profiles | 1 | Mục 4.3 | 1,0 | Hai vai trò với giao diện và quyền khác nhau, nhân viên tạo và sửa khách |

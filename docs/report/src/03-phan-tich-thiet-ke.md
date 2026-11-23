@@ -66,7 +66,7 @@ Table: Đặc tả use case "Nộp và duyệt eKYC" {#tbl:uc-ekyc}
 | | 4. Ứng dụng ghi `kyc/{uid}` và chuyển `kycStatus` sang PENDING. |
 | | 5. Nhân viên xem hồ sơ và duyệt, `kycStatus` thành VERIFIED. |
 | Luồng phụ | Không có hoặc có nhiều hơn một khuôn mặt thì yêu cầu chụp lại. Nhân viên từ chối kèm lý do thì `kycStatus` thành REJECTED và khách nộp lại được. |
-| Kết quả | Hồ sơ VERIFIED mới được phép giao dịch; vector đặc trưng dùng cho bước quét mặt sau này |
+| Kết quả | Ứng dụng chỉ cho giao dịch khi hồ sơ VERIFIED (Security Rules chưa kiểm); vector đặc trưng dùng cho bước quét mặt sau này |
 
 Table: Đặc tả use case "Chuyển tiền" {#tbl:uc-transfer}
 
@@ -263,7 +263,7 @@ Table: Collection `users` (id document là `uid` của Firebase Authentication) 
 |-----------|---------|-----------------------------------|
 | email | String | Email đăng nhập |
 | fullName | String | Họ tên |
-| phoneNumber | String | Số điện thoại, duy nhất (giữ bởi `phoneIndex`) |
+| phoneNumber | String | Số điện thoại. Tính duy nhất do `phoneIndex` giữ khi đổi số qua ứng dụng; Security Rules chưa chặn khách tự ghi trường này |
 | nationalId | String | Số căn cước |
 | address | String | Địa chỉ |
 | avatarBase64 | String? | Ảnh đại diện |
@@ -354,7 +354,7 @@ Table: Bất biến dữ liệu và ca kiểm tra Security Rules {#tbl:db-invari
 | Chỉ chủ tài khoản mới rút hoặc chuyển đi | `resource.data.ownerUid == request.auth.uid` | `moving another customers account denied` |
 | Cộng tiền cho người khác phải có lệnh trừ nguồn | `transferCreditAllowed`: có `TRANSFER_OUT` cặp, cùng số tiền, nguồn đã bị trừ | `credit without debit denied`, `credit amount differs from OUT denied` |
 | Thông tin người gửi trên biên lai người nhận không giả được | `transferInBacked`: tên, số tài khoản, ngân hàng phải khớp hồ sơ; `balanceAfter` rỗng | `fake sender name denied`, `TRANSFER_IN with forged source account denied` |
-| Mỗi hoá đơn chỉ trả một lần, không chiếm id hoá đơn của người khác | id `bill_<uid>_…` chỉ dành cho `PAYMENT` của chính `uid` đó | `second payment of same bill id denied`, `paying into another customers bill id denied` |
+| Mỗi khách chỉ trả một hoá đơn một lần, không chiếm id hoá đơn của người khác (hai khách khác nhau vẫn trả được cùng một mã) | id `bill_<uid>_…` chỉ dành cho `PAYMENT` của chính `uid` đó | `second payment of same bill id denied`, `paying into another customers bill id denied` |
 | Số tiền mỗi lần nạp, chuyển, thanh toán trong khoảng cho phép | `amount >= 10000` và `<= 100000000` (trừ rút) | `deposit over 100M denied`, `deposit under 10k denied` |
 | Danh bạ tra người nhận không giả tên | `indexEntryValid`: tên phải bằng `users.fullName`, số tài khoản phải trùng | `index entry with fake name denied`, `index list denied` |
 | Chỉ nhân viên mở tài khoản và sửa lãi suất, lãi suất hợp lý | `isOfficer()`; mỗi mức trong (0, 30]; kỳ hạn vay 1 đến 360 tháng | `customer writes rates denied`, `officer writes rate above 30 denied`, `officer mortgage term 0 denied` |

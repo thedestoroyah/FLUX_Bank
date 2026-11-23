@@ -36,7 +36,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 
 ### Chưa làm
 - **Báo cáo**: bản nháp đầy đủ đã dựng (mục 10); còn chụp ảnh UI thật, cập nhật trường mục lục trong ONLYOFFICE, soát và xuất PDF.
-- **Video demo**: đề không có yêu cầu riêng; chủ dự án tính sau khi xong báo cáo.
+- **Video demo**: đề (Technical Requirements, mục 5) ghi "Provide a demo video to show all the nice features of your app", và mục 1 của HANDOFF này liệt kê video trong phần cần nộp. Chủ dự án (23/11) chọn làm sau khi xong báo cáo; đừng coi video là tuỳ chọn.
 - (Tuỳ chọn, cộng điểm) Tải AAB lên Closed testing trên Play Console — chủ dự án tự làm, đang chờ Google xác minh danh tính (mục 3).
 
 ## 3. Việc chủ dự án cần làm

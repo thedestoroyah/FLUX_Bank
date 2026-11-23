@@ -34,6 +34,6 @@
 
 [17] Phosphor Icons, "Phosphor Icons," *phosphoricons.com*. https://phosphoricons.com (truy cập 23/11/2026).
 
-[18] R. Smith, "Inter typeface," *rsms.me*. https://rsms.me/inter/ (truy cập 23/11/2026).
+[18] R. Andersson, "Inter typeface," *rsms.me*. https://rsms.me/inter/ (truy cập 23/11/2026).
 
 [19] PlantUML, "PlantUML: open-source tool for UML diagrams," *plantuml.com*. https://plantuml.com/ (truy cập 23/11/2026).
