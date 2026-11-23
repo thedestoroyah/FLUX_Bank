@@ -1,0 +1,36 @@
+@startuml
+!include _style.iuml
+skinparam sequenceMessageAlign center
+autonumber
+
+actor "Khách hàng" as U
+participant "Màn chuyển tiền\n(Fragment + ViewModel)" as TF
+participant "Sheet xác thực\n(OTP, quét mặt)" as Auth
+participant "AccountRepository" as Repo
+database "Firestore\n+ Rules" as FS
+
+U -> TF : nhập số TK, số tiền, nội dung
+TF -> FS : tra tên chủ TK (accountIndex)
+TF -> TF : TransferPolicy.checkAmount\n(hạn mức, số dư)
+alt vi phạm hạn mức hoặc thiếu số dư
+  TF --> U : báo lỗi trên form
+else hợp lệ
+  TF -> Auth : show(tóm tắt giao dịch)
+  Auth --> U : SMS giả lập chứa mã 6 số
+  U -> Auth : nhập OTP
+  alt OTP sai, hết hạn hoặc bị khoá
+    Auth --> U : báo lỗi, cho nhập lại\nhoặc gửi mã mới
+  else OTP đúng
+    opt số tiền ≥ 10.000.000 ₫
+      Auth -> Auth : chớp mắt, so vector mặt\nvới vector eKYC
+    end
+    Auth --> TF : đã xác thực
+    TF -> Repo : transfer(...)
+    Repo -> FS : runTransaction ghi 4 document:\nOUT, trừ nguồn, cộng đích, IN
+    FS --> FS : rules kiểm tra bất biến
+    FS --> Repo : commit hoặc từ chối
+    Repo --> TF : Result<Transaction>
+    TF --> U : mở biên lai
+  end
+end
+@enduml
