@@ -22,6 +22,7 @@ from tools.diagrams import render_all  # noqa: E402
 from tools.front import fill_front, load_front  # noqa: E402
 from tools.pdf import to_pdf  # noqa: E402
 from tools.placeholders import make_placeholders  # noqa: E402
+from tools.toc import collect_entries, find_pages, pdf_pages, populate  # noqa: E402
 
 TEMPLATE = REPORT / "template" / "BAO_CAO.template-goc.docx"
 SRC = REPORT / "src"
@@ -32,6 +33,7 @@ SHOTS = REPORT / "ui-shots.md"
 DESIGN_MD = REPORT.parents[1] / "DESIGN.md"
 APP_FONTS = REPORT.parents[1] / "app" / "src" / "main" / "res" / "font"
 OUTPUT_NAME = "FLUX_Bank_BaoCao"
+MAX_PAGINATION_PASSES = 5
 
 
 def chapter_files() -> list[Path]:
@@ -39,7 +41,7 @@ def chapter_files() -> list[Path]:
     return sorted(SRC.glob("[0-9][0-9]-*.md"))
 
 
-def build(pdf: bool) -> Path:
+def build(quick: bool) -> Path:
     """Dựng toàn bộ báo cáo; trả về đường dẫn file .docx."""
     OUT.mkdir(exist_ok=True)
     # Sinh ảnh và sơ đồ trước để bước soát nội dung thấy đủ file.
@@ -52,17 +54,40 @@ def build(pdf: bool) -> Path:
     front = fill_front(TEMPLATE, load_front(SRC / "front.md"), OUT / "front.docx")
     body = pandoc_body(chapter_files(), TEMPLATE, [OUT, IMAGES], OUT / "body.docx")
     postprocess(body)
-    docx = compose(front, body, OUT / f"{OUTPUT_NAME}.docx")
-    if pdf:
-        to_pdf(docx, OUT / f"{OUTPUT_NAME}.pdf")
-    return docx
+    base = compose(front, body, OUT / "base.docx")
+    if quick:
+        return base
+    return fill_lists(base)
+
+
+def fill_lists(base: Path) -> Path:
+    """Điền sẵn mục lục, danh mục hình và bảng kèm số trang thật.
+
+    Số trang chỉ biết sau khi dàn trang, nên lặp: điền → xuất PDF → đọc số trang → điền lại, cho tới khi
+    số trang không đổi (độ dài của chính các danh mục làm dịch trang của phần mở đầu).
+    """
+    from docx import Document
+
+    final = OUT / f"{OUTPUT_NAME}.docx"
+    pdf = OUT / f"{OUTPUT_NAME}.pdf"
+    entries = collect_entries(Document(str(base)))
+    labels = {e.key: "0" for e in entries}
+    for _ in range(MAX_PAGINATION_PASSES):
+        populate(base, final, labels)
+        to_pdf(final, pdf)
+        new = find_pages(entries, pdf_pages(pdf))
+        if new == labels:
+            return final
+        labels = new
+    raise SystemExit("Số trang của các danh mục không ổn định sau nhiều lần dàn trang")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--pdf", action="store_true", help="xuất thêm PDF bằng ONLYOFFICE x2t")
+    parser.add_argument("--pdf", action="store_true", help="giữ để tương thích; PDF luôn được xuất vì cần số trang")
+    parser.add_argument("--quick", action="store_true", help="bỏ qua bước điền danh mục (nhanh, danh mục còn trống)")
     args = parser.parse_args()
-    print(build(args.pdf))
+    print(build(args.quick))
 
 
 if __name__ == "__main__":
