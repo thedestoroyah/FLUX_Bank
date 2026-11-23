@@ -134,6 +134,16 @@ def _check_headings(report: Path) -> list[str]:
     return errors
 
 
+def _check_reference_labels(report: Path) -> list[str]:
+    """Tham chiếu @fig:/@tbl: tự thêm chữ "Hình"/"Bảng"; viết thêm chữ đó ở trước sẽ bị lặp."""
+    errors = []
+    for ch in _chapters(report):
+        for lineno, line in enumerate(_read(ch).splitlines(), 1):
+            for m in re.finditer(r"\b(Hình|Bảng)\s+(@(?:fig|tbl):[\w-]+)", line, re.I):
+                errors.append(f"{ch.name}:{lineno}: lặp chữ {m.group(1)!r} trước {m.group(2)}")
+    return errors
+
+
 def _check_secrets(report: Path, repo: Path) -> list[str]:
     errors = []
     targets = {str(p.relative_to(report)): _read(p)
@@ -169,7 +179,7 @@ def word_counts(report: Path) -> dict[str, int]:
 
 def run(report_dir: Path, repo_root: Path) -> list[str]:
     """Chạy mọi phép soát; trả về danh sách lỗi (rỗng = đạt)."""
-    return [*_check_references(report_dir), *_check_images(report_dir), *_check_headings(report_dir),
+    return [*_check_references(report_dir), *_check_images(report_dir), *_check_headings(report_dir), *_check_reference_labels(report_dir),
             *_check_secrets(report_dir, repo_root), *_check_leftovers(report_dir)]
 
 

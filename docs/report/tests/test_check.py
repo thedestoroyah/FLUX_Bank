@@ -138,3 +138,10 @@ def test_spell_checks_only_last_cell_of_table_rows(report):
         "# X\n\n| zxqvtn | wkjhgf | Mô tả bình thường |\n", encoding="utf-8")
     flagged = check.spell(rep)
     assert not any(w.endswith((": zxqvtn", ": wkjhgf")) for w in flagged), flagged
+
+
+def test_duplicate_label_before_reference(report):
+    rep, root = report
+    with open(rep / "src" / "02-kien-truc.md", "a", encoding="utf-8") as f:
+        f.write("\nXem Hình @fig:arch.\n")
+    assert any("lặp chữ" in e and "@fig:arch" in e for e in check.run(rep, root))
