@@ -1,4 +1,4 @@
-# FLUX Bank — Handoff (cập nhật 2026-11-24, F1–F7 + chuẩn bị Play xong, bản nháp báo cáo xong; tiếp theo: ảnh UI, hoàn thiện báo cáo, video nếu cần)
+# FLUX Bank — Handoff (cập nhật 2026-11-24: F1–F7, chuẩn bị Play và bản nháp báo cáo đều đã merge vào `main`; tiếp theo: chụp 43 ảnh UI → hoàn thiện báo cáo → video demo)
 
 Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc file này trước, sau đó đọc `PROJECT_CONTEXT.md` (kiến trúc, design system, dữ liệu).
 
@@ -19,6 +19,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 - **Chuẩn bị phát hành Google Play đã merge vào `main`** (2026-11-13, `694a74f`): ký app bằng khoá upload, App Check (AI Logic vẫn Unenforce), dòng chú thích demo ở màn đăng nhập, tài liệu + hình ảnh Play ở `docs/play/`. Review toàn nhánh bởi reviewer độc lập (0 Critical; 2 Important đã sửa), bản release cài tay chạy đạt trên Xiaomi. Chi tiết mục 3, "Cho bản phát hành Google Play".
 - **F7 (Trợ lý AI) đã merge vào `main`** (2026-11-13): review toàn nhánh bởi reviewer độc lập (0 Critical, 4 Important + 2 Minor nâng lên Important, đã sửa hết có test), chạy trên Xiaomi với Gemini thật. Xem mục 3 và 7.
 - **Unit test 391/391 pass** (sau merge Play, 2026-11-13), rules test 49/49 (F7 không đổi rules), `assembleDebug` + `lintDebug` pass (0 error). F6 review toàn nhánh (2026-11-12): 0 Critical, 6 Important đã sửa có test (chạm chi nhánh lúc đang định vị lại vẽ đường từ vị trí cũ, test cache yếu, ở xa > 20 km bị báo lỗi mạng, lỗi API vị trí làm crash, định vị lại không có khung chờ, "Thử lại" bật GPS lại; thêm chặn lỗi camera khi xoay ngang). F5 review toàn nhánh: 0 Critical, 3 Important đã sửa có test (chiếm id hoá đơn của người khác, mã biên lai hoá đơn trùng, lỗi hạn mức hiện muộn). F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test).
+- **Báo cáo cuối kỳ** (nhánh `docs/report`, merge vào `main` ngày 2026-11-24, 15 commit): bản nháp 116 trang đã dựng, 57/57 test công cụ dựng đạt, review toàn nhánh bởi reviewer độc lập (0 Critical, 7 Important đã sửa). **`main` đi trước `origin/main`, chưa push** — push khi chủ dự án đồng ý. Chi tiết mục 10.
 - F1–F2 và F3 đều đã được reviewer độc lập review toàn nhánh, đã sửa hết lỗi Important; lỗi Minor còn lại ở mục 7. F3 đã chạy demo đạt trên máy thật (mục 3).
 
 ### Đã hoàn thành
@@ -35,7 +36,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 | Feature 7 | Ô Trợ lý AI: màn chat, Gemini qua Firebase AI Logic (gói Spark; model `gemini-3.5-flash-lite`, không gửi `thinkingConfig`), câu trả lời kèm 0–3 nút mở đúng màn F3–F6, số liệu chi tiêu thật của tháng, "Chế độ cơ bản" theo từ khoá khi mất mạng / hết lượt / quá 20 s, tin chứa OTP trả lời ngay trên máy (không gửi Google). Màn "Giao dịch tháng N" (Lịch sử lọc theo tháng, giờ VN) |
 
 ### Chưa làm
-- **Báo cáo**: bản nháp đầy đủ đã dựng (mục 10); còn chụp ảnh UI thật, cập nhật trường mục lục trong ONLYOFFICE, soát và xuất PDF.
+- **Báo cáo**: bản nháp đầy đủ đã dựng và merge vào `main` (mục 10); còn chụp 43 ảnh UI thật, chủ dự án đọc và sửa, soát lần cuối, xuất PDF.
 - **Video demo**: đề (Technical Requirements, mục 5) ghi "Provide a demo video to show all the nice features of your app", và mục 1 của HANDOFF này liệt kê video trong phần cần nộp. Chủ dự án (23/11) chọn làm sau khi xong báo cáo; đừng coi video là tuỳ chọn.
 - (Tuỳ chọn, cộng điểm) Tải AAB lên Closed testing trên Play Console — chủ dự án tự làm, đang chờ Google xác minh danh tính (mục 3).
 
@@ -142,6 +143,8 @@ Cho bản phát hành Google Play (đã merge vào `main` 2026-11-13, `694a74f`)
 | `docs/superpowers/specs/2026-11-12-navigation-f6-design.md`, `docs/superpowers/plans/2026-11-12-navigation-f6.md` | Spec + plan F6 (đã merge) |
 | `docs/superpowers/specs/2026-11-12-assistant-f7-design.md`, `docs/superpowers/plans/2026-11-12-assistant-f7.md` | Spec (có §11 ghi chú khi làm) + plan F7 |
 | `docs/superpowers/specs/2026-11-13-play-release-design.md`, `docs/superpowers/plans/2026-11-13-play-release.md` | Spec + plan chuẩn bị phát hành Play (đã merge) |
+| `docs/report/` | Báo cáo cuối kỳ: `src/*.md`, `diagrams/*.puml`, `ui-shots.md`, `build.py`, `check.py`, `tools/`, `tests/` (mục 10) |
+| `docs/superpowers/specs/2026-11-23-final-report-design.md`, `docs/superpowers/plans/2026-11-23-final-report.md` | Spec + plan báo cáo (đã thực hiện) |
 | `docs/play/` | Chính sách bảo mật, câu trả lời Play Console, tin mời người thử, hình ảnh trang Play + script dựng |
 | `DESIGN.md`, `.impeccable/design.json` | Design system "The Titanium Ledger" rút từ code (token, quy tắc, component) — đọc trước khi làm mockup/màn mới |
 | `docs/licenses/` | Giấy phép Inter (OFL), Phosphor (MIT), MobileFaceNet (MIT), ZXing (Apache-2.0), OSMDroid (Apache-2.0) + dữ liệu OpenStreetMap (ODbL) |
@@ -183,6 +186,7 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 
 ## 6. Môi trường & mẹo (quan trọng)
 
+- **Máy 2026-11-23**: không có Node (chạy test rules bằng `bun`: `cd rules-test && JAVA_HOME=/usr/lib/jvm/java-21-openjdk bun node_modules/firebase-tools/lib/bin/firebase.js emulators:exec --only firestore --project demo-flux "bun test rules.test.mjs"`, ngoài sandbox); có pandoc, graphviz, ffmpeg, obs, ONLYOFFICE; không có LibreOffice, scrcpy. `java-21-openjdk` và `java-25-openjdk` cùng cài (25 là mặc định); khi build báo thiếu toolchain 21 thì đó là JDK 21 bị gỡ.
 - **Build**: daemon Gradle đã ghim JDK 21 (`gradle/gradle-daemon-jvm.properties`), không cần `JAVA_HOME`: `./gradlew testDebugUnitTest assembleDebug`. Android Studio: Gradle JDK = `/usr/lib/jvm/java-21-openjdk`.
 - **Test rules**: `rules-test/` (Node + Firestore emulator), xem README mục 5.
 - **Firestore Console**: gõ tay tên field khi tạo document (copy từ markdown có thể dính ký tự ẩn U+200B, app sẽ không đọc được field).
@@ -271,18 +275,20 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 
 ## 9. Cách bắt đầu session mới
 
-Mở Claude Code từ thư mục `Final_Exam/` (để có skill impeccable), cắm điện thoại Xiaomi (qua bộ chia EPZ) và mở khoá nếu cần chạy trên máy, rồi dùng câu lệnh mở đầu:
-> Đọc `FLUX_Bank/HANDOFF.md` và `FLUX_Bank/PROJECT_CONTEXT.md`. Bắt đầu viết báo cáo đồ án (và chuẩn bị video demo) theo đề `docs/FinalProject_2026_2027.pdf` và barem `docs/Marking.xlsx`.
+Mở Claude Code từ thư mục `Final_Exam/` (để có skill impeccable), cắm điện thoại Xiaomi (qua bộ chia EPZ) và mở khoá, rồi dùng câu lệnh mở đầu:
+> Đọc `FLUX_Bank/HANDOFF.md` (mục 9 và 10) và `FLUX_Bank/PROJECT_CONTEXT.md`. Tiếp tục đồ án FLUX Bank: chụp 43 ảnh màn hình cho báo cáo theo `docs/report/ui-shots.md`, dựng lại báo cáo, rồi chuẩn bị kịp video demo.
 
-Quy trình đã dùng và nên giữ: `superpowers:brainstorming` (hỏi từng câu, mockup HTML trên visual companion) → viết spec vào `docs/superpowers/specs/` → `superpowers:writing-plans` → `superpowers:executing-plans` (chủ dự án chọn chế độ **Native**) → review toàn nhánh → `finishing-a-development-branch`.
+**Hạn nộp 2026-12-01** (tính từ 2026-11-24 còn 7 ngày). Thứ tự đề xuất:
+1. **Chủ dự án dọn máy** (3 việc, làm trước khi chụp): tắt nút trợ năng màu xanh nổi ở mép phải màn hình; bật Không làm phiền để thanh trạng thái hết icon Zalo/Messenger; đổi tên khách thử "Customer" thành một tên giả giống thật (dùng tài khoản nhân viên sửa). Quyền camera của app chưa cấp (cấp khi app hỏi). Quyền vị trí đang được cấp.
+2. **Chụp 43 ảnh** (`adb exec-out screencap -p`, chạy adb ngoài sandbox, máy phải mở khoá) vào `docs/report/images/ui/<id>.png`, rồi `git add -f` (thư mục này bị gitignore). Cần chủ dự án đưa tài khoản thử khách và nhân viên (mật khẩu không lưu trong repo). Ảnh bản đồ không được lộ vị trí nhà. Dựng lại báo cáo (mục 10).
+3. **Chủ dự án đọc báo cáo**, sửa chỗ sai (Claude sửa file `.md` rồi dựng lại; sửa tay trong file Word thì danh mục bị lệch số trang).
+4. **Video demo**: đề yêu cầu (Technical Requirements mục 5). Chủ dự án chọn làm sau khi xong báo cáo. Chưa có kịch bản; danh sách màn hình ở `ui-shots.md` dùng lại được. Máy có `ffmpeg` và `obs`; **chưa có `scrcpy`** (`sudo pacman -S scrcpy`). Quota Gemini miễn phí có hạn: trước ngày quay đừng gọi thử Trợ lý bừa; hết lượt thì Trợ lý chạy chế độ cơ bản.
+5. (Tuỳ chọn) Play Closed testing do chủ dự án tự làm (mục 3); sau đó cập nhật mục "Trạng thái Google Play" ở chương 6 báo cáo.
+6. Push `main` lên `origin` khi chủ dự án đồng ý (`git push origin main`, ngoài sandbox).
 
-Còn **18 ngày** (tính từ 2026-11-13; F1–F7 và chuẩn bị Play đã xong). Lịch đề xuất:
-1. **Báo cáo** (việc chính): class diagram, ERD, use case, kiến trúc, ảnh chụp từng màn theo các mục của barem (ảnh báo cáo giữ nguyên khung, không cắt như ảnh Play; có thể dùng lại 6 ảnh trong `docs/play/graphics/`). Nguồn: `PROJECT_CONTEXT.md`, các spec trong `docs/superpowers/specs/`, mục 8 "Giới hạn đã biết". Trước khi chụp/quay có thể chạy `/impeccable critique` hoặc `audit` trên các màn chính và sửa lỗi nhìn thấy (giới hạn 1 ngày).
-2. **Video demo**: chừa 5–7 ngày cuối. Quota Gemini miễn phí có hạn: trước ngày quay hạn chế gọi thử Trợ lý; nếu hết lượt, Trợ lý vẫn chạy chế độ cơ bản.
-3. (Tuỳ chọn) Play Closed testing do chủ dự án tự làm (mục 3).
-4. Push `main` lên `origin` khi chủ dự án đồng ý.
+Quy trình đã dùng và nên giữ: `superpowers:brainstorming` → spec trong `docs/superpowers/specs/` → `superpowers:writing-plans` → `superpowers:executing-plans` (chủ dự án chọn **Native**) → review toàn nhánh → `finishing-a-development-branch`. Trả lời chủ dự án bằng tiếng Việt, gọi giảng viên là "thầy".
 
-## 10. Báo cáo cuối kỳ (trạng thái 2026-11-24, nhánh `docs/report`)
+## 10. Báo cáo cuối kỳ (trạng thái 2026-11-24, đã merge vào `main`)
 
 - **Spec/plan**: `docs/superpowers/specs/2026-11-23-final-report-design.md`, `docs/superpowers/plans/2026-11-23-final-report.md`. Mẫu Khoa: `docs/report/template/BAO_CAO.template-goc.docx` (bìa: một sinh viên 52300098, người hướng dẫn ThS. Võ Văn Thành — thầy, nam).
 - **Nguồn**: `docs/report/src/` (`front.md` + `01…07-*.md` + `08-tai-lieu.md`), sơ đồ PlantUML `docs/report/diagrams/*.puml`, danh sách ảnh UI `docs/report/ui-shots.md`.
@@ -290,3 +296,16 @@ Còn **18 ngày** (tính từ 2026-11-13; F1–F7 và chuẩn bị Play đã xon
 - **Ảnh UI**: `docs/report/images/ui/<id>.png` (id trong `ui-shots.md`, 43 ảnh). Chưa có ảnh thật nên build tự tạo ảnh giữ chỗ (không ghi đè ảnh đã có). Chụp bằng `adb exec-out screencap -p` sau khi dọn máy: tắt nút trợ năng nổi, bật Không làm phiền, đổi tên khách thử "Customer", ảnh bản đồ không lộ vị trí nhà. File ảnh thật cần `git add -f` (thư mục `images/ui/` bị gitignore vì chứa ảnh sinh tự động).
 - **Việc còn lại cho báo cáo**: (1) chụp 43 ảnh, dựng lại; (2) mở `.docx` trong ONLYOFFICE (danh mục đã điền sẵn; làm mới lại nếu sửa nội dung trong file Word) → soát → xuất PDF; (3) đọc lại toàn bộ (chương 1 ghi "tôi đọc và kiểm chứng nội dung báo cáo"); (4) cập nhật mục "Trạng thái Google Play" ở chương 6 nếu có thay đổi sau 13/11; (5) điền ngày ký ở trang cảm ơn và cam đoan; (6) xem lại bảng tự chấm điểm (mục 6.8) và dòng video ở bảng 1.1.
 - **JDK 21** phải còn trên máy để build app (dự án ghim toolchain 21); chỉ gỡ sau khi nộp xong.
+- **Lỗi nhỏ còn lại của báo cáo** (từ review 2026-11-24, chưa sửa; sửa trong `docs/report/src/*.md` hoặc `tools/`):
+  1. `build.py`: bước `check.run` chạy trước khi dựng docx nên kiểm tra "chữ sót của mẫu" và "bí mật" trong docx đọc bản dựng trước.
+  2. Bảng dài đôi khi chỉ còn tiêu đề và hàng đầu ở cuối trang; chưa đặt `w:tblHeader`; `keep_with_next` chỉ áp cho bảng ≤ 5 hàng.
+  3. Danh sách tài liệu tham khảo chưa thụt dòng treo kiểu IEEE.
+  4. Văn bản, ERD, class-model ghi "mỗi người dùng có ≥ 1 tài khoản" (sai với nhân viên).
+  5. `CustomerOnboardingService` và `AppLockObserver → AuthRepository` vẽ nét đứt dù giữ làm thuộc tính (chú giải ghi nét liền = giữ tham chiếu).
+  6. Bảng CSDL chưa ghi các trường id lưu trùng (`uid`, `accountId`, `id`).
+  7. Chương 2: ghi phiên bản lấy từ `libs.versions.toml`/`build.gradle.kts`, nhưng Kotlin và JDK lấy từ nơi khác; câu "Chủ dự án yêu cầu chi phí bằng 0" (ngôi thứ ba); "App Check chặn…" ở thì hiện tại dù chưa bật bắt buộc.
+  8. Chương 7: "Gemini miễn phí chỉ cho 20 lượt mỗi ngày" đúng cho `gemini-3.5-flash`, không phải model đang dùng.
+  9. Chương 6: nói mọi lần chạy dùng bản debug (bản release cũng đã cài và thử); dòng kiểm thử F1/F2 trên máy liệt kê các luồng chi tiết hơn ghi chép gốc ("mọi luồng F1–F2 đều đạt").
+  10. Chưa có ảnh cho vé phim, mua sắm, hoá đơn nước, chuyển giữa tài khoản mình, khách tự nộp eKYC, email đặt lại mật khẩu của nhân viên (`ui-shots.md` chưa có các id này).
+  11. Độ dài ~18.400 từ (mục tiêu 14.000–17.000, tính cả bảng); `front._reset_field` chỉ đọc mảnh đầu của lệnh trường TOC; `check.py` giữ một bản debug token App Check (đã có trong HANDOFF, đừng đăng ký token này).
+- **Chưa chắc / cần chủ dự án xác nhận trong báo cáo**: mục 1.6 (công cụ AI) viết rằng chủ dự án "đọc, kiểm chứng nội dung báo cáo" và rằng các lần chạy thử trên máy phần lớn do Claude Code điều khiển qua adb còn chủ dự án mở khoá và thao tác ở bước cần khuôn mặt; trạng thái Google Play (chương 6) chốt theo ngày 13/11; bảng tự chấm điểm 6.8 (tổng 9,6/10) là đề xuất; dòng video ở bảng 1.1 ghi "ngoài phạm vi báo cáo này".
