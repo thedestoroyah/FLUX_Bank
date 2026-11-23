@@ -14,6 +14,7 @@ from pathlib import Path
 REPORT = Path(__file__).resolve().parent
 sys.path.insert(0, str(REPORT))
 
+import check  # noqa: E402
 from tools.body import pandoc_body, postprocess  # noqa: E402
 from tools.compose import compose  # noqa: E402
 from tools.diagrams import render_all  # noqa: E402
@@ -38,6 +39,9 @@ def chapter_files() -> list[Path]:
 def build(pdf: bool) -> Path:
     """Dựng toàn bộ báo cáo; trả về đường dẫn file .docx."""
     OUT.mkdir(exist_ok=True)
+    errors = check.run(REPORT, REPORT.parents[1])
+    if errors:
+        raise SystemExit("Soát nội dung thất bại:\n  " + "\n  ".join(errors))
     front = fill_front(TEMPLATE, load_front(SRC / "front.md"), OUT / "front.docx")
     make_placeholders(SHOTS, IMAGES / "ui")
     render_all(DIAGRAMS, OUT / "diagrams")
