@@ -28,7 +28,7 @@ Table: Đối chiếu yêu cầu của đề với ứng dụng {#tbl:requiremen
 | Kỹ thuật: cơ sở dữ liệu trên cloud | Cloud Firestore | 3.4 |
 | Kỹ thuật: triển khai trên Google Play | Đã chuẩn bị bản phát hành; chưa tải lên (tuỳ chọn) | 6.7 |
 | Kỹ thuật: báo cáo phân tích thiết kế, hiện thực, giao diện | Chương 2 đến 5 | |
-| Kỹ thuật: video demo | Ngoài phạm vi báo cáo này; giao diện được trình bày bằng ảnh màn hình ở chương 5 | 5 |
+| Kỹ thuật: video demo | Video quay màn hình các chức năng, nộp qua liên kết Google Drive (mục Bài nộp); ảnh màn hình ở chương 5 | 5 |
 
 ## Phạm vi và ràng buộc
 
@@ -37,6 +37,15 @@ Table: Đối chiếu yêu cầu của đề với ứng dụng {#tbl:requiremen
 - Mọi giao dịch dùng tiền giả lập. Chuyển liên ngân hàng, dữ liệu hoá đơn, giá vé và 12 chi nhánh được giả lập trong ứng dụng; riêng nạp tiền đi qua cổng VNPay sandbox thật, và bản đồ, đường đi dùng OpenStreetMap và OSRM thật.
 - Giảng viên đã xác nhận ngày 13/11/2026 rằng việc đưa ứng dụng lên Google Play là tuỳ chọn, nên tôi dành thời gian chính cho ứng dụng và báo cáo.
 - Chữ hiển thị trong ứng dụng là tiếng Việt, tiền tệ là đồng (VND) và được lưu dạng số nguyên.
+
+## Bài nộp
+
+Bài nộp gồm ba phần, kèm một file văn bản:
+
+- **Mã nguồn** của ứng dụng trên một kho riêng ở GitHub (nhánh `main`).
+- **Video demo** các chức năng, đặt trên Google Drive.
+- **Báo cáo** này, dạng PDF.
+- **File `.txt`** chứa hai liên kết: liên kết kho GitHub và liên kết video trên Google Drive. File này nộp cùng báo cáo.
 
 ## Công cụ thực hiện
 

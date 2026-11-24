@@ -21,6 +21,7 @@ Trước khi chụp: tắt nút trợ năng nổi, bật Không làm phiền, đ
 | cus-transfer-hub | Chọn kiểu chuyển tiền | trong FLUX / của tôi / liên ngân hàng |
 | cus-transfer-internal | Chuyển trong FLUX | tra tên theo số tài khoản |
 | cus-transfer-external | Chuyển liên ngân hàng | chọn ngân hàng |
+| cus-transfer-own | Chuyển giữa tài khoản của tôi | Thanh toán → Tiết kiệm |
 | cus-auth-otp | Sheet xác thực OTP | bàn phím số riêng |
 | cus-sms-otp | Thông báo SMS giả lập | chạm để tự điền |
 | cus-auth-face | Bước quét khuôn mặt | giao dịch ≥ 10.000.000 ₫ |
@@ -29,9 +30,12 @@ Trước khi chụp: tắt nút trợ năng nổi, bật Không làm phiền, đ
 | cus-qr-mine | Mã QR của tôi | |
 | cus-bill-electric | Thanh toán tiền điện | tra hoá đơn |
 | cus-bill-paid | Hoá đơn đã thanh toán | không trả lần hai |
+| cus-bill-water | Thanh toán tiền nước | SAWACO, tra theo mã khách hàng |
 | cus-topup | Nạp tiền điện thoại | nhà mạng theo đầu số |
 | cus-catalog-flight | Vé máy bay | danh mục |
 | cus-catalog-hotel | Đặt phòng khách sạn | danh mục |
+| cus-catalog-movie | Vé xem phim | suất đã qua giờ bị khoá |
+| cus-catalog-shop | Mua sắm | lưới sản phẩm |
 | cus-payment-receipt | Biên lai thanh toán dịch vụ | mã đặt chỗ |
 | cus-branch-suggest | Gợi ý chi nhánh đi bộ gần nhất | đường emerald trên bản đồ OSM |
 | cus-branch-list | Danh sách chi nhánh | xếp theo quãng đi bộ |

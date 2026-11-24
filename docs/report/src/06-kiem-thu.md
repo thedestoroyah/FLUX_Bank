@@ -59,7 +59,7 @@ Table: Kết quả chạy thử trên điện thoại thật {#tbl:device-tests}
 | F6 (12/11) | Hộp thoại quyền vị trí (từ chối rồi cấp lại); gợi ý chi nhánh từ vị trí thật kèm dòng giải thích khi chi nhánh gần nhất phải đi vòng; danh sách xếp theo quãng đi bộ; chọn chi nhánh khác; gọi chi nhánh; tắt mạng thì dùng đường thẳng, bật lại thì có đường đi bộ; ép xoay ngang không lỗi | Đứng ở cổng trường để thấy ca "393 m nhưng đi bộ 1,3 km" (đã đo bằng OSRM); máy không có Play services |
 | F7 (13/11) | Chip "Nạp tiền điện thoại" mở đúng màn và quay lại còn chat; hỏi chi tiêu tháng bằng AI thật (khoảng 6 giây) ra đúng "4.282.200 ₫ qua 3 giao dịch"; tin chứa OTP được nhắc và không gửi lên AI; chuyển sang chế độ cơ bản khi AI lỗi | Chế độ máy bay thật; hết hạn mức ngày của AI |
 
-Ghi chú: các lần chạy này được ghi bằng văn bản ngay sau mỗi tính năng, chưa có video. Video demo nằm ngoài phạm vi của báo cáo này.
+Ghi chú: các lần chạy này được ghi bằng văn bản ngay sau mỗi tính năng, không quay lại. Video demo nộp riêng qua Google Drive (mục Bài nộp ở chương 1) chạy lại các chức năng chính.
 
 ## Review và sửa lỗi
 
@@ -116,7 +116,7 @@ Table: Tự đánh giá theo barem {#tbl:self-assessment}
 | Utilities | 0,5 | Mục 4.7 | 0,5 | Bảy tiện ích chạy được, dữ liệu giả lập |
 | Navigation | 0,5 | Mục 4.8 | 0,5 | Bản đồ, vị trí, gợi ý đường đi bộ ngắn nhất, có dự phòng |
 | Chatbot | 0,5 | Mục 4.9 | 0,5 | Trợ lý AI kèm nút mở màn, có chế độ cơ bản |
-| Hình thức báo cáo, demo | 1 | Toàn báo cáo | 0,9 | Theo mẫu của Khoa; phần video chưa làm trong báo cáo này |
+| Hình thức báo cáo, demo | 1 | Toàn báo cáo | 0,9 | Theo mẫu của Khoa; video demo nộp riêng qua liên kết Google Drive |
 | Tổng | 10 | | 9,6 | |
 
 Phần tự chấm chỉ là ý kiến của tôi; điểm chính thức do giảng viên quyết định.

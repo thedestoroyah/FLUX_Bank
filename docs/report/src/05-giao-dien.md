@@ -84,6 +84,10 @@ Tab Chuyển tiền cho chọn ba kiểu, kèm danh sách người nhận gần 
 ![](ui/cus-transfer-external.png)
 :::
 
+![Chuyển giữa tài khoản của tôi: chọn tài khoản nguồn và đích](ui/cus-transfer-own.png){#fig:ui-transfer-own width=5.2cm}
+
+Kiểu thứ ba, chuyển giữa tài khoản của chính khách, chỉ cần chọn tài khoản nguồn và đích (@fig:ui-transfer-own).
+
 Khi nhập số tài khoản FLUX, ứng dụng hiện tên chủ tài khoản để người chuyển xác nhận đúng người nhận. Form cũng cho biết hạn mức còn lại trong ngày. Mọi giao dịch kết thúc ở bottom sheet xác thực.
 
 ::: {#fig:ui-auth-sheet .phones caption="Xác thực giao dịch: (a) bottom sheet nhập mã OTP với bàn phím số riêng; (b) thông báo SMS giả lập chứa mã; (c) bước quét mặt khi số tiền từ 10.000.000 ₫"}
@@ -116,6 +120,12 @@ Bảy tiện ích dùng ba kiểu màn hình, tất cả đều thanh toán bằ
 ![](ui/cus-catalog-flight.png)
 ![](ui/cus-catalog-hotel.png)
 ![](ui/cus-payment-receipt.png)
+:::
+
+::: {#fig:ui-utility-3 .phones caption="Tiền nước, vé phim và mua sắm: (a) tra hoá đơn tiền nước SAWACO; (b) vé xem phim, các suất đã qua giờ bị khoá; (c) mua sắm, nút thanh toán khoá khi số tiền vượt số dư"}
+![](ui/cus-bill-water.png)
+![](ui/cus-catalog-movie.png)
+![](ui/cus-catalog-shop.png)
 :::
 
 Màn hoá đơn (điện, nước) nhận mã khách hàng và hiện hoá đơn của kỳ hiện tại; hoá đơn đã trả hiện nhãn "đã thanh toán" và cho xem lại biên lai. Màn nạp điện thoại tự nhận nhà mạng theo đầu số và có sáu mệnh giá. Màn danh mục dùng chung cho vé máy bay, vé phim, khách sạn và mua sắm: chọn mục, số lượng và ngày, rồi nhận biên lai kèm mã đặt chỗ.
