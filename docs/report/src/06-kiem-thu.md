@@ -5,7 +5,7 @@ Chương này trình bày cách tôi kiểm tra ứng dụng và kết quả: ki
 ## Môi trường
 
 - Máy phát triển chạy Linux với JDK 21, Gradle 9.6.0 và Android Gradle Plugin 9.4.1.
-- Thiết bị thật là một điện thoại Xiaomi (mã máy 2511FPC34G), Android 16, màn hình 1268×2756. Mọi lần chạy thử thủ công ở mục "Kiểm thử chức năng trên điện thoại thật" dùng máy này, cài bản debug qua adb.
+- Thiết bị thật là một điện thoại Xiaomi (mã máy 2511FPC34G), Android 16, màn hình 1268×2756. Mọi lần chạy thử thủ công ở mục "Kiểm thử chức năng trên điện thoại thật" dùng máy này, cài bản debug qua adb. Riêng ngày 13/11, bản release ký bằng khoá upload cũng được cài tay lên máy này để kiểm tra mở không lỗi, dòng chú thích demo và Trợ lý trả lời bằng AI.
 - Dữ liệu là dự án Firebase thật (gói Spark) với tài khoản thử, gồm một khách hàng, một nhân viên và vài khách tạo thêm trong lúc thử.
 - Kiểm thử rules chạy trên Firestore Emulator cục bộ, không đụng dữ liệu thật.
 
@@ -52,7 +52,7 @@ Table: Kết quả chạy thử trên điện thoại thật {#tbl:device-tests}
 
 | Tính năng (ngày) | Đã chạy đạt | Chưa thử |
 |--------------|-------------------------------|------------------------|
-| F1 và F2 (27/10) | Nhân viên tạo khách; khách đăng nhập lần đầu và đổi mật khẩu; eKYC và nhân viên duyệt; bật khoá sinh trắc học; đổi số điện thoại qua OTP; quét mặt đúng người qua, người khác bị từ chối; chọn ngưỡng 0,6 | |
+| F1 và F2 (27/10) | Chạy từ đầu đến cuối các luồng F1 và F2 (tạo khách, đăng nhập lần đầu, eKYC, xác thực); hiệu chỉnh ngưỡng so khớp khuôn mặt và giữ ở 0,6. Ghi chép gốc không liệt kê từng bước | |
 | F3 (27/10) | Nhân viên mở tiết kiệm và khoản vay 1,5 tỉ đồng 240 tháng; đổi lãi suất tiết kiệm; khách nạp 2.000.000 ₫ qua OTP (mã hết hạn và gửi lại mã); rút quá số dư bị chặn; chi tiết tiết kiệm và khoản vay đúng số; lịch sử và giao dịch gần đây; nạp 10.000.000 ₫ với quét mặt | |
 | F4 (28/10) | Nạp 1.000.000 ₫ qua VNPay sandbox (đóng WebView giữa chừng thì số dư không đổi); chuyển 500.000 ₫ theo số tài khoản (người nhận thấy tiền); chuyển liên ngân hàng; chuyển giữa tài khoản của mình; "Mã của tôi" | Quét QR bằng camera; quét mặt khi chuyển từ 10.000.000 ₫; chặn hạn mức 200 triệu (có unit test) |
 | F5 (12/11) | Mua sắm 1.490.000 ₫; trả tiền điện qua OTP, tra lại thấy "đã thanh toán"; trả hoá đơn nước; lịch sử có biểu tượng dịch vụ | Quét mặt khi từ 10.000.000 ₫; hai máy trả cùng một hoá đơn cùng lúc |

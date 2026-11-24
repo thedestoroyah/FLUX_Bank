@@ -48,16 +48,24 @@ def build(quick: bool) -> Path:
     make_design_images(DESIGN_MD, APP_FONTS, IMAGES / "ui")
     make_placeholders(SHOTS, IMAGES / "ui")
     render_all(DIAGRAMS, OUT / "diagrams")
-    errors = check.run(REPORT, REPORT.parents[1])
-    if errors:
-        raise SystemExit("Soát nội dung thất bại:\n  " + "\n  ".join(errors))
+    # Xoá bản dựng cũ để lần soát đầu chỉ đọc nguồn Markdown; docx mới được soát lại ở cuối.
+    (OUT / f"{OUTPUT_NAME}.docx").unlink(missing_ok=True)
+    _fail_on(check.run(REPORT, REPORT.parents[1]))
     front = fill_front(TEMPLATE, load_front(SRC / "front.md"), OUT / "front.docx")
     body = pandoc_body(chapter_files(), TEMPLATE, [OUT, IMAGES], OUT / "body.docx")
     postprocess(body)
     base = compose(front, body, OUT / "base.docx")
     if quick:
         return base
-    return fill_lists(base)
+    final = fill_lists(base)
+    _fail_on(check.run(REPORT, REPORT.parents[1]))  # lần này có docx: soát bí mật và chữ sót của mẫu
+    return final
+
+
+def _fail_on(errors: list[str]) -> None:
+    """Dừng build với danh sách lỗi của check.run nếu có."""
+    if errors:
+        raise SystemExit("Soát nội dung thất bại:\n  " + "\n  ".join(errors))
 
 
 def fill_lists(base: Path) -> Path:

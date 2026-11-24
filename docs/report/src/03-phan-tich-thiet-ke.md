@@ -245,13 +245,15 @@ Firestore [3] là cơ sở dữ liệu document. Dữ liệu nằm trong các co
 
 Vì không có phép nối, một số thông tin được lưu lặp lại để đọc nhanh: tên và số tài khoản đối tác nằm ngay trong giao dịch, tên chủ tài khoản nằm trong `accountIndex`. Đổi lại, các bản sao này có thể lệch khi dữ liệu gốc đổi. Thiết kế chấp nhận điều đó ở những chỗ bản sao là lịch sử bất biến (giao dịch không bao giờ sửa), và dùng Security Rules bắt bản sao phải khớp dữ liệu gốc tại thời điểm ghi (xem bảng bất biến bên dưới).
 
+Các trường `uid` (trong `users` và `kyc`), `accountId` (trong `accounts`) và `id` (trong `transactions`) lặp lại chính id của document. Ứng dụng ghi cùng một giá trị vào cả đường dẫn lẫn trường này khi tạo document, để code đọc dữ liệu về là có sẵn id mà không phải lấy từ đường dẫn. Sơ đồ ER chỉ vẽ chúng một lần, ở vai trò id của document (nhãn `doc id`).
+
 ### Sơ đồ ER
 
 @fig:erd có bảy collection.
 
 ![Sơ đồ thực thể quan hệ của cơ sở dữ liệu Firestore](diagrams/erd.png){#fig:erd width=15.5cm}
 
-Một người dùng (`users`) có tối đa một hồ sơ `kyc` và một mục `phoneIndex`, và có ít nhất một tài khoản trong `accounts` (nhân viên cấp sẵn một tài khoản Checking khi tạo khách). Mỗi tài khoản có nhiều giao dịch trong `transactions`; hai giao dịch của một lần chuyển nội bộ trỏ nhau qua `pairTxId`. `accountIndex` là danh bạ tra người nhận theo số tài khoản và chỉ có mục cho tài khoản Checking và Saving. `config/rates` là một document duy nhất chứa lãi suất chung. Document `accounts` còn giữ `lastTxId`, trỏ tới giao dịch gần nhất đã đổi số dư, và Security Rules dùng trường này để buộc mỗi lần đổi số dư phải có một giao dịch mới đi kèm.
+Một người dùng (`users`) có tối đa một hồ sơ `kyc` và một mục `phoneIndex`, và, nếu là khách hàng, có ít nhất một tài khoản trong `accounts` (nhân viên cấp sẵn một tài khoản Checking khi tạo khách); nhân viên không sở hữu tài khoản ngân hàng nào. Mỗi tài khoản có nhiều giao dịch trong `transactions`; hai giao dịch của một lần chuyển nội bộ trỏ nhau qua `pairTxId`. `accountIndex` là danh bạ tra người nhận theo số tài khoản và chỉ có mục cho tài khoản Checking và Saving. `config/rates` là một document duy nhất chứa lãi suất chung. Document `accounts` còn giữ `lastTxId`, trỏ tới giao dịch gần nhất đã đổi số dư, và Security Rules dùng trường này để buộc mỗi lần đổi số dư phải có một giao dịch mới đi kèm.
 
 ### Mô tả các collection
 

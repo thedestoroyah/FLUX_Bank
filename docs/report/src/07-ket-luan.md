@@ -12,7 +12,7 @@ Về báo cáo, tôi đã trình bày kiến trúc cùng lý do chọn công ngh
 - Code do công cụ AI viết cần được đọc và đối chiếu với đề. Bản đầu của Feature 1 và 2 chạy được nhưng thiếu nhiều thứ đề yêu cầu, và chỉ khi đặt nó cạnh đề bài tôi mới thấy chỗ thiếu.
 - Review bởi một người (hoặc agent) không tham gia viết tìm ra lỗi mà tác giả bỏ sót. Ví dụ một khách có thể "chiếm" mã hoá đơn của người khác để chặn họ thanh toán; tôi không nghĩ tới tình huống này cho tới khi lần review của Feature 5 chỉ ra.
 - Kiểm thử trên máy thật tìm ra lỗi mà kiểm thử đơn vị không thấy. Ở Feature 3, thanh tab biến mất sau khi vuốt back, bàn phím che sheet nhập lãi suất, và chỉ mục Firestore tạo nhầm chiều sắp xếp đều chỉ lộ ra khi chạy trên điện thoại.
-- Dịch vụ miễn phí mong manh và phải có phương án dự phòng. Google Maps bị bỏ vì không lập được tài khoản thanh toán, mô hình Gemini miễn phí chỉ cho 20 lượt mỗi ngày, máy chủ OSRM công cộng có thể bận. Mỗi chỗ phụ thuộc như vậy trong ứng dụng đều có đường dự phòng (chế độ cơ bản, đường thẳng).
+- Dịch vụ miễn phí mong manh và phải có phương án dự phòng. Google Maps bị bỏ vì không lập được tài khoản thanh toán, mô hình `gemini-3.5-flash` ở gói miễn phí chỉ cho 20 lượt mỗi ngày (nên ứng dụng dùng `gemini-3.5-flash-lite`), máy chủ OSRM công cộng có thể bận. Mỗi chỗ phụ thuộc như vậy trong ứng dụng đều có đường dự phòng (chế độ cơ bản, đường thẳng).
 - Viết tài liệu thiết kế và mockup trước khi code làm giảm việc phải làm lại, nhất là ở giao diện, nơi tôi dễ đổi ý khi chỉ nhìn một trang HTML.
 
 ## Hướng phát triển

@@ -11,7 +11,7 @@ FLUX Bank là một ứng dụng Android native, không có máy chủ riêng. �
 Có ba nhóm thành phần:
 
 - Trên điện thoại là giao diện, ViewModel, repository và các lớp nghiệp vụ thuần Kotlin. Những việc liên quan tới riêng tư cũng chạy ngay trên máy: phát hiện khuôn mặt bằng ML Kit [7], tính vector đặc trưng khuôn mặt bằng mô hình MobileFaceNet [8] chạy trên LiteRT [9], xác thực sinh trắc học bằng `BiometricPrompt` [10], vẽ bản đồ bằng OSMDroid [12].
-- Firebase gói Spark gồm Authentication [6] giữ tài khoản đăng nhập, Cloud Firestore [3] giữ toàn bộ dữ liệu nghiệp vụ, và Security Rules [4] là lớp kiểm tra cuối cùng phía máy chủ. Firebase AI Logic [15] đứng giữa ứng dụng và Gemini, App Check [16] chặn các ứng dụng giả gọi vào AI Logic.
+- Firebase gói Spark gồm Authentication [6] giữ tài khoản đăng nhập, Cloud Firestore [3] giữ toàn bộ dữ liệu nghiệp vụ, và Security Rules [4] là lớp kiểm tra cuối cùng phía máy chủ. Firebase AI Logic [15] đứng giữa ứng dụng và Gemini, App Check [16] được dùng để chặn các ứng dụng giả gọi vào AI Logic, hiện ở chế độ chưa bắt buộc (xem mục Trợ lý AI và App Check).
 - Ngoài Firebase còn ba dịch vụ: cổng VNPay sandbox [11] cho chức năng nạp tiền, máy chủ tile OpenStreetMap [14] cho nền bản đồ, máy chủ OSRM [13] để tính đường đi bộ.
 
 Vì không có máy chủ riêng nên mọi quy tắc nghiệp vụ phải nằm ở hai chỗ: code trên điện thoại và Security Rules. Hệ quả này quyết định nhiều thiết kế ở chương 3 và sẽ được nói rõ ở mục "Phân chia kiểm tra giữa ứng dụng và Security Rules" bên dưới.
@@ -60,7 +60,7 @@ Hai dòng OTP và khuôn mặt là giới hạn thật của kiến trúc: một
 
 ## Công nghệ và lý do chọn
 
-@tbl:tech-nen liệt kê nền tảng build và hạ tầng; @tbl:tech-chuc-nang liệt kê các thư viện và dịch vụ cho từng chức năng. Số phiên bản lấy từ `gradle/libs.versions.toml` và `app/build.gradle.kts`.
+@tbl:tech-nen liệt kê nền tảng build và hạ tầng; @tbl:tech-chuc-nang liệt kê các thư viện và dịch vụ cho từng chức năng. Số phiên bản lấy từ `gradle/libs.versions.toml` và `app/build.gradle.kts`; riêng Gradle lấy từ `gradle/wrapper/gradle-wrapper.properties`, JDK 21 từ `gradle/gradle-daemon-jvm.properties`, còn Kotlin là bản đi kèm AGP 9.4.1.
 
 Table: Nền tảng và hạ tầng {#tbl:tech-nen}
 
@@ -72,7 +72,7 @@ Table: Nền tảng và hạ tầng {#tbl:tech-nen}
 | Cloud Firestore [3] | Firebase BoM 34.19.0 | Dữ liệu dùng chung giữa nhân viên và khách trên nhiều máy; có transaction; đồng bộ sẵn; gói Spark miễn phí | SQLite/Room: chỉ lưu trên một máy nên nhân viên và khách không thấy dữ liệu của nhau |
 | Firebase Authentication [6] | cùng BoM | Đăng nhập email và mật khẩu, tạo tài khoản qua app phụ, không phải tự dựng máy chủ | Tự xây máy chủ đăng nhập: tốn công và phải trả phí máy chủ |
 | Security Rules [4] | `firestore.rules` | Lớp kiểm tra duy nhất chạy ở máy chủ trên gói Spark | Cloud Functions: cần gói Blaze, Google Cloud từ chối lập tài khoản thanh toán (lỗi `OR_BACR2_59`) |
-| Gói Spark [5] | miễn phí | Chủ dự án yêu cầu chi phí bằng 0 | Gói Blaze, vì lý do ở dòng trên |
+| Gói Spark [5] | miễn phí | Tôi đặt mục tiêu chi phí bằng 0 | Gói Blaze, vì lý do ở dòng trên |
 
 Table: Thư viện và dịch vụ theo chức năng {#tbl:tech-chuc-nang}
 
@@ -88,7 +88,7 @@ Table: Thư viện và dịch vụ theo chức năng {#tbl:tech-chuc-nang}
 | Fused Location (play-services-location 21.3.0) | Vị trí người dùng | API vị trí chuẩn của Android | Tự đọc GPS |
 | Firebase AI Logic [15] (BoM 34.19.0) | Trợ lý AI dùng Gemini | Không để API key trong APK; chạy trên Spark | Gọi thẳng Gemini bằng key trong ứng dụng: lộ key |
 | Model `gemini-3.5-flash-lite` | Trả lời có cấu trúc `{reply, actions}`, không bật thinking | Chọn sau khi đo hạn mức gói miễn phí | `gemini-3.5-flash` chỉ 20 lượt mỗi ngày; `gemini-3.8-flash` hay quá tải |
-| App Check [16] (Play Integrity cho release, debug provider cho debug) | Chặn ứng dụng giả gọi AI Logic | Cùng hệ Firebase | Không bật: ai cũng gọi được qua key của dự án |
+| App Check [16] (Play Integrity cho release, debug provider cho debug) | Để chặn ứng dụng giả gọi AI Logic (hiện chưa bắt buộc) | Cùng hệ Firebase | Không bật: ai cũng gọi được qua key của dự án |
 | ML Kit Barcode Scanning (17.3.0), ZXing (3.5.3) | Quét và sinh mã QR nhận tiền | Chạy trên máy, giấy phép Apache-2.0 | Tự giải mã QR |
 | CameraX (1.6.2) | Chụp eKYC, quét mặt, quét QR | API camera thống nhất | Camera2 trực tiếp |
 | Phosphor [17] (MIT), Inter [18] (OFL) | Bộ icon và font chữ | Miễn phí, dùng được trong sản phẩm | Icon Material mặc định |

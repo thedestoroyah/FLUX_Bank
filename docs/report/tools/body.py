@@ -9,7 +9,7 @@ from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls, qn
-from docx.shared import Pt
+from docx.shared import Cm, Pt
 from docx.text.paragraph import Paragraph
 
 FILTER = Path(__file__).with_name("figures.lua")
@@ -99,7 +99,7 @@ SHORT_TABLE_ROWS = 5
 
 
 def _keep_together(doc) -> None:
-    """Giữ caption bảng với bảng, bảng ngắn trên một trang, ảnh với caption bên dưới."""
+    """Giữ caption bảng với bảng, bảng ngắn trên một trang, hàng tiêu đề bảng dài với hàng sau nó, ảnh với caption bên dưới."""
     for p in doc.paragraphs:
         if p.style.name == "Caption" and p.text.startswith("Bảng "):
             p.paragraph_format.keep_with_next = True
@@ -116,11 +116,27 @@ def _keep_together(doc) -> None:
                     p.paragraph_format.keep_with_next = True
             continue
         if len(table.rows) > SHORT_TABLE_ROWS:
+            # Bảng dài được phép ngắt trang, nhưng hàng tiêu đề không bị bỏ lẻ cuối trang.
+            for c in table.rows[0].cells:
+                for p in c.paragraphs:
+                    p.paragraph_format.keep_with_next = True
             continue
         for row in table.rows[:-1]:
             for c in row.cells:
                 for p in c.paragraphs:
                     p.paragraph_format.keep_with_next = True
+
+
+REFERENCE_ENTRY_RE = re.compile(r"^\[\d+\]\s")
+REFERENCE_INDENT = Cm(1)
+
+
+def _hang_references(doc) -> None:
+    """Mục tài liệu tham khảo `[n] ...` thụt dòng treo kiểu IEEE: dòng đầu sát lề, các dòng sau thụt vào."""
+    for p in doc.paragraphs:
+        if REFERENCE_ENTRY_RE.match(p.text):
+            p.paragraph_format.left_indent = REFERENCE_INDENT
+            p.paragraph_format.first_line_indent = -REFERENCE_INDENT
 
 
 def _set_borders(tbl, val: str) -> None:
@@ -232,6 +248,7 @@ def postprocess(docx: Path) -> None:
             p.paragraph_format.keep_with_next = True  # tiêu đề không bị bỏ lẻ cuối trang
         if p.style.name == "Heading 1":  # mẫu Khoa: mỗi chương bắt đầu ở trang mới
             p.paragraph_format.page_break_before = True
+    _hang_references(doc)
     _keep_together(doc)
     _mark_unnumbered(doc)
     _fit_images(doc.element.body)

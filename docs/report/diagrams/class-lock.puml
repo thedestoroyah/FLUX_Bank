@@ -27,7 +27,7 @@ interface AuthRepository
 
 AppLockObserver ..|> DefaultLifecycleObserver
 AppLockObserver --> LockPolicy
-AppLockObserver ..> AuthRepository
+AppLockObserver --> AuthRepository
 FluxApp *-- AppLockObserver : startUnlock = mở UnlockActivity
 UnlockActivity --> AppLockObserver : onUnlocked()
 LoginActivity --> AppLockObserver : markColdStartHandled()

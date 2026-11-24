@@ -84,7 +84,7 @@ entity "config/rates" as rates {
 
 users ||--o| phone : "SĐT duy nhất"
 users ||--o| kyc : "hồ sơ eKYC"
-users ||--|{ acc : "sở hữu"
+users ||--o{ acc : "sở hữu\n(khách ≥ 1, nhân viên 0)"
 acc ||--o{ tx : "ghi nhận"
 users ||--o{ tx : "ownerUid"
 tx |o--o| tx : "pairTxId (OUT ↔ IN)"

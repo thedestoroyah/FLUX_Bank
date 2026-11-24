@@ -92,7 +92,7 @@ User --> UserRole
 BankAccount --> AccountType
 Transaction --> TransactionType
 User "1" -- "0..1" KycRecord : kyc/{uid}
-User "1" -- "1..*" BankAccount : ownerUid
+User "1" -- "0..*" BankAccount : ownerUid\n(khách ≥ 1, nhân viên 0)
 BankAccount "1" -- "0..*" Transaction : accountId
 Transaction "0..1" -- "0..1" Transaction : pairTxId\n(OUT ↔ IN)
 Transaction *-- "0..*" DetailRow : details

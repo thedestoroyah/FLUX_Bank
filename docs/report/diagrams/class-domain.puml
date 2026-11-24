@@ -70,9 +70,9 @@ class MonthSummary {
 
 CustomerOnboardingService ..> NewCustomerInput
 CustomerOnboardingService ..> OnboardingError
-CustomerOnboardingService ..> AuthRepository
-CustomerOnboardingService ..> UserRepository
-CustomerOnboardingService ..> AccountRepository
+CustomerOnboardingService --> AuthRepository
+CustomerOnboardingService --> UserRepository
+CustomerOnboardingService --> AccountRepository
 TransferPolicy ..> TransferError
 TransferPolicy ..> Transaction
 InterestCalculator ..> PaymentFrequency

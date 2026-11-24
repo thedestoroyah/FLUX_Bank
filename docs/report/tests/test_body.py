@@ -292,3 +292,36 @@ def test_code_blocks_use_monospace_10pt(tmp_path):
     assert code_styles
     for s in code_styles:
         assert s.font.name == "Courier New" and s.font.size == Pt(10), s.name
+
+
+@pytest.fixture(scope="module")
+def long_table(tmp_path_factory):
+    """Bảng 8 hàng (dài hơn SHORT_TABLE_ROWS) sau postprocess."""
+    from tools.body import pandoc_body, postprocess
+
+    tmp = tmp_path_factory.mktemp("longtable")
+    rows = "\n".join(f"| {i} | giá trị {i} |" for i in range(8))
+    md = f"# CHƯƠNG MỘT\n\nTable: Bảng dài {{#tbl:long}}\n\n| Khoá | Giá trị |\n|---|---|\n{rows}\n"
+    (tmp / "doc.md").write_text(md, encoding="utf-8")
+    out = pandoc_body([tmp / "doc.md"], TEMPLATE, [tmp], tmp / "body.docx")
+    postprocess(out)
+    return Document(str(out)).tables[0]
+
+
+def test_long_table_repeats_header_row(long_table):
+    assert long_table.rows[0]._tr.trPr.find(qn("w:tblHeader")) is not None
+    assert all(r._tr.trPr.find(qn("w:tblHeader")) is None for r in long_table.rows[1:])
+
+
+def test_long_table_header_stays_with_first_data_row(long_table):
+    header = long_table.rows[0]
+    assert all(p.paragraph_format.keep_with_next for c in header.cells for p in c.paragraphs)
+    last = long_table.rows[-1]
+    assert not any(p.paragraph_format.keep_with_next for c in last.cells for p in c.paragraphs)
+
+
+def test_reference_entries_use_hanging_indent(body):
+    entry = next(p for p in body.paragraphs if p.text.startswith("[1] Một nguồn"))
+    fmt = entry.paragraph_format
+    assert fmt.left_indent is not None and fmt.left_indent > 0
+    assert fmt.first_line_indent == -fmt.left_indent
