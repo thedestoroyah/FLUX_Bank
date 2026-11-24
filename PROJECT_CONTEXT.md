@@ -90,7 +90,7 @@ Security Rules: `firestore.rules` (deploy thủ công qua Console — xem README
 - Tên trên Play "FLUX Bank (Demo)"; màn đăng nhập có dòng chú thích demo (`login_demo_note`).
 
 ## Báo cáo cuối kỳ
-- Nằm ở `docs/report/` (Markdown + PlantUML → pandoc theo mẫu Khoa → `.docx` + `.pdf`), dựng bằng `docs/report/build.py`; spec/plan `docs/superpowers/specs|plans/2026-11-23-final-report*.md`. Cách dựng, ảnh UI còn thiếu và việc còn lại: `HANDOFF.md` mục 9 và 10.
+- Nằm ở `docs/report/` (Markdown + PlantUML → pandoc theo mẫu Khoa → `.docx` + `.pdf`), dựng bằng `docs/report/build.py`; spec/plan `docs/superpowers/specs|plans/2026-11-23-final-report*.md`. Cách dựng, ảnh UI còn thiếu và việc còn lại: `docs/HANDOFF.md` mục 9 và 10.
 
 ## Giới hạn đã biết
 - Gói Spark: OTP và đối chiếu khuôn mặt được kiểm tra trên thiết bị; rules chỉ giới hạn field được sửa. Hướng nâng cấp: Cloud Functions phát/kiểm token.

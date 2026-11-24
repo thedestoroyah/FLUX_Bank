@@ -15,7 +15,7 @@ Tài liệu bàn giao để tiếp tục công việc ở session mới. Đọc 
 
 ## 2. Trạng thái hiện tại
 
-- Repo git ở `FLUX_Bank/`, remote `origin` = GitHub private `thedestoroyah/FLUX_Bank` (HTTPS, tạo 2026-11-12; SSH key chưa gắn với GitHub nên dùng HTTPS qua `gh`). **`main` có F1–F7**: F4 merge 2026-10-28 (`9f6e5c3`), F5 merge 2026-11-12 (`9c3a311`), F6 merge 2026-11-12 (`ac3de12`), F7 merge 2026-11-13 (`d3ad2a5`); tất cả đã review toàn nhánh và chạy trên máy thật (mục 3). Chuẩn bị Play merge 2026-11-13 (`694a74f`). **`main` đi trước `origin/main` (chưa push)** — push khi chủ dự án đồng ý.
+- Repo git ở `FLUX_Bank/`, remote `origin` = GitHub private `thedestoroyah/FLUX_Bank` (HTTPS, tạo 2026-11-12; SSH key chưa gắn với GitHub nên dùng HTTPS qua `gh`). **`main` có F1–F7**: F4 merge 2026-10-28 (`9f6e5c3`), F5 merge 2026-11-12 (`9c3a311`), F6 merge 2026-11-12 (`ac3de12`), F7 merge 2026-11-13 (`d3ad2a5`); tất cả đã review toàn nhánh và chạy trên máy thật (mục 3). Chuẩn bị Play merge 2026-11-13 (`694a74f`). **Mọi thứ chính ở nhánh `main`** (nhánh mặc định trên GitHub; nhánh `feat/ui-foundation-f1-f2`, `chore/play-release` đã gộp hết vào `main` và bị xoá). File HANDOFF này nằm ở `docs/HANDOFF.md` (trước đây ở gốc repo).
 - **Chuẩn bị phát hành Google Play đã merge vào `main`** (2026-11-13, `694a74f`): ký app bằng khoá upload, App Check (AI Logic vẫn Unenforce), dòng chú thích demo ở màn đăng nhập, tài liệu + hình ảnh Play ở `docs/play/`. Review toàn nhánh bởi reviewer độc lập (0 Critical; 2 Important đã sửa), bản release cài tay chạy đạt trên Xiaomi. Chi tiết mục 3, "Cho bản phát hành Google Play".
 - **F7 (Trợ lý AI) đã merge vào `main`** (2026-11-13): review toàn nhánh bởi reviewer độc lập (0 Critical, 4 Important + 2 Minor nâng lên Important, đã sửa hết có test), chạy trên Xiaomi với Gemini thật. Xem mục 3 và 7.
 - **Unit test 391/391 pass** (sau merge Play, 2026-11-13), rules test 49/49 (F7 không đổi rules), `assembleDebug` + `lintDebug` pass (0 error). F6 review toàn nhánh (2026-11-12): 0 Critical, 6 Important đã sửa có test (chạm chi nhánh lúc đang định vị lại vẽ đường từ vị trí cũ, test cache yếu, ở xa > 20 km bị báo lỗi mạng, lỗi API vị trí làm crash, định vị lại không có khung chờ, "Thử lại" bật GPS lại; thêm chặn lỗi camera khi xoay ngang). F5 review toàn nhánh: 0 Critical, 3 Important đã sửa có test (chiếm id hoá đơn của người khác, mã biên lai hoá đơn trùng, lỗi hạn mức hiện muộn). F4 đã qua review toàn nhánh (0 Critical; 6 lỗi Important đã sửa, có test).
@@ -191,7 +191,7 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 - **Build**: daemon Gradle đã ghim JDK 21 (`gradle/gradle-daemon-jvm.properties`), không cần `JAVA_HOME`: `./gradlew testDebugUnitTest assembleDebug`. Android Studio: Gradle JDK = `/usr/lib/jvm/java-21-openjdk`.
 - **Test rules**: `rules-test/` (Node + Firestore emulator), xem README mục 5.
 - **Firestore Console**: gõ tay tên field khi tạo document (copy từ markdown có thể dính ký tự ẩn U+200B, app sẽ không đọc được field).
-- **Git/GitHub**: `git push origin main` (HTTPS qua `gh`, đã cấu hình; cần chạy ngoài sandbox). Không `--force`.
+- **Git/GitHub**: `git push origin main` (HTTPS qua `gh`, đã cấu hình; cần chạy ngoài sandbox). Không `--force`, trừ lần dọn lịch sử 2026-11-24 (xoá file ghi chú Gemini khỏi mọi commit, chủ dự án tự push).
 - **Điện thoại nối qua bộ chia USB EPZ TP35 Pro** (cắm thẳng vào laptop bằng cáp khác từng báo `unable to enumerate USB device` trong `journalctl -k`, tức cáp chỉ sạc / tiếp xúc kém). Không thấy máy thì xem `lsusb` và `journalctl -k --since "-10 min" | grep -i usb` trước khi đổ lỗi cho adb.
 - **Keystore / mật khẩu**: không bao giờ đọc, in hay commit mật khẩu trong `local.properties`; kiểm chữ ký bằng `jarsigner -verify -verbose:summary -certs app/build/outputs/bundle/release/app-release.aab`.
 - **adb phải chạy ngoài sandbox của Claude Code**: server adb khởi động trong sandbox không mở được USB nên `adb devices` trống dù máy đã cắm (`lsusb` vẫn thấy Xiaomi). Sửa: `adb kill-server && adb start-server` ngoài sandbox.
@@ -277,7 +277,7 @@ FluxApp.instance.userRepository.findUidByPhone("0912345678")
 ## 9. Cách bắt đầu session mới
 
 Mở Claude Code từ thư mục `Final_Exam/` (để có skill impeccable), cắm điện thoại Xiaomi (qua bộ chia EPZ) và mở khoá, rồi dùng câu lệnh mở đầu:
-> Đọc `FLUX_Bank/HANDOFF.md` (mục 9 và 10) và `FLUX_Bank/PROJECT_CONTEXT.md`. Tiếp tục đồ án FLUX Bank: chụp 43 ảnh màn hình cho báo cáo theo `docs/report/ui-shots.md`, dựng lại báo cáo, rồi chuẩn bị kịp video demo.
+> Đọc `FLUX_Bank/docs/HANDOFF.md` (mục 9 và 10) và `FLUX_Bank/PROJECT_CONTEXT.md`. Tiếp tục đồ án FLUX Bank: chụp 43 ảnh màn hình cho báo cáo theo `docs/report/ui-shots.md`, dựng lại báo cáo, rồi chuẩn bị kịp video demo.
 
 **Hạn nộp 2026-12-01** (tính từ 2026-11-24 còn 7 ngày). Thứ tự đề xuất:
 1. **Chủ dự án dọn máy** (3 việc, làm trước khi chụp): tắt nút trợ năng màu xanh nổi ở mép phải màn hình; bật Không làm phiền để thanh trạng thái hết icon Zalo/Messenger; đổi tên khách thử "Customer" thành một tên giả giống thật (dùng tài khoản nhân viên sửa). Quyền camera của app chưa cấp (cấp khi app hỏi). Quyền vị trí đang được cấp.
@@ -285,7 +285,7 @@ Mở Claude Code từ thư mục `Final_Exam/` (để có skill impeccable), c�
 3. **Chủ dự án đọc báo cáo**, sửa chỗ sai (Claude sửa file `.md` rồi dựng lại; sửa tay trong file Word thì danh mục bị lệch số trang).
 4. **Video demo**: đề yêu cầu (Technical Requirements mục 5). Chủ dự án chọn làm sau khi xong báo cáo. Chưa có kịch bản; danh sách màn hình ở `ui-shots.md` dùng lại được. Máy có `ffmpeg` và `obs`; **chưa có `scrcpy`** (`sudo pacman -S scrcpy`). Quota Gemini miễn phí có hạn: trước ngày quay đừng gọi thử Trợ lý bừa; hết lượt thì Trợ lý chạy chế độ cơ bản.
 5. (Tuỳ chọn) Play Closed testing do chủ dự án tự làm (mục 3); sau đó cập nhật mục "Trạng thái Google Play" ở chương 6 báo cáo.
-6. Push `main` lên `origin` khi chủ dự án đồng ý (`git push origin main`, ngoài sandbox).
+6. Push `main` lên `origin` khi chủ dự án đồng ý (`git push origin main`, ngoài sandbox). Đặt `main` làm nhánh mặc định trên GitHub (Settings → Branches) nếu chưa.
 
 Quy trình đã dùng và nên giữ: `superpowers:brainstorming` → spec trong `docs/superpowers/specs/` → `superpowers:writing-plans` → `superpowers:executing-plans` (chủ dự án chọn **Native**) → review toàn nhánh → `finishing-a-development-branch`. Trả lời chủ dự án bằng tiếng Việt, gọi giảng viên là "thầy".
 
