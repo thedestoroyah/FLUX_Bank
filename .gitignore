@@ -18,3 +18,5 @@ local.properties
 .kotlin/
 .directory
 .docs/report/submission
+# Gói nộp bài (chỉ giữ trên máy)
+/docs/report/submission/
