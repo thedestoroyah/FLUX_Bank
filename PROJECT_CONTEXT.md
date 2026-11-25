@@ -90,8 +90,8 @@ Security Rules: `firestore.rules` (deploy thủ công qua Console — xem README
 - Tên trên Play "FLUX Bank (Demo)"; màn đăng nhập có dòng chú thích demo (`login_demo_note`).
 
 ## Báo cáo cuối kỳ
-- Nằm ở `docs/report/` (Markdown + PlantUML → pandoc theo mẫu Khoa → `.docx` + `.pdf`), dựng bằng `docs/report/build.py`; spec/plan `docs/superpowers/specs|plans/2026-11-23-final-report*.md`. Cách dựng, ảnh UI còn thiếu (2 ảnh chi nhánh) và việc còn lại: `docs/HANDOFF.md` mục 9 và 10.
-- Video demo (đề bắt buộc): kịch bản `docs/video/kich-ban-demo.md`; chưa quay.
+- Nằm ở `docs/report/` (Markdown + PlantUML → pandoc theo mẫu Khoa → `.docx` + `.pdf`), dựng bằng `docs/report/build.py`; spec/plan `docs/superpowers/specs|plans/2026-11-23-final-report*.md`. Cách dựng và trạng thái: `docs/HANDOFF.md` mục 9 và 10. Báo cáo đủ 47/47 ảnh UI; bản nộp do chủ dự án sửa tay nằm ở `docs/report/submission/52300098/`.
+- Video demo: đã quay xong (kịch bản `docs/video/kich-ban-demo.md`), link ở `docs/report/submission/52300098/link_demo_video.txt`. Dự án hoàn tất 2026-11-25; repo GitHub public.
 
 ## Giới hạn đã biết
 - Gói Spark: OTP và đối chiếu khuôn mặt được kiểm tra trên thiết bị; rules chỉ giới hạn field được sửa. Hướng nâng cấp: Cloud Functions phát/kiểm token.
